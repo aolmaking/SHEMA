@@ -506,6 +506,20 @@ class AtlasEngine extends EventEmitter {
         });
 
         this.bus.dispatch(event);
+      } else if (status === 'skip') {
+        const event = createAtlasEvent({
+          eventType: ATLAS_EVENT_TYPES.EXEMPTION_RECORDED,
+          occurredAt: new Date().toISOString(),
+          source: 'habit_core',
+          entityId: habitId,
+          payload: {
+            dateStr,
+            habitId,
+          },
+          userConfirmed: true,
+        });
+
+        this.bus.dispatch(event);
       }
     });
 

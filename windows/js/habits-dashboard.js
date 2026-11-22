@@ -573,6 +573,11 @@
           switchTab('grid');
         }
 
+        const plate = $('#dashWindowPlate');
+        if (plate) plate.dataset.activeTab = state.activeTab;
+        const hud = $('#dashQuickHud');
+        if (hud) hud.style.display = (state.activeTab === 'atlas') ? 'none' : '';
+
         updateMonthDisplay();
         renderActiveTab();
       }
@@ -621,6 +626,10 @@
 
   function switchTab(tabId) {
     state.activeTab = tabId;
+    const plate = $('#dashWindowPlate');
+    if (plate) plate.dataset.activeTab = tabId;
+    const hud = $('#dashQuickHud');
+    if (hud) hud.style.display = (tabId === 'atlas') ? 'none' : '';
     $$('.dash-tab').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabId);
     });
@@ -5323,10 +5332,25 @@
     const serEl = $('#atlasSerScore'); if (serEl) serEl.textContent = String(aff.SER || 0);
     const disEl = $('#atlasDisScore'); if (disEl) disEl.textContent = String(aff.DIS || 0);
 
-    // 3. Miro Avatar & Speech
+    // 3. Miro Avatar & Speech (Brand Artwork + Starlight Sparkle)
     const miroBox = $('#atlasMiroAvatarBox');
-    if (miroBox && miro.svgSprite) {
-      miroBox.innerHTML = miro.svgSprite;
+    if (miroBox) {
+      miroBox.innerHTML = `
+        <div class="atlas-miro-spirit-img"></div>
+        <span class="atlas-miro-starlight-sparkle">✨</span>
+      `;
+      miroBox.onclick = async () => {
+        try {
+          if (window.widgets?.atlas?.getMiroDialogue) {
+            const nextDiag = await window.widgets.atlas.getMiroDialogue({
+              state: 'CELEBRATING',
+              context: { lang: state.language || 'ar', wayfinderName: wf.name },
+            });
+            const sp = $('#atlasMiroSpeech');
+            if (sp && nextDiag) sp.textContent = `"${nextDiag}"`;
+          }
+        } catch (_) {}
+      };
     }
     const speechEl = $('#atlasMiroSpeech');
     if (speechEl) {
@@ -5340,7 +5364,7 @@
           if (window.widgets?.atlas?.getMiroDialogue) {
             const nextDiag = await window.widgets.atlas.getMiroDialogue({
               state: 'CURIOUS_REFLECTIVE',
-              context: { lang: state.language || 'ar' },
+              context: { lang: state.language || 'ar', wayfinderName: wf.name },
             });
             if (speechEl && nextDiag) speechEl.textContent = `"${nextDiag}"`;
           }
