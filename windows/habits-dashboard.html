@@ -1735,6 +1735,7 @@
           <div class="atlas-wayfinder-status">
             <div class="atlas-wf-header">
               <div class="atlas-wf-rank">
+                <span class="atlas-wayfinder-name-tag" id="atlasWayfinderName" title="اسم مستكشف الدرب (انقر للتعديل)">مستكشف الدرب</span>
                 <span class="atlas-level-pill" id="atlasWayfinderLevel">Level 1</span>
                 <span class="atlas-title-text" id="atlasWayfinderTitle">غارس الخطوة الأولى</span>
               </div>
@@ -2089,6 +2090,36 @@
         <button class="btn btn-subtle" id="rewardModalCancelBtn" data-i18n="habits.cancel">إلغاء</button>
         <button class="dash-action-btn primary" id="rewardModalSaveBtn" data-i18n="habits.saveRecord">حفظ
           المكافأة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wayfinder Sovereign Identity Induction Modal (First-Time Onboarding & Edit) -->
+  <div class="modal-backdrop" id="atlasInductionModal" hidden>
+    <div class="modal-card modal-compact atlas-induction-card">
+      <div class="modal-head">
+        <span class="modal-title">🌟 ميثاق مستكشف الدرب (Wayfinder Induction)</span>
+        <button type="button" class="icon-btn" id="atlasInductionCloseBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="atlas-induction-intro">
+          <div class="atlas-induction-icon">🧭</div>
+          <p class="atlas-induction-text">
+            مرحباً بك في <strong>أطلس العوالم الحيّة (The Living Atlas)</strong>.<br>
+            قبل أن ننطلق معاً، يود الرفيق <strong>ميرو</strong> أن يعرف اسمك أو اللقب الأحبّ إليك لتخليده في سجلات الأطلس ومخاطبتك به طوال الرحلة.
+          </p>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label" for="atlasInductionNameInput">اسم المستكشف / لقبك في الرحلة:</label>
+          <input type="text" class="form-input" id="atlasInductionNameInput" placeholder="مثال: أحمد، الباحث، طارق..." maxlength="32" autocomplete="off">
+          <div class="form-hint" style="margin-top: 6px; font-size: 11px; opacity: 0.7;">
+            * يمكنك تعديل اسمك في أي وقت بالنقر على شارة اسمك في أعلى لوحة الأطلس.
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-subtle" id="atlasInductionSkipBtn">تخطي مؤقتاً</button>
+        <button type="button" class="dash-action-btn primary" id="atlasInductionSubmitBtn">✨ تخليد الاسم والبدء</button>
       </div>
     </div>
   </div>

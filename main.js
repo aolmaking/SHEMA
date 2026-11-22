@@ -5359,6 +5359,7 @@ function registerIpc() {
   ipcMain.handle('atlas:add-miro-note', (_e, { text, habitId } = {}) => atlasEngine.addMiroNote(text, habitId));
   ipcMain.handle('atlas:delete-miro-note', (_e, noteId) => atlasEngine.deleteMiroNote(noteId));
   ipcMain.handle('atlas:reset-miro-memory', (_e) => atlasEngine.resetMiroMemory());
+  ipcMain.handle('atlas:set-wayfinder-name', (_e, name) => atlasEngine.setWayfinderName(name));
 
   ipcMain.on('shell:open', (_e, url) => {
     if (typeof url === 'string' && (/^https?:\/\//i.test(url) || /^mailto:/i.test(url))) openExternalUrl(url);

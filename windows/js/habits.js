@@ -2993,6 +2993,10 @@
     const xpProgress = atlas.xpProgress || { currentXp: wayfinder.xp || 0, nextLevelXp: 100, progressPercent: 0 };
     const isEn = lang() === 'en';
 
+    // Wayfinder Name Badge
+    const nameEl = $('#habitsMiniWayfinderName');
+    if (nameEl) nameEl.textContent = wayfinder.name || (isEn ? 'Wayfinder' : 'مستكشف الدرب');
+
     // Level Badge
     const lvlEl = $('#habitsMiniLevelBadge');
     if (lvlEl) lvlEl.textContent = `Lv.${digits(wayfinder.level || 1)}`;
@@ -3656,10 +3660,11 @@
         return;
       }
       const isEn = lang() === 'en';
+      const wfName = state.atlas?.wayfinder?.name;
       let dialogue = state.atlas?.miro?.currentDialogue;
       if (!dialogue && window.widgets?.atlas?.getMiroDialogue) {
         try {
-          const res = await window.widgets.atlas.getMiroDialogue({ lang: isEn ? 'en' : 'ar' });
+          const res = await window.widgets.atlas.getMiroDialogue({ lang: isEn ? 'en' : 'ar', context: { wayfinderName: wfName } });
           dialogue = res?.text;
         } catch (_) {}
       }
@@ -3685,7 +3690,8 @@
       const isEn = lang() === 'en';
       if (window.widgets?.atlas?.getMiroDialogue) {
         try {
-          const res = await window.widgets.atlas.getMiroDialogue({ lang: isEn ? 'en' : 'ar', state: 'supportive' });
+          const wfName = state.atlas?.wayfinder?.name;
+          const res = await window.widgets.atlas.getMiroDialogue({ lang: isEn ? 'en' : 'ar', state: 'supportive', context: { wayfinderName: wfName } });
           if (res?.text) {
             const speechEl = $('#habitsMiniMiroSpeech');
             if (speechEl) speechEl.textContent = `"${res.text}"`;

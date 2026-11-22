@@ -50,6 +50,7 @@ SHĒMA is composed of dedicated, modular desktop tiles that can be positioned an
 - **Composite Daily Wellness Index (DWI)**: A proprietary composite health metric calculating day-level wellness by cross-analyzing habit completion rates, sleep hours/quality, mood fluctuations, and screen stress.
 - **Guilt-Free Continuity ("Don't Break The Chain")**: Approved leave/exemption tagging (`skip`) protects consistency streaks during illness, travel, or scheduled rest days.
 - **The Living Atlas (أطلس العوالم الحيّة)**:
+  - **Wayfinder Sovereign Induction & Identity**: On first-time initialization, the user enters their custom Wayfinder name or moniker. This identity is permanently woven throughout the journey—adorning dashboard badges, mini desktop headers, monument chronicles, and Miro's personalized ambient whispers (*"يا [الاسم]..."*). Clickable anytime for effortless updates.
   - **Living Map**: 6 restore-worthy landmark regions (*The Crossroads, Sunken Library, Granite Pass, Solitary Peak, Quiet Waters, World Tree*) brought back to life as habits are completed.
   - **Miro Companion**: An ambient, glowing starlight spirit reacting to user progress with intelligent, multi-modal consultation and encouraging guidance.
   - **Celestial Astrolabe**: 5 behavioral skill branches (*Awareness, Consistency, Resilience, Reflection, Mastery*) advancing through organic habit stacking.

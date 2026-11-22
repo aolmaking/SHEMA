@@ -8542,6 +8542,33 @@ body.theme-notebook .preview-tile {
   gap: 8px;
 }
 
+.atlas-wayfinder-name-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7c3aed;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+[data-theme="dark"] .atlas-wayfinder-name-tag {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.2));
+  border-color: rgba(167, 139, 250, 0.45);
+  color: #c4b5fd;
+}
+
+.atlas-wayfinder-name-tag:hover {
+  transform: translateY(-1px);
+  border-color: #8b5cf6;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+}
+
 .atlas-level-pill {
   background: linear-gradient(135deg, #0284c7, #38bdf8);
   color: #ffffff;
@@ -9330,4 +9357,33 @@ body.theme-notebook .preview-tile {
   margin-top: 14px;
   display: flex;
   justify-content: flex-end;
+}
+
+/* Wayfinder Sovereign Induction Modal */
+.atlas-induction-card {
+  max-width: 440px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+}
+
+.atlas-induction-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08));
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.atlas-induction-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.atlas-induction-text {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-main, #0f172a);
+  margin: 0;
 }

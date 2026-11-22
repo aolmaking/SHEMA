@@ -155,8 +155,17 @@ class MiroCompanion {
     }
 
     const selected = list[Math.floor(Math.random() * list.length)] || '';
-    this.lastDialogue = selected;
-    return selected;
+    const name = (context.name || context.wayfinderName || '').trim();
+    let res = selected;
+    if (name && name !== 'مستكشف الدرب' && name !== 'Wayfinder') {
+      if (isEn) {
+        res = `${name}, ${selected.charAt(0).toLowerCase() + selected.slice(1)}`;
+      } else {
+        res = `يا ${name}، ${selected}`;
+      }
+    }
+    this.lastDialogue = res;
+    return res;
   }
 
   /**

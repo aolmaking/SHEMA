@@ -203,6 +203,15 @@ class AtlasEngine extends EventEmitter {
   }
 
   /**
+   * Sets the Wayfinder's custom sovereign identity name
+   */
+  setWayfinderName(name) {
+    const wf = this.store.setWayfinderName(name);
+    this.emit('atlas:updated', this.getDashboardState());
+    return { ok: true, wayfinder: wf };
+  }
+
+  /**
    * Upgrades a Haven facility using Haven Gold earned from habit executions
    */
   upgradeFacility(facilityId) {
@@ -605,7 +614,7 @@ class AtlasEngine extends EventEmitter {
       miro: {
         state: this.miro.state,
         glowIntensity: this.miro.glowIntensity,
-        dialogue: this.miro.lastDialogue || this.miro.getDialogueForState(this.miro.state, { lang }),
+        dialogue: this.miro.lastDialogue || this.miro.getDialogueForState(this.miro.state, { lang, wayfinderName: wf.name }),
         svgSprite: MiroCompanion.renderSvgSprite({ glow: this.miro.glowIntensity }),
         consultationModes: MIRO_CONSULTATION_MODES,
       },

@@ -24,6 +24,8 @@ function getDefaultAtlasState() {
     },
     // Track 1: Wayfinder Progression & Game Store
     wayfinder: {
+      name: 'مستكشف الدرب',
+      isNamed: false,
       xp: 0,
       level: 1,
       havenGold: 0,
@@ -109,6 +111,8 @@ class AtlasStore {
     const defaults = getDefaultAtlasState();
 
     if (!d.wayfinder) d.wayfinder = defaults.wayfinder;
+    if (!d.wayfinder.name) d.wayfinder.name = 'مستكشف الدرب';
+    if (typeof d.wayfinder.isNamed !== 'boolean') d.wayfinder.isNamed = false;
     if (!d.wayfinder.livingMaterials) {
       d.wayfinder.livingMaterials = { aetherShards: 0, manuscriptScraps: 0, seedsOfLight: 0 };
     }
@@ -137,6 +141,7 @@ class AtlasStore {
 
   flush() {
     this.data.meta.lastActive = new Date().toISOString();
+    this.store.save();
     this.store.flush();
   }
 
@@ -144,6 +149,16 @@ class AtlasStore {
 
   getWayfinder() {
     return { ...this.data.wayfinder };
+  }
+
+  setWayfinderName(name) {
+    const clean = typeof name === 'string' ? name.trim().slice(0, 32) : '';
+    if (clean) {
+      this.data.wayfinder.name = clean;
+      this.data.wayfinder.isNamed = true;
+      this.flush();
+    }
+    return this.getWayfinder();
   }
 
   addXpAndGold(xp = 0, gold = 0) {

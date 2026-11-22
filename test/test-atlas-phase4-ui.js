@@ -15,6 +15,9 @@ try {
 
   assert.ok(dashHtml.includes('data-tab="atlas"'), 'Atlas nav tab button must exist');
   assert.ok(dashHtml.includes('id="pane-atlas"'), '#pane-atlas container must exist');
+  assert.ok(dashHtml.includes('id="atlasWayfinderName"'), '#atlasWayfinderName badge must exist');
+  assert.ok(dashHtml.includes('id="atlasInductionModal"'), '#atlasInductionModal must exist');
+  assert.ok(dashHtml.includes('id="atlasInductionNameInput"'), '#atlasInductionNameInput must exist');
   assert.ok(dashHtml.includes('id="atlasWayfinderLevel"'), '#atlasWayfinderLevel must exist');
   assert.ok(dashHtml.includes('id="atlasWayfinderTitle"'), '#atlasWayfinderTitle must exist');
   assert.ok(dashHtml.includes('id="atlasHavenGold"'), '#atlasHavenGold must exist');
@@ -56,6 +59,7 @@ try {
 
   assert.ok(habitsHtml.includes('id="atlasMiniMiroMote"'), '#atlasMiniMiroMote must exist in mini widget header');
   assert.ok(habitsHtml.includes('id="habitsAtlasMiniBar"'), '#habitsAtlasMiniBar must exist in habits.html');
+  assert.ok(habitsHtml.includes('id="habitsMiniWayfinderName"'), '#habitsMiniWayfinderName must exist in habits.html');
   assert.ok(habitsHtml.includes('id="habitsMiniMiroAvatar"'), '#habitsMiniMiroAvatar must exist in habits.html');
   assert.ok(habitsHtml.includes('id="habitsMiniLevelBadge"'), '#habitsMiniLevelBadge must exist in habits.html');
   assert.ok(habitsHtml.includes('id="habitsMiniGoldVal"'), '#habitsMiniGoldVal must exist in habits.html');
@@ -133,14 +137,48 @@ try {
   assert.ok(preloadJs.includes('atlas:upgrade-facility'), 'preload.js must expose atlas:upgrade-facility');
   assert.ok(preloadJs.includes('atlas:resolve-obstacle'), 'preload.js must expose atlas:resolve-obstacle');
   assert.ok(preloadJs.includes('atlas:get-miro-dialogue'), 'preload.js must expose atlas:get-miro-dialogue');
+  assert.ok(preloadJs.includes('atlas:set-wayfinder-name'), 'preload.js must expose atlas:set-wayfinder-name');
 
   const mainJs = fs.readFileSync(path.join(__dirname, '../main.js'), 'utf8');
   assert.ok(mainJs.includes('AtlasEngine'), 'main.js must import AtlasEngine');
   assert.ok(mainJs.includes('atlasEngine.bridgeHabitsManager'), 'main.js must bridge habitsManager with atlasEngine');
   assert.ok(mainJs.includes("ipcMain.handle('atlas:get-state'"), 'main.js must register atlas:get-state handler');
   assert.ok(mainJs.includes("ipcMain.handle('atlas:upgrade-facility'"), 'main.js must register atlas:upgrade-facility handler');
+  assert.ok(mainJs.includes("ipcMain.handle('atlas:set-wayfinder-name'"), 'main.js must register atlas:set-wayfinder-name handler');
   assert.ok(mainJs.includes('isMicroStep'), 'main.js must forward isMicroStep in habits:save-status');
   console.log('✅ Core habits engine and IPC bridge verified.');
+
+  // 6. Functional Verification of Wayfinder Name & Miro Personalization
+  console.log('\n--- 6. Testing Wayfinder Name Induction & Miro Dialogue Personalization ---');
+  const { AtlasStore } = require('../src/core/atlas/atlas-store');
+  const { AtlasEngine } = require('../src/core/atlas/atlas-engine');
+  const { MiroCompanion, MIRO_STATES } = require('../src/core/atlas/atlas-miro');
+
+  const tmpStorePath = path.join(__dirname, 'fixtures/atlas-test-name.json');
+  if (fs.existsSync(tmpStorePath)) fs.unlinkSync(tmpStorePath);
+
+  const testStore = new AtlasStore(tmpStorePath);
+  assert.strictEqual(testStore.data.wayfinder.name, 'مستكشف الدرب', 'Default name should be مستكشف الدرب');
+  assert.strictEqual(testStore.data.wayfinder.isNamed, false, 'Default isNamed should be false');
+
+  testStore.setWayfinderName('طارق');
+  assert.strictEqual(testStore.data.wayfinder.name, 'طارق', 'Name should update to طارق');
+  assert.strictEqual(testStore.data.wayfinder.isNamed, true, 'isNamed should become true');
+
+  const testEngine = new AtlasEngine({ storePath: tmpStorePath });
+  const dashState = testEngine.getDashboardState('ar');
+  assert.strictEqual(dashState.wayfinder.name, 'طارق', 'Dashboard state should return Wayfinder name');
+  assert.strictEqual(dashState.wayfinder.isNamed, true, 'Dashboard state should return isNamed true');
+
+  const miroComp = new MiroCompanion();
+  const arSpeech = miroComp.getDialogueForState(MIRO_STATES.WELCOMING, { lang: 'ar', name: 'طارق' });
+  assert.ok(arSpeech.includes('طارق'), `Miro Arabic dialogue should be personalized with name: ${arSpeech}`);
+
+  const enSpeech = miroComp.getDialogueForState(MIRO_STATES.CELEBRATING, { lang: 'en', name: 'Tariq' });
+  assert.ok(enSpeech.includes('Tariq'), `Miro English dialogue should be personalized with name: ${enSpeech}`);
+
+  if (fs.existsSync(tmpStorePath)) fs.unlinkSync(tmpStorePath);
+  console.log('✅ Wayfinder Name induction and Miro dialogue personalization verified 100%.');
 
   console.log('\n========================================================');
   console.log('🎉 ALL ATLAS PHASE 4 UI TESTS PASSED (100%)');

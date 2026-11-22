@@ -193,6 +193,7 @@ contextBridge.exposeInMainWorld('widgets', {
     addMiroNote: (opts) => ipcRenderer.invoke('atlas:add-miro-note', opts),
     deleteMiroNote: (noteId) => ipcRenderer.invoke('atlas:delete-miro-note', noteId),
     resetMiroMemory: () => ipcRenderer.invoke('atlas:reset-miro-memory'),
+    setWayfinderName: (name) => ipcRenderer.invoke('atlas:set-wayfinder-name', name),
     onUpdated: (fn) => on('atlas:updated', fn),
   },
 

@@ -5226,7 +5226,69 @@
     const wf = atlasState.wayfinder || {};
     const miro = atlasState.miro || {};
 
-    // 1. Wayfinder Header
+    // 1. Wayfinder Header & Sovereign Name
+    const nameEl = $('#atlasWayfinderName');
+    if (nameEl) {
+      nameEl.textContent = wf.name || (isEn ? 'Wayfinder' : 'مستكشف الدرب');
+      nameEl.onclick = () => {
+        const modal = $('#atlasInductionModal');
+        const input = $('#atlasInductionNameInput');
+        if (input) input.value = wf.name && wf.name !== 'مستكشف الدرب' ? wf.name : '';
+        if (modal) {
+          modal.hidden = false;
+          if (input) input.focus();
+        }
+      };
+    }
+
+    // Auto-prompt induction onboarding on first visit if not yet named
+    if (wf.isNamed === false && !state._atlasInductionPrompted) {
+      state._atlasInductionPrompted = true;
+      const modal = $('#atlasInductionModal');
+      const input = $('#atlasInductionNameInput');
+      if (input) input.value = '';
+      if (modal) modal.hidden = false;
+    }
+
+    const inductionModal = $('#atlasInductionModal');
+    const inductionInput = $('#atlasInductionNameInput');
+    const inductionSubmit = $('#atlasInductionSubmitBtn');
+    const inductionSkip = $('#atlasInductionSkipBtn');
+    const inductionClose = $('#atlasInductionCloseBtn');
+
+    if (inductionSubmit) {
+      inductionSubmit.onclick = async () => {
+        const chosen = (inductionInput ? inductionInput.value : '').trim();
+        if (chosen && window.widgets?.atlas?.setWayfinderName) {
+          try {
+            await window.widgets.atlas.setWayfinderName(chosen);
+            if (inductionModal) inductionModal.hidden = true;
+            renderAtlasPane();
+          } catch (err) {
+            console.error('[Atlas] Failed to save wayfinder name:', err);
+          }
+        }
+      };
+    }
+    if (inductionInput) {
+      inductionInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (inductionSubmit) inductionSubmit.click();
+        }
+      };
+    }
+    if (inductionSkip) {
+      inductionSkip.onclick = () => {
+        if (inductionModal) inductionModal.hidden = true;
+      };
+    }
+    if (inductionClose) {
+      inductionClose.onclick = () => {
+        if (inductionModal) inductionModal.hidden = true;
+      };
+    }
+
     const lvlEl = $('#atlasWayfinderLevel');
     if (lvlEl) lvlEl.textContent = `Level ${wf.level || 1}`;
 
