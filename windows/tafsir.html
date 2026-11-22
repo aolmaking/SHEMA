@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="tf.title" data-kind="window" data-page="tafsir">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>التفسير</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/tafsir.css">
+</head>
+<body>
+  <div class="plate window-plate tafsir-plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" id="place">—</div>
+        <div class="head-sub" id="sub">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn" id="copyBtn" data-i18n-title="tf.copy"></button>
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.close"></button>
+      </div>
+    </header>
+
+    <div class="body scroll" id="scroll">
+      <!-- the ayah -->
+      <section class="ayah-block">
+        <p class="ayah" id="ayah" dir="rtl" lang="ar"></p>
+        <div class="ayah-meta">
+          <span class="badge" id="verified" hidden>
+            <span id="verifiedIcon"></span><span data-i18n="tf.verified">نص مُطابَق من مصدرين</span>
+          </span>
+          <span class="src" id="ayahSource"></span>
+        </div>
+      </section>
+
+      <!-- why this ayah, clearly the app's own labelling -->
+      <section class="why" id="whyBlock" hidden>
+        <div class="why-head">
+          <span id="whyIcon"></span>
+          <span data-i18n="tf.why">لماذا ظهرت هذه الآية الآن</span>
+        </div>
+        <ul class="why-list" id="whyList"></ul>
+        <p class="why-note" data-i18n="tf.whyNote"></p>
+      </section>
+
+      <!-- tafsir -->
+      <section class="tafsir-block">
+        <div class="tafsir-head">
+          <div>
+            <div class="tafsir-name" id="tafsirName">—</div>
+            <div class="tafsir-author" id="tafsirAuthor">—</div>
+          </div>
+          <select class="picker" id="picker" data-i18n-title="tf.pick"></select>
+        </div>
+
+        <div class="tafsir-text" id="tafsir" dir="rtl" lang="ar"></div>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div><span data-i18n="tf.loading">جارٍ جلب التفسير…</span>
+        </div>
+        <div class="failed" id="failed" hidden>
+          <p id="failedText"></p>
+          <button class="btn" id="retryBtn" data-i18n="tf.retry"></button>
+        </div>
+      </section>
+
+      <!-- english meaning, optional -->
+      <section class="tr-block" id="trBlock" hidden>
+        <div class="tr-head" id="trName">—</div>
+        <div class="tr-text" id="trText" dir="ltr" lang="en"></div>
+      </section>
+
+      <!-- attribution -->
+      <footer class="attrib">
+        <div class="attrib-row">
+          <span class="attrib-key" data-i18n="tf.kText">نص الآية</span>
+          <span class="attrib-val" id="srcText">—</span>
+        </div>
+        <div class="attrib-row">
+          <span class="attrib-key" data-i18n="tf.kVerify">التحقق</span>
+          <span class="attrib-val" id="srcVerify">—</span>
+        </div>
+        <div class="attrib-row">
+          <span class="attrib-key" data-i18n="tf.kTafsir">التفسير</span>
+          <span class="attrib-val" id="srcTafsir">—</span>
+        </div>
+        <div class="attrib-links" id="links"></div>
+        <p class="attrib-note" data-i18n="tf.note"></p>
+      </footer>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/tafsir.js"></script>
+</body>
+</html>

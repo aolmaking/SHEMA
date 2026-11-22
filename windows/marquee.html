@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>تحديد مستطيلي</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      background: transparent;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .marquee-box {
+      position: fixed;
+      border: 1.5px solid #0099ff;
+      background: rgba(0, 153, 255, 0.16);
+      box-shadow: 0 0 16px rgba(0, 153, 255, 0.45);
+      border-radius: 4px;
+      display: none;
+      pointer-events: none;
+      z-index: 100;
+      transition: width 0.02s linear, height 0.02s linear;
+    }
+
+    .marquee-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 18, 24, 0.85);
+      color: #ffffff;
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      pointer-events: none;
+      backdrop-filter: blur(20px);
+      letter-spacing: 0.2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="marquee-box" id="marqueeBox"></div>
+  <div class="marquee-hint" id="marqueeHint">اسحب بالماوس لتحديد مجموعة الودجات ككتلة واحدة • Esc للإلغاء</div>
+
+  <script>
+    let isDrawing = false;
+    let startX = 0;
+    let startY = 0;
+    const box = document.getElementById('marqueeBox');
+    const hintEl = document.getElementById('marqueeHint');
+
+    function applyMarqueeLang() {
+      const isEn = (window.widgets?.settings?.get()?.language === 'en');
+      if (isEn) {
+        document.title = 'Marquee Selection';
+        document.documentElement.dir = 'ltr';
+        document.documentElement.lang = 'en';
+        if (hintEl) hintEl.textContent = 'Drag with mouse to select widgets as a block • Esc to cancel';
+      } else {
+        document.title = 'تحديد مستطيلي';
+        document.documentElement.dir = 'rtl';
+        document.documentElement.lang = 'ar';
+        if (hintEl) hintEl.textContent = 'اسحب بالماوس لتحديد مجموعة الودجات ككتلة واحدة • Esc للإلغاء';
+      }
+    }
+    applyMarqueeLang();
+
+    if (window.widgets?.win?.onMarqueeInit) {
+      window.widgets.win.onMarqueeInit((pt) => {
+        if (pt && typeof pt.sx === 'number') {
+          isDrawing = true;
+          startX = pt.sx;
+          startY = pt.sy;
+          box.style.display = 'block';
+          updateBox(pt.sx, pt.sy);
+        }
+      });
+    }
+
+    document.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      isDrawing = true;
+      startX = e.screenX;
+      startY = e.screenY;
+      box.style.display = 'block';
+      updateBox(e.screenX, e.screenY);
+    });
+
+    document.addEventListener('pointermove', (e) => {
+      if (!isDrawing) return;
+      updateBox(e.screenX, e.screenY);
+    });
+
+    function updateBox(curX, curY) {
+      const left = Math.min(startX, curX);
+      const top = Math.min(startY, curY);
+      const width = Math.abs(curX - startX);
+      const height = Math.abs(curY - startY);
+
+      box.style.left = left + 'px';
+      box.style.top = top + 'px';
+      box.style.width = width + 'px';
+      box.style.height = height + 'px';
+
+      if (window.widgets?.marquee?.update) {
+        window.widgets.marquee.update({ x: left, y: top, width, height });
+      }
+    }
+
+    function finish() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      const left = parseInt(box.style.left || '0', 10);
+      const top = parseInt(box.style.top || '0', 10);
+      const width = parseInt(box.style.width || '0', 10);
+      const height = parseInt(box.style.height || '0', 10);
+      box.style.display = 'none';
+
+      if (window.widgets?.marquee?.end) {
+        window.widgets.marquee.end({ x: left, y: top, width, height });
+      }
+    }
+
+    document.addEventListener('pointerup', finish);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        isDrawing = false;
+        box.style.display = 'none';
+        if (window.widgets?.marquee?.cancel) {
+          window.widgets.marquee.cancel();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

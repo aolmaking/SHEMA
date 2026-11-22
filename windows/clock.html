@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="clock.title" data-kind="widget" data-page="clock">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>الساعة والمنبه والمؤقت</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/tile.css">
+  <link rel="stylesheet" href="css/clock.css">
+</head>
+
+<body>
+  <div class="plate tile-plate" data-drag data-transparency="max">
+    <div class="handle"></div>
+    <div class="tile-actions">
+      <button class="icon-btn active" id="transparencyBtn" data-i18n-title="clock.transparency"></button>
+      <button class="icon-btn" id="settingsBtn" data-i18n-title="clock.settings"></button>
+      <button class="icon-btn" id="closeBtn" data-i18n-title="common.hide"></button>
+    </div>
+
+    <!-- Navigation Bar between Clock / Alarm / Timer -->
+    <nav class="clock-nav" id="clockNav" role="tablist">
+      <button class="clock-tab-btn active" id="tabClock" data-tab="clock" role="tab" data-i18n-title="clock.tabClock" title="الساعة">
+        <span class="tab-icon">⏰</span>
+        <span class="tab-label" data-i18n="clock.tabClock">الساعة</span>
+      </button>
+      <button class="clock-tab-btn" id="tabAlarm" data-tab="alarm" role="tab" data-i18n-title="clock.tabAlarm" title="المنبه">
+        <span class="tab-icon">🔔</span>
+        <span class="tab-label" data-i18n="clock.tabAlarm">المنبه</span>
+        <span class="tab-badge" id="alarmBadge" hidden>0</span>
+      </button>
+      <button class="clock-tab-btn" id="tabTimer" data-tab="timer" role="tab" data-i18n-title="clock.tabTimer" title="المؤقت">
+        <span class="tab-icon">⏱️</span>
+        <span class="tab-label" data-i18n="clock.tabTimer">التايمر</span>
+        <span class="tab-dot" id="timerDot" hidden></span>
+      </button>
+    </nav>
+
+    <!-- Views Container -->
+    <div class="tile-body clock-body" id="clockBody">
+      <!-- ── TAB 1: CLOCK ── -->
+      <div class="clock-view active" id="viewClock">
+        <div class="clock" id="clock">
+          <section class="main">
+            <div class="face" id="face">
+              <svg class="dial" id="dial" viewBox="0 0 100 100" aria-hidden="true"></svg>
+              <div class="readout">
+                <div class="time numerals" id="time">--:--</div>
+                <div class="sub" id="sub"></div>
+              </div>
+            </div>
+            <div class="dateline" id="dateline"></div>
+          </section>
+          <section class="zones" id="zones" hidden style="display: none !important;"></section>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: ALARM ── -->
+      <div class="clock-view" id="viewAlarm">
+        <div class="alarm-view-content">
+          <div class="alarm-top-bar">
+            <span class="alarm-count-badge" id="alarmCountBadge">0 منبهات</span>
+            <button class="alarm-add-btn" id="addAlarmBtn" type="button">
+              <span class="plus-icon">+</span>
+              <span data-i18n="alarm.add">إضافة منبه</span>
+            </button>
+          </div>
+
+          <div class="alarms-list scroll" id="alarmsList">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Add / Edit Alarm Drawer -->
+          <div class="alarm-drawer" id="alarmDrawer" hidden>
+            <div class="alarm-drawer-header">
+              <div class="drawer-title-wrap">
+                <span class="drawer-title-icon">⏰</span>
+                <span class="drawer-title" id="drawerTitle" data-i18n="alarm.new">منبه جديد</span>
+              </div>
+              <button class="drawer-close-btn" id="closeDrawerBtn" type="button" title="إغلاق" data-i18n-title="common.close">✕</button>
+            </div>
+            <div class="alarm-drawer-body scroll">
+              <!-- Hero Time Picker Card -->
+              <div class="alarm-hero-time-card">
+                <div class="time-picker-controls">
+                  <!-- Hours -->
+                  <div class="time-unit-col">
+                    <button type="button" class="time-step-btn" id="btnHourUp" title="+1 ساعة" data-i18n-title="clock.hourUp">▲</button>
+                    <input type="number" id="alarmHour" min="1" max="12" value="7" class="num-picker numerals">
+                    <button type="button" class="time-step-btn" id="btnHourDown" title="-1 ساعة" data-i18n-title="clock.hourDown">▼</button>
+                  </div>
+
+                  <span class="time-colon">:</span>
+
+                  <!-- Minutes -->
+                  <div class="time-unit-col">
+                    <button type="button" class="time-step-btn" id="btnMinUp" title="+1 دقيقة" data-i18n-title="clock.minUp">▲</button>
+                    <input type="number" id="alarmMinute" min="0" max="59" value="0" class="num-picker numerals">
+                    <button type="button" class="time-step-btn" id="btnMinDown" title="-1 دقيقة" data-i18n-title="clock.minDown">▼</button>
+                  </div>
+
+                  <!-- AM / PM Segmented Switch -->
+                  <div class="ampm-switch" id="alarmAmPm">
+                    <button type="button" class="ampm-option active" data-val="AM">ص</button>
+                    <button type="button" class="ampm-option" data-val="PM">م</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Alarm Label Card -->
+              <div class="alarm-field-card">
+                <div class="alarm-field-header">
+                  <span class="field-icon">🏷️</span>
+                  <label class="alarm-field-label" for="alarmLabelInput" data-i18n="alarm.label">تسمية المنبه</label>
+                </div>
+                <input type="text" id="alarmLabelInput" class="alarm-text-input"
+                  placeholder="اسم المنبه (مثال: الاستيقاظ، موعد، درس)..." data-i18n-ph="alarm.labelPh" maxlength="36">
+              </div>
+
+              <!-- Repeat Days Card -->
+              <div class="alarm-field-card">
+                <div class="alarm-field-header">
+                  <span class="field-icon">🔄</span>
+                  <label class="alarm-field-label" data-i18n="alarm.repeat">أيام التكرار</label>
+                </div>
+                <div class="days-selector" id="daysSelector">
+                  <button type="button" class="day-chip active" data-day="6" title="السبت" data-i18n-title="alarm.daySat"><span data-i18n="alarm.daySatShort">س</span></button>
+                  <button type="button" class="day-chip active" data-day="0" title="الأحد" data-i18n-title="alarm.daySun"><span data-i18n="alarm.daySunShort">ح</span></button>
+                  <button type="button" class="day-chip active" data-day="1" title="الاثنين" data-i18n-title="alarm.dayMon"><span data-i18n="alarm.dayMonShort">ن</span></button>
+                  <button type="button" class="day-chip active" data-day="2" title="الثلاثاء" data-i18n-title="alarm.dayTue"><span data-i18n="alarm.dayTueShort">ث</span></button>
+                  <button type="button" class="day-chip active" data-day="3" title="الأربعاء" data-i18n-title="alarm.dayWed"><span data-i18n="alarm.dayWedShort">ر</span></button>
+                  <button type="button" class="day-chip active" data-day="4" title="الخميس" data-i18n-title="alarm.dayThu"><span data-i18n="alarm.dayThuShort">خ</span></button>
+                  <button type="button" class="day-chip" data-day="5" title="الجمعة" data-i18n-title="alarm.dayFri"><span data-i18n="alarm.dayFriShort">ج</span></button>
+                </div>
+                <div class="days-quick-shortcuts">
+                  <button type="button" class="quick-btn" id="btnEveryday" data-i18n="alarm.everyday">يومياً</button>
+                  <button type="button" class="quick-btn" id="btnWorkdays" data-i18n="alarm.workdays">أيام
+                    العمل</button>
+                  <button type="button" class="quick-btn" id="btnOnce" data-i18n="alarm.once">مرة واحدة</button>
+                </div>
+              </div>
+
+              <!-- Linked Task (Optional) -->
+              <div class="alarm-field-card">
+                <div class="alarm-field-header">
+                  <span class="field-icon">📋</span>
+                  <label class="alarm-field-label" for="alarmTaskSelect">
+                    <span data-i18n="alarm.task">ربط بمهمة</span>
+                    <span class="hint-pill" data-i18n="alarm.optional">اختياري</span>
+                  </label>
+                </div>
+                <select id="alarmTaskSelect" class="alarm-select-input">
+                  <option value="" data-i18n="alarm.noTask">بدون ربط بمهمة</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="alarm-drawer-footer">
+              <button type="button" class="btn-delete-alarm" id="deleteAlarmBtn" title="حذف المنبه" data-i18n-title="alarm.delete" hidden>
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                </svg>
+                <span data-i18n="alarm.delete">حذف</span>
+              </button>
+              <button type="button" class="alarm-sound-test-btn" id="alarmSoundTestBtn" title="تجربة الصوت" data-i18n-title="alarm.testSound"
+                data-i18n="alarm.testSound">🔔 تجربة الصوت</button>
+              <div class="alarm-save-actions">
+                <button type="button" class="btn-cancel" id="cancelAlarmBtn" data-i18n="alarm.cancel">إلغاء</button>
+                <button type="button" class="btn-save" id="saveAlarmBtn" data-i18n="alarm.save">حفظ المنبه</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: TIMER ── -->
+      <div class="clock-view" id="viewTimer">
+        <div class="timer-view-content">
+          <div class="timer-circle-container">
+            <svg class="timer-svg" id="timerSvg" viewBox="0 0 100 100" aria-hidden="true">
+              <defs>
+                <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="var(--accent, #38bdf8)" />
+                  <stop offset="100%" stop-color="var(--accent-glow, #6366f1)" />
+                </linearGradient>
+              </defs>
+              <circle class="timer-track" cx="50" cy="50" r="44"></circle>
+              <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="44" pathLength="100"
+                stroke-dasharray="100" stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
+            </svg>
+            <div class="timer-center-text">
+              <div class="timer-clock-digits numerals" id="timerClockDigits">05:00</div>
+              <div class="timer-state-badge" id="timerStateBadge" data-i18n="timer.ready">جاهز</div>
+            </div>
+          </div>
+
+          <!-- Selection Bar: Preset Chips OR Custom Time Inputs (Inline Replacement) -->
+          <div class="timer-middle-bar" id="timerMiddleBar">
+            <div class="timer-preset-chips" id="timerPresetChips">
+              <button type="button" class="preset-chip" data-sec="60">1 د</button>
+              <button type="button" class="preset-chip active" data-sec="300">5 د</button>
+              <button type="button" class="preset-chip" data-sec="900">15 د</button>
+              <button type="button" class="preset-chip" data-sec="1500">25 د</button>
+              <button type="button" class="preset-chip custom-toggle" id="btnCustomTimer"
+                title="تخصيص الوقت" data-i18n-title="timer.customTime">⏱️</button>
+            </div>
+
+            <!-- Custom Inputs (inline swap so vertical height is never disrupted) -->
+            <div class="timer-custom-inputs" id="timerCustomInputs" hidden dir="ltr">
+              <div class="timer-input-group">
+                <input type="number" id="timerInputH" min="0" max="23" value="0" class="timer-num-input numerals" title="ساعات (0-23)" data-i18n-title="timer.hours">
+                <span class="timer-input-label" id="lblUnitH" data-i18n="timer.hUnit">س</span>
+              </div>
+              <span class="timer-input-sep">:</span>
+              <div class="timer-input-group">
+                <input type="number" id="timerInputM" min="0" max="59" value="5" class="timer-num-input numerals" title="دقائق (0-59)" data-i18n-title="timer.minutes">
+                <span class="timer-input-label" id="lblUnitM" data-i18n="timer.mUnit">د</span>
+              </div>
+              <span class="timer-input-sep">:</span>
+              <div class="timer-input-group">
+                <input type="number" id="timerInputS" min="0" max="59" value="0" class="timer-num-input numerals" title="ثواني (0-59)" data-i18n-title="timer.seconds">
+                <span class="timer-input-label" id="lblUnitS" data-i18n="timer.sUnit">ث</span>
+              </div>
+              <button type="button" class="timer-custom-btn apply" id="btnApplyCustomTimer" title="تطبيق" data-i18n-title="common.apply">✓</button>
+              <button type="button" class="timer-custom-btn cancel" id="btnCancelCustomTimer" title="إلغاء" data-i18n-title="alarm.cancel">✕</button>
+            </div>
+          </div>
+
+          <!-- Controls (Pinned at bottom, guaranteed visibility) -->
+          <div class="timer-action-controls" id="timerActionControls">
+            <button type="button" class="timer-ctrl-btn secondary" id="timerResetBtn" title="إعادة ضبط" data-i18n-title="timer.reset">↺</button>
+            <button type="button" class="timer-ctrl-btn primary" id="timerMainBtn">
+              <span id="timerMainIcon">▶</span>
+              <span id="timerMainText" data-i18n="timer.start">بدء</span>
+            </button>
+            <button type="button" class="timer-ctrl-btn secondary" id="timerAddMinBtn" title="إضافة دقيقة" data-i18n-title="timer.addMin"><span data-i18n="timer.addMinShort">+1 د</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Alarm Ringing Overlay -->
+    <div class="ringing-overlay" id="ringingOverlay" hidden>
+      <div class="ringing-card">
+        <div class="ringing-bell-pulse">🔔</div>
+        <div class="ringing-time-large numerals" id="ringingTimeLarge">07:00 ص</div>
+        <div class="ringing-label-text" id="ringingLabelText" data-i18n="alarm.ringing">منبه!</div>
+        <div class="ringing-task-pill" id="ringingTaskPill" hidden>
+          <span class="task-icon">📋</span>
+          <span class="task-name" id="ringingTaskName"></span>
+          <button type="button" class="open-task-btn" id="ringingOpenTaskBtn" title="فتح المهمة" data-i18n-title="alarm.openTask">↗</button>
+        </div>
+        <div class="ringing-btn-row">
+          <button type="button" class="ringing-action-btn done" id="ringingCompleteTaskBtn" data-i18n="alarm.completeTask" hidden>✓ تم إنجاز المهمة</button>
+          <button type="button" class="ringing-action-btn snooze" id="ringingSnoozeBtn" data-i18n="alarm.snooze">غفوة (5
+            د)</button>
+          <button type="button" class="ringing-action-btn dismiss" id="ringingDismissBtn"
+            data-i18n="alarm.dismiss">إيقاف المنبه</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/cities.js"></script>
+  <script src="js/clock.js"></script>
+</body>
+
+</html>

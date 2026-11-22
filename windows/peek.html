@@ -1,0 +1,1621 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="glass">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <title>معاينة ذكية سريعة</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", sans-serif);
+    }
+
+    /* Outer Peek Floating Glass Card */
+    .peek-card {
+      width: 324px;
+      height: 220px;
+      background: var(--plate, rgba(22, 23, 28, 0.88));
+      color: var(--ink, #ffffff);
+      border: 1px solid var(--border-peek, rgba(255, 255, 255, 0.16));
+      border-radius: 20px;
+      box-shadow:
+        0 24px 50px -10px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 255, 255, 0.10) inset,
+        0 0 35px color-mix(in srgb, var(--accent, #3b82f6) 20%, transparent);
+      backdrop-filter: blur(48px) saturate(210%);
+      -webkit-backdrop-filter: blur(48px) saturate(210%);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    /* Ultra-Fluid Spring Entrance Animation */
+    @keyframes peekSpringIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.84) translateY(14px);
+        filter: blur(12px) brightness(0.9);
+      }
+      55% {
+        opacity: 0.98;
+        transform: scale(1.025) translateY(-2px);
+        filter: blur(0px) brightness(1.04);
+      }
+      80% {
+        transform: scale(0.992) translateY(1px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0px) brightness(1);
+      }
+    }
+
+    /* Staggered Content Cascade Animation */
+    @keyframes peekContentFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .peek-animate-in {
+      animation: peekSpringIn 0.38s cubic-bezier(0.16, 1.35, 0.45, 1) forwards;
+      will-change: transform, opacity, filter;
+    }
+
+    .peek-animate-in .peek-body {
+      animation: peekContentFadeUp 0.28s 0.06s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    }
+
+    .peek-animate-in .peek-foot {
+      animation: peekContentFadeUp 0.28s 0.10s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    }
+
+    .peek-card:hover {
+      transform: translateY(-2px) scale(1.015);
+      box-shadow:
+        0 28px 60px -8px rgba(0, 0, 0, 0.70),
+        0 0 30px color-mix(in srgb, var(--accent, #3b82f6) 32%, transparent),
+        0 0 0 1px rgba(255, 255, 255, 0.20) inset;
+      border-color: color-mix(in srgb, var(--accent, #3b82f6) 55%, rgba(255, 255, 255, 0.25));
+    }
+
+    /* Specular Light Sweep & Gradient Border Sheen */
+    .peek-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.02) 65%, transparent 100%);
+      pointer-events: none;
+      z-index: 1;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    /* Header */
+    .peek-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px 8px;
+      border-bottom: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .peek-app-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .peek-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      background: var(--tile, rgba(255, 255, 255, 0.09));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.14));
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .peek-card:hover .peek-icon {
+      transform: scale(1.10) rotate(-3deg);
+    }
+
+    .peek-titles {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .peek-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--ink, #ffffff);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.25;
+      letter-spacing: -0.2px;
+    }
+
+    .peek-sub {
+      font-size: 9.5px;
+      color: var(--ink-3, rgba(255, 255, 255, 0.58));
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1.5px;
+      line-height: 1.2;
+    }
+
+    .peek-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft, rgba(59, 130, 246, 0.18));
+      color: var(--accent, #3b82f6);
+      border: 1px solid color-mix(in srgb, var(--accent, #3b82f6) 32%, transparent);
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.1px;
+    }
+
+    .peek-tag-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent, #3b82f6);
+      box-shadow: 0 0 6px var(--accent, #3b82f6);
+    }
+
+    /* Body */
+    .peek-body {
+      flex: 1;
+      min-height: 0;
+      padding: 8px 14px 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      color: var(--ink, #ffffff);
+      overflow: hidden;
+    }
+
+    /* Footer */
+    .peek-foot {
+      padding: 6px 14px 7px;
+      font-size: 9.5px;
+      color: var(--ink-3, rgba(255, 255, 255, 0.58));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+      background: var(--tile, rgba(255, 255, 255, 0.04));
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .peek-live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--ink-3, rgba(255, 255, 255, 0.70));
+    }
+
+    .peek-live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+      animation: livePulse 2s infinite ease-in-out;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+
+    .peek-foot-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2.5px 8px;
+      border-radius: 6px;
+      background: var(--tile, rgba(255, 255, 255, 0.06));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+      color: var(--accent, #3b82f6);
+      font-weight: 700;
+      font-size: 9.5px;
+      transition: all 0.18s ease;
+    }
+
+    .peek-card:hover .peek-foot-action {
+      background: var(--accent-soft, rgba(59, 130, 246, 0.22));
+      border-color: color-mix(in srgb, var(--accent, #3b82f6) 45%, transparent);
+      transform: translateX(calc(var(--dir, 1) * -2px));
+    }
+
+    /* ========================================================
+       Universal Progress & Checklist Tokens
+       ======================================================== */
+    .peek-progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--tile, rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.10));
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 5px 0 7px;
+    }
+
+    .peek-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent, #3b82f6), #10b981);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .peek-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      overflow: hidden;
+    }
+
+    .peek-check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--ink, #ffffff);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+      padding: 3px 6px;
+      background: var(--tile, rgba(255, 255, 255, 0.04));
+      border-radius: 6px;
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.06));
+    }
+
+    .peek-badge-check {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .peek-badge-pending {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      border: 1.5px solid var(--accent, #3b82f6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .peek-priority-pill {
+      font-size: 8.5px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-inline-start: auto;
+      flex-shrink: 0;
+    }
+
+    .peek-priority-high {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .peek-priority-med {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .peek-priority-norm {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .stats-peek-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      color: var(--ink, #ffffff);
+      font-weight: 600;
+    }
+
+    .stats-streak-pill {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #ea580c;
+      background: rgba(234, 88, 12, 0.16);
+      border: 1px solid rgba(234, 88, 12, 0.32);
+      padding: 2px 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* --- Clock Peek Layout --- */
+    .clock-peek-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 2px 0;
+    }
+
+    .clock-mini-analog {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--tile, rgba(255, 255, 255, 0.08));
+      border: 2px solid var(--line, rgba(255, 255, 255, 0.16));
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .clock-analog-hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: 50% 100%;
+      border-radius: 999px;
+    }
+
+    .analog-hand-h {
+      width: 3px;
+      height: 20px;
+      margin-left: -1.5px;
+      background: var(--ink, #ffffff);
+    }
+
+    .analog-hand-m {
+      width: 2px;
+      height: 27px;
+      margin-left: -1px;
+      background: color-mix(in srgb, var(--ink, #fff) 85%, transparent);
+    }
+
+    .analog-hand-s {
+      width: 1.5px;
+      height: 30px;
+      margin-left: -0.75px;
+      background: var(--accent, #3b82f6);
+    }
+
+    .clock-analog-pin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      margin: -3px 0 0 -3px;
+      border-radius: 50%;
+      background: var(--accent, #3b82f6);
+      box-shadow: 0 0 4px var(--accent, #3b82f6);
+    }
+
+    .clock-digital-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .clock-time-huge {
+      display: inline-flex;
+      align-items: baseline;
+      font-family: var(--font-num, inherit);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .clock-hm {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--ink, #ffffff);
+    }
+
+    .clock-sec {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent, #3b82f6);
+      margin-inline-start: 2px;
+    }
+
+    .clock-peek-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-2, rgba(255, 255, 255, 0.85));
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .clock-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .clock-chip {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--tile, rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.10));
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--ink-3, rgba(255, 255, 255, 0.70));
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .clock-chip.accent {
+      color: var(--accent, #3b82f6);
+      background: var(--accent-soft, rgba(59, 130, 246, 0.15));
+      border-color: color-mix(in srgb, var(--accent, #3b82f6) 30%, transparent);
+    }
+
+    /* --- Calendar Peek Layout --- */
+    .cal-peek-wrap {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .cal-peek-date-badge {
+      width: 66px;
+      height: 72px;
+      border-radius: 13px;
+      background: var(--tile, rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.14));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    }
+
+    .cal-peek-month {
+      background: var(--accent, #3b82f6);
+      color: #ffffff;
+      font-size: 9.5px;
+      font-weight: 800;
+      text-align: center;
+      padding: 3.5px 0;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .cal-peek-day {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 29px;
+      font-weight: 900;
+      color: var(--ink, #ffffff);
+      font-family: var(--font-num, inherit);
+      line-height: 1;
+    }
+
+    .cal-peek-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cal-peek-weekday {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--ink, #ffffff);
+    }
+
+    .cal-peek-subdate {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent, #3b82f6);
+    }
+
+    .cal-peek-event-card {
+      margin-top: 3px;
+      padding: 5px 8px;
+      background: var(--tile, rgba(255, 255, 255, 0.07));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.10));
+      border-radius: 7px;
+      font-size: 10px;
+      color: var(--ink-2, rgba(255, 255, 255, 0.85));
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* --- Pomodoro Peek Layout --- */
+    .pomo-peek-wrap {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 2px 0;
+    }
+
+    .pomo-peek-ring-box {
+      position: relative;
+      width: 74px;
+      height: 74px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pomo-ring-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .pomo-ring-bg {
+      fill: none;
+      stroke: var(--tile, rgba(255, 255, 255, 0.10));
+      stroke-width: 6;
+    }
+
+    .pomo-ring-fg {
+      fill: none;
+      stroke: var(--accent, #3b82f6);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 188.5; /* 2 * PI * 30 */
+      stroke-dashoffset: 60;
+      transition: stroke-dashoffset 0.4s ease;
+    }
+
+    .pomo-ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+    }
+
+    .pomo-peek-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pomo-time-huge {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--ink, #ffffff);
+      font-family: var(--font-num, inherit);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
+      line-height: 1;
+    }
+
+    .pomo-status-sub {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent, #3b82f6);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pomo-dots-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .pomo-cycle-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--tile, rgba(255, 255, 255, 0.15));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.18));
+    }
+
+    .pomo-cycle-dot.active {
+      background: var(--accent, #3b82f6);
+      box-shadow: 0 0 6px var(--accent, #3b82f6);
+      border-color: var(--accent, #3b82f6);
+    }
+
+    .pomo-cycle-label {
+      font-size: 9px;
+      color: var(--ink-3, rgba(255, 255, 255, 0.60));
+      margin-inline-start: 5px;
+    }
+
+    /* --- Notes Peek Layout --- */
+    .notes-peek-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .notes-peek-title-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--ink, #ffffff);
+    }
+
+    .notes-peek-snippet {
+      font-size: 10.5px;
+      line-height: 1.5;
+      color: var(--ink-2, rgba(255, 255, 255, 0.88));
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      background: var(--tile, rgba(255, 255, 255, 0.07));
+      padding: 6px 9px;
+      border-radius: 8px;
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.10));
+    }
+
+    .notes-peek-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9.5px;
+      color: var(--ink-3, rgba(255, 255, 255, 0.58));
+      font-weight: 600;
+    }
+
+    /* --- Quran Peek Layout --- */
+    .quran-peek-wrap {
+      text-align: center;
+      padding: 2px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .quran-peek-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent, #3b82f6);
+    }
+
+    .quran-peek-text {
+      font-family: var(--font-quran, 'Amiri Quran', 'Amiri', serif);
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--ink, #ffffff);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      padding: 0 4px;
+      font-weight: 600;
+    }
+
+    .quran-peek-foot {
+      font-size: 9.5px;
+      color: var(--ink-3, rgba(255, 255, 255, 0.60));
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* --- Email Peek Layout --- */
+    .email-peek-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .email-peek-item {
+      padding: 6px 10px;
+      background: var(--tile, rgba(255, 255, 255, 0.07));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.10));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .email-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent-soft, rgba(59, 130, 246, 0.25));
+      color: var(--accent, #3b82f6);
+      font-weight: 800;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid color-mix(in srgb, var(--accent, #3b82f6) 35%, transparent);
+    }
+
+    .email-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .email-peek-sender {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ink, #ffffff);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .email-peek-subject {
+      font-size: 9.5px;
+      color: var(--ink-2, rgba(255, 255, 255, 0.75));
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+
+    /* --- Photo Peek Layout --- */
+    .photo-peek-wrap {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 3px 0;
+    }
+
+    .photo-peek-frame {
+      width: 72px;
+      height: 72px;
+      border-radius: 12px;
+      background: var(--tile, rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.16));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    }
+
+    .photo-peek-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-peek-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .photo-peek-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--ink, #ffffff);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .photo-peek-sub {
+      font-size: 10px;
+      color: var(--ink-3, rgba(255, 255, 255, 0.62));
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+
+    /* --- Folder Peek Layout --- */
+    .folder-peek-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .folder-peek-grid {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .folder-item-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3.5px 8px;
+      border-radius: 7px;
+      background: var(--tile, rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--ink, #ffffff);
+    }
+  </style>
+</head>
+<body>
+  <div class="peek-card peek-animate-in" id="peekCard">
+    <!-- Header -->
+    <div class="peek-head">
+      <div class="peek-app-badge">
+        <div class="peek-icon" id="peekIcon">✨</div>
+        <div class="peek-titles">
+          <div class="peek-title" id="peekTitle">معاينة الودجت</div>
+          <div class="peek-sub" id="peekSub">معاينة حية ذكية</div>
+        </div>
+      </div>
+      <div class="peek-tag" id="peekTag">
+        <span class="peek-tag-dot" id="peekTagDot"></span>
+        <span id="peekTagText">توقيت محلي</span>
+      </div>
+    </div>
+
+    <!-- Dynamic Body Content -->
+    <div class="peek-body" id="peekBody"></div>
+
+    <!-- Refined Footer -->
+    <div class="peek-foot">
+      <div class="peek-live-status">
+        <span class="peek-live-dot"></span>
+        <span id="peekLiveStatus">متزامن بدقة النظام</span>
+      </div>
+      <div class="peek-foot-action">
+        <span id="peekFootActionText">⤢ انقر للاستعادة</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTargetPage = null;
+    let liveClockInterval = null;
+    let hasReceivedPayload = false;
+
+    // Restore widget to full normal size on click
+    document.getElementById('peekCard').addEventListener('click', () => {
+      if (currentTargetPage && window.widgets?.win?.restoreFromPeek) {
+        window.widgets.win.restoreFromPeek(currentTargetPage);
+      }
+    });
+
+    // Auto-dismiss instantaneously when mouse leaves the peek window
+    document.addEventListener('mouseleave', () => {
+      if (window.widgets?.win?.hidePeek) {
+        window.widgets.win.hidePeek();
+      }
+    });
+
+    window.addEventListener('blur', () => {
+      if (window.widgets?.win?.hidePeek) {
+        window.widgets.win.hidePeek();
+      }
+    });
+
+    if (window.widgets?.win?.onPeekLoad) {
+      window.widgets.win.onPeekLoad((payload) => {
+        hasReceivedPayload = true;
+        renderPeekContent(payload);
+      });
+    }
+
+    // Proactive fetch on DOMContentLoaded so no race condition can drop payload
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (!hasReceivedPayload && window.widgets?.win?.getPeekPayload) {
+        try {
+          const payload = await window.widgets.win.getPeekPayload();
+          if (payload && payload.page) {
+            hasReceivedPayload = true;
+            renderPeekContent(payload);
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      }
+    });
+
+    const PEEK_I18N = {
+      ar: {
+        clickToRestore: '⤢ انقر للاستعادة',
+        synced: 'متزامن بدقة النظام',
+        localTime: 'توقيت محلي',
+        clockTitle: 'الساعة والتوقيت العالمي',
+        clockSub: 'الوقت اللحظي متزامن بدقة النظام',
+        updatedSec: 'محدث بالثواني ({time})',
+        calTitle: 'التقويم والأجندة',
+        calSub: 'جدولك ومواعيدك اليومية',
+        calNoEvents: 'لا توجد مواعيد متبقية لليوم • يوم هادئ',
+        calEventsCount: '{n} أحداث مسجلة',
+        calScheduled: 'موعد مجدول',
+        pomoTitle: 'مؤقت التركيز وبومودورو',
+        pomoBreakSub: 'استراحة مستحقة لتجديد الطاقة',
+        pomoFocusSub: 'جلسة تركيز عميق على المهمة الحالية',
+        pomoBreak: '☕ استراحة',
+        pomoFocus: '🎯 تركيز',
+        pomoRunning: '▶ قيد التشغيل',
+        pomoReady: '⏸ جاهز للبدء',
+        pomoCycle: 'جلسة {current} من {total}',
+        pomoSessions: '🏆 {n} جلسات اليوم',
+        habitsTitle: 'العادات اليومية والعافية',
+        habitsSub: '{done} من {total} مكتملة اليوم',
+        habitsStreak: 'سلسلة {n} أيام',
+        habitsEmpty: 'انقر لبدء تسجيل عاداتك الصحية لليوم ✨',
+        habitsTodayScore: 'إنجاز اليوم: <strong>{pct}%</strong>',
+        habitsStatus: '{done}/{total} مكتملة',
+        todoTitle: 'قائمة المهام اليومية',
+        todoSub: '{pending} مهام متبقية من أصل {total}',
+        todoPendingTag: 'باقي {pending}',
+        todoUrgent: 'عاجل',
+        todoMed: 'متوسط',
+        todoNormal: 'عادي',
+        todoRegistered: 'مهمة مسجلة',
+        todoEmpty: 'لا توجد مهام مسجلة حالياً • يومك منجز تماماً ✨',
+        todoRemaining: 'المتبقي: <strong>{pending} مهام</strong>',
+        todoDonePct: '{pct}% منجز',
+        todoStatus: '{done}/{total} منجزة',
+        notesTitle: 'الملاحظات السريعة',
+        notesSub: '{n} ملاحظات محفوظة',
+        notesWordCount: '{n} كلمة',
+        notesQuick: 'ملاحظة سريعة',
+        notesSnippetDefault: 'أفكار وتدوينات سريعة لتنظيم العمل والمهام اليومية...',
+        notesLastEdit: 'آخر تعديل: {time}',
+        notesClickEdit: 'انقر للتحرير ↗',
+        notesSaved: '{n} ملاحظات مسجلة',
+        quranTitle: 'الورد القرآني وآية اليوم',
+        quranAyahTag: 'آية مباركة',
+        emailTitle: 'البريد الإلكتروني',
+        emailUnreadSub: '{n} رسائل جديدة غير مقروءة',
+        emailCleanSub: 'صندوق الوارد نظيف ومحدث',
+        emailNewTag: '🔔 {n} جديد',
+        emailCleanTag: 'الوارد منظم',
+        emailNewSender: 'مرسل جديد',
+        emailToday: 'اليوم',
+        emailNoSubj: 'بدون موضوع',
+        emailCleanEmpty: '✨ صندوق الوارد منظم بالكامل • لا توجد رسائل جديدة',
+        emailCleanStatus: 'الوارد نظيف',
+        emailUnreadStatus: '{n} غير مقروء',
+        photoTitle: 'إطار الصور المختارة',
+        photoActiveSub: 'عرض تفاعلي حي للصورة المختارة',
+        photoEmptySub: 'لم يتم اختيار صورة بعد',
+        photoTag: 'إطار الصور',
+        photoDefaultCaption: 'صورة المكتب المختارة',
+        photoSubTip: 'انقر للتكبير والتنقل بين الصور وضبط الألوان',
+        photoStatus: 'معرض الصور نشط',
+        folderTitle: 'المجلد الذكي',
+        folderSub: '{n} ويتجات وأدوات مجمعة',
+        folderTag: '{n} أدوات',
+        folderTip: 'انقر لفتح المجلد واستعراض الأدوات',
+        folderContents: 'محتويات المجلد:',
+        folderStatus: 'مجلد أدوات سطح المكتب',
+        defaultTitle: 'معاينة الودجت السريع',
+        defaultSub: 'معاينة تفاعلية حية',
+        defaultTag: 'تفاعلي',
+        defaultBodyTitle: 'معاينة تفاعلية',
+        defaultBodySub: 'انقر في أي مكان للاستعادة الفورية',
+        defaultStatus: 'جاهز',
+        am: 'صباحاً',
+        pm: 'مساءً',
+      },
+      en: {
+        clickToRestore: '⤢ Click to restore',
+        synced: 'System time synchronized',
+        localTime: 'Local Time',
+        clockTitle: 'Clock & World Time',
+        clockSub: 'Real-time precision clock',
+        updatedSec: 'Updated live ({time})',
+        calTitle: 'Calendar & Agenda',
+        calSub: 'Daily schedule and events',
+        calNoEvents: 'No upcoming events today • Quiet day',
+        calEventsCount: '{n} events scheduled',
+        calScheduled: 'Scheduled event',
+        pomoTitle: 'Focus Timer & Pomodoro',
+        pomoBreakSub: 'Well-deserved break to recharge',
+        pomoFocusSub: 'Deep focus session on current task',
+        pomoBreak: '☕ Break',
+        pomoFocus: '🎯 Focus',
+        pomoRunning: '▶ Running',
+        pomoReady: '⏸ Ready to start',
+        pomoCycle: 'Session {current} of {total}',
+        pomoSessions: '🏆 {n} sessions today',
+        habitsTitle: 'Daily Habits & Wellness',
+        habitsSub: '{done} of {total} completed today',
+        habitsStreak: '{n}-day streak',
+        habitsEmpty: 'Click to start tracking your healthy habits today ✨',
+        habitsTodayScore: 'Today score: <strong>{pct}%</strong>',
+        habitsStatus: '{done}/{total} done',
+        todoTitle: 'Daily Tasks & To-Do',
+        todoSub: '{pending} remaining of {total} tasks',
+        todoPendingTag: '{pending} left',
+        todoUrgent: 'Urgent',
+        todoMed: 'Medium',
+        todoNormal: 'Normal',
+        todoRegistered: 'Task item',
+        todoEmpty: 'No pending tasks • All caught up ✨',
+        todoRemaining: 'Remaining: <strong>{pending} tasks</strong>',
+        todoDonePct: '{pct}% done',
+        todoStatus: '{done}/{total} done',
+        notesTitle: 'Quick Notes',
+        notesSub: '{n} saved notes',
+        notesWordCount: '{n} words',
+        notesQuick: 'Quick Note',
+        notesSnippetDefault: 'Quick thoughts, journal entries and tasks...',
+        notesLastEdit: 'Last edited: {time}',
+        notesClickEdit: 'Click to edit ↗',
+        notesSaved: '{n} notes saved',
+        quranTitle: 'Daily Quran & Reflection',
+        quranAyahTag: 'Blessed Ayah',
+        emailTitle: 'Email Inbox',
+        emailUnreadSub: '{n} unread messages',
+        emailCleanSub: 'Inbox is clean and up to date',
+        emailNewTag: '🔔 {n} new',
+        emailCleanTag: 'Inbox clean',
+        emailNewSender: 'New sender',
+        emailToday: 'Today',
+        emailNoSubj: 'No subject',
+        emailCleanEmpty: '✨ Inbox is all caught up • No new emails',
+        emailCleanStatus: 'Inbox clean',
+        emailUnreadStatus: '{n} unread',
+        photoTitle: 'Photo Frame',
+        photoActiveSub: 'Live preview of selected photo',
+        photoEmptySub: 'No photo selected yet',
+        photoTag: 'Photo Frame',
+        photoDefaultCaption: 'Desktop Photo',
+        photoSubTip: 'Click to expand, browse and adjust image colors',
+        photoStatus: 'Photo gallery active',
+        folderTitle: 'Smart Folder',
+        folderSub: '{n} widgets grouped',
+        folderTag: '{n} tools',
+        folderTip: 'Click to open folder and browse widgets',
+        folderContents: 'Folder contents:',
+        folderStatus: 'Desktop widget folder',
+        defaultTitle: 'Widget Quick Peek',
+        defaultSub: 'Interactive live preview',
+        defaultTag: 'Interactive',
+        defaultBodyTitle: 'Interactive Preview',
+        defaultBodySub: 'Click anywhere to restore immediately',
+        defaultStatus: 'Ready',
+        am: 'AM',
+        pm: 'PM',
+      }
+    };
+
+    function renderPeekContent({ page, data = {}, theme, accent, fontUi, isRtl }) {
+      currentTargetPage = page;
+
+      if (liveClockInterval) {
+        clearInterval(liveClockInterval);
+        liveClockInterval = null;
+      }
+
+      // Re-trigger the spring entrance animation every time peek updates
+      const card = document.getElementById('peekCard');
+      card.classList.remove('peek-animate-in');
+      void card.offsetWidth; // Force CSS reflow
+      card.classList.add('peek-animate-in');
+
+      // Apply dynamic theme & styling
+      const root = document.documentElement;
+      if (theme) {
+        root.setAttribute('data-theme', theme);
+      }
+      if (accent) {
+        root.style.setProperty('--accent', accent);
+        root.style.setProperty('--accent-soft', `color-mix(in srgb, ${accent} 20%, transparent)`);
+      }
+      if (fontUi && fontUi !== 'inherit') {
+        root.style.setProperty('--font-ui', fontUi);
+      }
+      if (isRtl !== undefined) {
+        root.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+        root.style.setProperty('--dir', isRtl ? '1' : '-1');
+        root.style.setProperty('--start', isRtl ? 'right' : 'left');
+      }
+
+      const isEn = (isRtl === false) || (root.getAttribute('dir') === 'ltr') || (window.widgets?.settings?.get()?.language === 'en');
+      function tP(k, vars = {}) {
+        let str = (PEEK_I18N[isEn ? 'en' : 'ar'] || PEEK_I18N.ar)[k] || k;
+        for (const v of Object.keys(vars)) {
+          str = str.replace(new RegExp(`\\{${v}\\}`, 'g'), String(vars[v]));
+        }
+        return str;
+      }
+
+      const iconEl = document.getElementById('peekIcon');
+      const titleEl = document.getElementById('peekTitle');
+      const subEl = document.getElementById('peekSub');
+      const tagTextEl = document.getElementById('peekTagText');
+      const bodyEl = document.getElementById('peekBody');
+      const liveStatusEl = document.getElementById('peekLiveStatus');
+      const footActionEl = document.getElementById('peekFootActionText');
+      if (footActionEl) footActionEl.textContent = tP('clickToRestore');
+
+      const now = new Date();
+
+      switch (page) {
+        case 'clock': {
+          iconEl.textContent = '⏰';
+          titleEl.textContent = tP('clockTitle');
+          subEl.textContent = tP('clockSub');
+          const tz = data.tz || Intl.DateTimeFormat().resolvedOptions().timeZone || (isEn ? 'Local' : 'محلي');
+          tagTextEl.textContent = tz.split('/').pop() || tz;
+
+          function updateClockDigits() {
+            const current = new Date();
+            const h = current.getHours();
+            const m = current.getMinutes();
+            const s = current.getSeconds();
+            const hStr = String(h).padStart(2, '0');
+            const mStr = String(m).padStart(2, '0');
+            const sStr = String(s).padStart(2, '0');
+            const period = h >= 12 ? tP('pm') : tP('am');
+            const dateStr = current.toLocaleDateString(isEn ? 'en-US' : 'ar-EG', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            });
+
+            // Calculate analog angles
+            const degS = s * 6;
+            const degM = m * 6 + s * 0.1;
+            const degH = (h % 12) * 30 + m * 0.5;
+
+            bodyEl.innerHTML = `
+              <div class="clock-peek-container">
+                <div class="clock-mini-analog">
+                  <div class="clock-analog-hand analog-hand-h" style="transform: rotate(${degH}deg);"></div>
+                  <div class="clock-analog-hand analog-hand-m" style="transform: rotate(${degM}deg);"></div>
+                  <div class="clock-analog-hand analog-hand-s" style="transform: rotate(${degS}deg);"></div>
+                  <div class="clock-analog-pin"></div>
+                </div>
+                <div class="clock-digital-content">
+                  <div class="clock-time-huge">
+                    <span class="clock-hm">${hStr}:${mStr}</span>
+                    <span class="clock-sec">:${sStr}</span>
+                  </div>
+                  <div class="clock-peek-date">${dateStr}</div>
+                  <div class="clock-chips-row">
+                    <span class="clock-chip accent">🌐 ${tz}</span>
+                    <span class="clock-chip">${period}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+            liveStatusEl.textContent = tP('updatedSec', { time: `${hStr}:${mStr}:${sStr}` });
+          }
+
+          updateClockDigits();
+          liveClockInterval = setInterval(updateClockDigits, 1000);
+          break;
+        }
+
+        case 'calendar': {
+          iconEl.textContent = '📅';
+          titleEl.textContent = tP('calTitle');
+          subEl.textContent = tP('calSub');
+          const dayNum = data.dayNum || now.getDate();
+          const monthName = data.monthName || now.toLocaleDateString(isEn ? 'en-US' : 'ar-SA', { month: 'long' });
+          const dayName = data.weekday || now.toLocaleDateString(isEn ? 'en-US' : 'ar-SA', { weekday: 'long' });
+          const hijri = data.hijriDate || (isEn ? 'Umm al-Qura Calendar' : 'تقويم أم القرى');
+          tagTextEl.textContent = monthName;
+
+          const events = data.events || [];
+          let eventHtml = '';
+          if (events.length > 0) {
+            const ev = events[0];
+            eventHtml = `
+              <div class="cal-peek-event-card">
+                <span>📌</span>
+                <span style="font-weight:700;">${ev.title || tP('calScheduled')}</span>
+                <span style="color:var(--accent); font-size:9.5px; margin-inline-start:auto;">${ev.time || ''}</span>
+              </div>
+            `;
+          } else {
+            eventHtml = `
+              <div class="cal-peek-event-card">
+                <span>✨</span>
+                <span>${tP('calNoEvents')}</span>
+              </div>
+            `;
+          }
+
+          bodyEl.innerHTML = `
+            <div class="cal-peek-wrap">
+              <div class="cal-peek-date-badge">
+                <div class="cal-peek-month">${monthName}</div>
+                <div class="cal-peek-day">${dayNum}</div>
+              </div>
+              <div class="cal-peek-info">
+                <div class="cal-peek-weekday">${dayName}</div>
+                <div class="cal-peek-subdate">﴿ ${hijri} ﴾</div>
+                ${eventHtml}
+              </div>
+            </div>
+          `;
+          liveStatusEl.textContent = tP('calEventsCount', { n: events.length });
+          break;
+        }
+
+        case 'pomodoro': {
+          iconEl.textContent = '⏱️';
+          titleEl.textContent = tP('pomoTitle');
+          const isBreak = data.mode === 'short' || data.mode === 'long';
+          subEl.textContent = isBreak ? tP('pomoBreakSub') : (data.label || tP('pomoFocusSub'));
+          const timeStr = data.time || '25:00';
+          const pct = data.pct !== undefined ? data.pct : 0;
+          tagTextEl.textContent = isBreak ? tP('pomoBreak') : tP('pomoFocus');
+
+          const circum = 188.5; // 2 * PI * 30
+          const strokeOffset = Math.max(0, Math.min(circum, circum - (pct / 100) * circum));
+          const isRunning = data.status === 'running';
+          const statusText = isRunning ? tP('pomoRunning') : tP('pomoReady');
+          const statusIcon = isBreak ? '☕' : (isRunning ? '🔥' : '⏳');
+          const currentCycle = (data.cycle || 0) % 4;
+
+          const dotsHtml = [0, 1, 2, 3].map(i => `
+            <div class="pomo-cycle-dot ${i <= currentCycle ? 'active' : ''}"></div>
+          `).join('');
+
+          bodyEl.innerHTML = `
+            <div class="pomo-peek-wrap">
+              <div class="pomo-peek-ring-box">
+                <svg class="pomo-ring-svg" viewBox="0 0 72 72">
+                  <circle class="pomo-ring-bg" cx="36" cy="36" r="30" />
+                  <circle class="pomo-ring-fg" cx="36" cy="36" r="30" style="stroke-dashoffset: ${strokeOffset};" />
+                </svg>
+                <div class="pomo-ring-center">
+                  <span>${statusIcon}</span>
+                </div>
+              </div>
+              <div class="pomo-peek-details">
+                <div class="pomo-time-huge">${timeStr}</div>
+                <div class="pomo-status-sub">${statusText}</div>
+                <div class="pomo-dots-row">
+                  ${dotsHtml}
+                  <span class="pomo-cycle-label">${tP('pomoCycle', { current: currentCycle + 1, total: 4 })}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          liveStatusEl.textContent = tP('pomoSessions', { n: data.todaySessions || 0 });
+          break;
+        }
+
+        case 'habits': {
+          iconEl.textContent = '🔥';
+          titleEl.textContent = tP('habitsTitle');
+          const pct = data.pct !== undefined ? data.pct : 0;
+          const done = data.doneCount || 0;
+          const total = data.totalCount || 0;
+          const streak = data.streak || 0;
+          subEl.textContent = tP('habitsSub', { done, total });
+          tagTextEl.textContent = tP('habitsStreak', { n: streak });
+
+          const items = data.items || [];
+          let itemsHtml = '';
+          if (items.length > 0) {
+            itemsHtml = items.slice(0, 3).map(it => `
+              <div class="peek-check-item">
+                <span class="${it.done ? 'peek-badge-check' : 'peek-badge-pending'}">${it.done ? '✓' : ''}</span>
+                <span style="${it.done ? 'text-decoration:line-through; opacity:0.65;' : ''}">${it.icon ? it.icon + ' ' : ''}${it.name || it.title || (isEn ? 'Habit' : 'عادة يومية')}</span>
+                ${it.progressText ? `<span style="font-size:9px; color:var(--accent); margin-inline-start:auto;">${it.progressText}</span>` : ''}
+              </div>
+            `).join('');
+          } else {
+            itemsHtml = `
+              <div style="font-size:11px; color:var(--ink-3); text-align:center; padding:6px 0;">
+                ${tP('habitsEmpty')}
+              </div>
+            `;
+          }
+
+          bodyEl.innerHTML = `
+            <div class="stats-peek-header">
+              <span>${tP('habitsTodayScore', { pct })}</span>
+              <span class="stats-streak-pill">🔥 ${tP('habitsStreak', { n: streak })}</span>
+            </div>
+            <div class="peek-progress-track">
+              <div class="peek-progress-fill" style="width: ${pct}%;"></div>
+            </div>
+            <div class="peek-checklist">
+              ${itemsHtml}
+            </div>
+          `;
+          liveStatusEl.textContent = tP('habitsStatus', { done, total });
+          break;
+        }
+
+        case 'todo': {
+          iconEl.textContent = '📋';
+          titleEl.textContent = tP('todoTitle');
+          const tasks = data.tasks || [];
+          const totalCount = data.totalCount !== undefined ? data.totalCount : tasks.length;
+          const pendingCount = data.pendingCount !== undefined ? data.pendingCount : tasks.filter(t => !t.done).length;
+          const doneCount = data.doneCount !== undefined ? data.doneCount : (totalCount - pendingCount);
+          const pct = data.pct !== undefined ? data.pct : (totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0);
+
+          subEl.textContent = tP('todoSub', { pending: pendingCount, total: totalCount });
+          tagTextEl.textContent = tP('todoPendingTag', { pending: pendingCount });
+
+          let itemsHtml = '';
+          if (tasks.length > 0) {
+            itemsHtml = tasks.slice(0, 3).map(t => {
+              const priorityClass = t.priority === 'high' ? 'peek-priority-high' : (t.priority === 'med' ? 'peek-priority-med' : 'peek-priority-norm');
+              const priorityLabel = t.priority === 'high' ? tP('todoUrgent') : (t.priority === 'med' ? tP('todoMed') : tP('todoNormal'));
+              return `
+                <div class="peek-check-item">
+                  <span class="${t.done ? 'peek-badge-check' : 'peek-badge-pending'}">${t.done ? '✓' : ''}</span>
+                  <span style="${t.done ? 'text-decoration:line-through; opacity:0.6;' : ''}">${t.title || tP('todoRegistered')}</span>
+                  ${t.priority ? `<span class="peek-priority-pill ${priorityClass}">${priorityLabel}</span>` : ''}
+                </div>
+              `;
+            }).join('');
+          } else {
+            itemsHtml = `
+              <div style="font-size:11px; color:var(--ink-3); text-align:center; padding:6px 0;">
+                ${tP('todoEmpty')}
+              </div>
+            `;
+          }
+
+          bodyEl.innerHTML = `
+            <div class="stats-peek-header">
+              <span>${tP('todoRemaining', { pending: pendingCount })}</span>
+              <span style="color:var(--accent); font-weight:700;">${tP('todoDonePct', { pct })}</span>
+            </div>
+            <div class="peek-progress-track">
+              <div class="peek-progress-fill" style="width: ${pct}%;"></div>
+            </div>
+            <div class="peek-checklist">
+              ${itemsHtml}
+            </div>
+          `;
+          liveStatusEl.textContent = tP('todoStatus', { done: doneCount, total: totalCount });
+          break;
+        }
+
+        case 'notes': {
+          iconEl.textContent = '📝';
+          titleEl.textContent = tP('notesTitle');
+          subEl.textContent = tP('notesSub', { n: data.count || 1 });
+          tagTextEl.textContent = tP('notesWordCount', { n: data.wordCount || 0 });
+
+          const title = data.title || tP('notesQuick');
+          const snippet = data.snippet || tP('notesSnippetDefault');
+          const updated = data.updatedAt || tP('emailToday');
+
+          bodyEl.innerHTML = `
+            <div class="notes-peek-wrap">
+              <div class="notes-peek-title-bar">
+                <span>📌</span>
+                <span>${title}</span>
+              </div>
+              <div class="notes-peek-snippet">${snippet}</div>
+              <div class="notes-peek-meta">
+                <span>${tP('notesLastEdit', { time: updated })}</span>
+                <span style="color:var(--accent);">${tP('notesClickEdit')}</span>
+              </div>
+            </div>
+          `;
+          liveStatusEl.textContent = tP('notesSaved', { n: data.count || 1 });
+          break;
+        }
+
+        case 'quran': {
+          iconEl.textContent = '📖';
+          titleEl.textContent = tP('quranTitle');
+          const surah = data.surah || 'سورة الشرح';
+          const ayahNum = data.ayahNum ? (isEn ? `Ayah ${data.ayahNum}` : `الآية ${data.ayahNum}`) : '';
+          subEl.textContent = `${surah} ${ayahNum}`;
+          tagTextEl.textContent = tP('quranAyahTag');
+
+          const text = data.text || 'فَإِنَّ مَعَ الْعُسْرِ يُسْرًا • إِنَّ مَعَ الْعُسْرِ يُسْرًا';
+          const tafsir = data.tafsir || 'الفرج يعقب الشدة واليسر يعقب العسر';
+
+          bodyEl.innerHTML = `
+            <div class="quran-peek-wrap">
+              <div class="quran-peek-badge">
+                <span>﴿ ${surah} ${ayahNum ? '• ' + ayahNum : ''} ﴾</span>
+              </div>
+              <div class="quran-peek-text">«${text}»</div>
+              <div class="quran-peek-foot">💡 ${tafsir}</div>
+            </div>
+          `;
+          liveStatusEl.textContent = surah;
+          break;
+        }
+
+        case 'email': {
+          iconEl.textContent = '✉️';
+          titleEl.textContent = tP('emailTitle');
+          const unread = data.unread || 0;
+          subEl.textContent = unread > 0 ? tP('emailUnreadSub', { n: unread }) : (data.accountEmail || tP('emailCleanSub'));
+          tagTextEl.textContent = unread > 0 ? tP('emailNewTag', { n: unread }) : tP('emailCleanTag');
+
+          const recent = data.recent || [];
+          let mailsHtml = '';
+          if (recent.length > 0) {
+            mailsHtml = recent.slice(0, 2).map(m => {
+              const initial = (m.from || 'M')[0].toUpperCase();
+              return `
+                <div class="email-peek-item">
+                  <div class="email-avatar">${initial}</div>
+                  <div class="email-content">
+                    <div class="email-peek-sender">
+                      <span>${m.from || tP('emailNewSender')}</span>
+                      <span style="color:var(--accent); font-size:9px;">${m.date || tP('emailToday')}</span>
+                    </div>
+                    <div class="email-peek-subject">${m.subject || tP('emailNoSubj')}</div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            mailsHtml = `
+              <div style="font-size:11px; color:var(--ink-3); text-align:center; padding:12px 0;">
+                ${tP('emailCleanEmpty')}
+              </div>
+            `;
+          }
+
+          bodyEl.innerHTML = `
+            <div class="email-peek-wrap">
+              ${mailsHtml}
+            </div>
+          `;
+          liveStatusEl.textContent = unread > 0 ? tP('emailUnreadStatus', { n: unread }) : tP('emailCleanStatus');
+          break;
+        }
+
+        case 'photo': {
+          iconEl.textContent = '🖼️';
+          titleEl.textContent = tP('photoTitle');
+          subEl.textContent = data.hasPhoto ? tP('photoActiveSub') : tP('photoEmptySub');
+          tagTextEl.textContent = tP('photoTag');
+
+          const photoHtml = data.path
+            ? `<div class="photo-peek-frame"><img src="${data.path}" alt="Photo"></div>`
+            : `<div class="photo-peek-frame">🖼️</div>`;
+
+          bodyEl.innerHTML = `
+            <div class="photo-peek-wrap">
+              ${photoHtml}
+              <div class="photo-peek-info">
+                <div class="photo-peek-title">${data.caption || tP('photoDefaultCaption')}</div>
+                <div class="photo-peek-sub">${tP('photoSubTip')}</div>
+              </div>
+            </div>
+          `;
+          liveStatusEl.textContent = tP('photoStatus');
+          break;
+        }
+
+        case 'folder': {
+          iconEl.textContent = '📁';
+          titleEl.textContent = data.title || tP('folderTitle');
+          const count = data.count || (data.widgets ? data.widgets.length : 0);
+          subEl.textContent = tP('folderSub', { n: count });
+          tagTextEl.textContent = tP('folderTag', { n: count });
+
+          const widgets = data.widgets || [];
+          let gridHtml = '';
+          if (widgets.length > 0) {
+            gridHtml = widgets.slice(0, 6).map(w => `
+              <div class="folder-item-pill">
+                <span>${w.icon || '✨'}</span>
+                <span>${w.name || w.id}</span>
+              </div>
+            `).join('');
+          } else {
+            gridHtml = `
+              <div style="font-size:11px; color:var(--ink-3); text-align:center; padding:8px 0; width:100%;">
+                ${tP('folderTip')}
+              </div>
+            `;
+          }
+
+          bodyEl.innerHTML = `
+            <div class="folder-peek-wrap">
+              <div style="font-size:10.5px; font-weight:700; color:var(--ink-2);">${tP('folderContents')}</div>
+              <div class="folder-peek-grid">
+                ${gridHtml}
+              </div>
+            </div>
+          `;
+          liveStatusEl.textContent = tP('folderStatus');
+          break;
+        }
+
+        default: {
+          iconEl.textContent = '✨';
+          titleEl.textContent = tP('defaultTitle');
+          subEl.textContent = tP('defaultSub');
+          tagTextEl.textContent = tP('defaultTag');
+          bodyEl.innerHTML = `
+            <div style="text-align:center; padding:14px 0;">
+              <div style="font-size:13px; font-weight:700; color:var(--ink);">${tP('defaultBodyTitle')}</div>
+              <div style="font-size:10.5px; color:var(--ink-3); margin-top:4px;">${tP('defaultBodySub')}</div>
+            </div>
+          `;
+          liveStatusEl.textContent = tP('defaultStatus');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

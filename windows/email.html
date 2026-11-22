@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="email.title" data-kind="widget" data-page="email">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data: https: blob:;">
+  <title>البريد الإلكتروني</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/email.css">
+</head>
+<body>
+  <div class="plate" data-drag>
+    <!-- Main Header -->
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title">
+          <span data-i18n="email.title">البريد الإلكتروني</span>
+          <span class="unread-pill" id="unreadPill" hidden>0</span>
+        </div>
+        <div class="head-sub" id="sub">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn compose-btn" id="composeBtn" data-i18n-title="email.compose" title="كتابة رسالة جديدة"></button>
+        <button class="icon-btn" id="refreshBtn" data-i18n-title="email.refresh" title="تحديث الآن"></button>
+        <button class="icon-btn" id="settingsBtn" data-i18n-title="common.settings" title="الإعدادات"></button>
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.hide" title="إخفاء"></button>
+      </div>
+    </header>
+
+    <div class="body">
+      <!-- ── Pane 1: Email list ── -->
+      <section class="pane" id="listPane">
+        <!-- Quick filter tabs -->
+        <nav class="filter-bar" id="filterBar">
+          <button class="filter-tab active" data-filter="unread" id="tabUnread" data-i18n="email.tabUnread">غير مقروء</button>
+          <button class="filter-tab" data-filter="all" id="tabAll" data-i18n="email.tabAll">الكل</button>
+          <button class="filter-tab" data-filter="read" id="tabRead" data-i18n="email.tabRead">المقروء</button>
+        </nav>
+
+        <div class="status-banner" id="statusBanner" hidden></div>
+        <ul class="email-list scroll stagger" id="emailList"></ul>
+        
+        <!-- Not configured empty state -->
+        <div class="empty" id="setupPrompt" hidden>
+          <div class="empty-icon" id="setupIcon"></div>
+          <p class="empty-title" data-i18n="email.setupTitle">تهيئة حساب البريد</p>
+          <p class="empty-sub" data-i18n="email.setupSub">أدخل بيانات بريدك في الإعدادات لتلقي الرسائل فور وصولها.</p>
+          <button class="btn accent" id="setupBtn" data-i18n="email.setupBtn">فتح الإعدادات</button>
+        </div>
+
+        <!-- No emails empty state -->
+        <div class="empty" id="emptyInbox" hidden>
+          <div class="empty-icon" id="inboxIcon"></div>
+          <p class="empty-title" id="emptyInboxTitle" data-i18n="email.noEmails">لا توجد رسائل</p>
+          <p class="empty-sub" id="emptyInboxSub" data-i18n="email.noEmailsSub">صندوق الوارد نظيف ومحدّث.</p>
+        </div>
+      </section>
+
+      <!-- ── Pane 2: Full Email Reader (Maximized Reading Viewport) ── -->
+      <section class="pane reader-pane" id="readerPane" hidden>
+        <div class="reader-top-bar">
+          <button class="icon-btn reader-back-btn" id="readerBackBtn" title="رجوع" data-i18n-title="common.back"><span id="backIcon"></span></button>
+
+          <div class="reader-inline-info">
+            <span class="reader-inline-sender" id="readerSender"></span>
+            <span class="reader-inline-dot">·</span>
+            <span class="reader-inline-subject" id="readerSubject"></span>
+            <span class="reader-date-badge" id="readerDate"></span>
+            <span id="readerAvatar" hidden></span>
+            <span id="readerAddress" hidden></span>
+          </div>
+
+          <div class="reader-actions">
+            <button class="icon-btn small" id="readerPopoutBtn" data-i18n-title="email.popout" title="فتح في نافذة مستقلة"><span id="popoutIcon"></span></button>
+            <button class="icon-btn small" id="readerReplyBtn" data-i18n-title="email.reply" title="رد"><span id="replyIcon"></span></button>
+            <button class="icon-btn small" id="readerToggleReadBtn" data-i18n-title="email.toggleRead" title="تبديل القراءة"><span id="readToggleIcon"></span></button>
+            <button class="icon-btn small danger" id="readerDeleteBtn" data-i18n-title="email.delete" title="حذف"><span id="deleteIcon"></span></button>
+          </div>
+        </div>
+
+        <!-- Attachments section -->
+        <div class="reader-attachments-box" id="readerAttachmentsBox" hidden>
+          <div class="attachments-header">
+            <span class="attachments-icon" id="attHeaderIcon"></span>
+            <span class="attachments-title" id="attHeaderTitle" data-i18n="email.attHeader">المرفقات</span>
+          </div>
+          <div class="attachments-list" id="readerAttachmentsList"></div>
+        </div>
+
+        <!-- Body content: occupies entire remaining inner widget area -->
+        <div class="reader-body-wrapper scroll">
+          <div class="reader-loading" id="readerLoading" hidden>
+            <div class="spinner"></div>
+            <span data-i18n="email.loadingBody">جارٍ جلب نص ومرفقات الرسالة…</span>
+          </div>
+          <!-- Sandboxed HTML or plain text -->
+          <div class="reader-content-body" id="readerBody"></div>
+        </div>
+      </section>
+
+      <!-- ── Pane 3: Compose Email ── -->
+      <section class="pane compose-pane" id="composePane" hidden>
+        <div class="compose-toolbar">
+          <button class="icon-btn" id="composeCloseBtn" title="إلغاء" data-i18n-title="common.cancel"><span id="composeCloseIcon"></span></button>
+          <span class="compose-title" data-i18n="email.newMsg">رسالة جديدة</span>
+          <button class="btn accent send-btn" id="sendBtn">
+            <span id="sendIcon"></span> <span data-i18n="email.send">إرسال</span>
+          </button>
+        </div>
+
+        <div class="compose-fields">
+          <div class="compose-row">
+            <label class="compose-lbl" data-i18n="email.to">إلى:</label>
+            <input class="compose-input" id="composeTo" type="email" placeholder="example@domain.com" autocomplete="off">
+            <button class="link-btn" id="toggleCcBtn" data-i18n="email.addCc">+ نسخة</button>
+          </div>
+          <div class="compose-row" id="ccRow" hidden>
+            <label class="compose-lbl" data-i18n="email.cc">نسخة:</label>
+            <input class="compose-input" id="composeCc" type="text" placeholder="cc@domain.com" autocomplete="off">
+          </div>
+          <div class="compose-row">
+            <label class="compose-lbl" data-i18n="email.subj">الموضوع:</label>
+            <input class="compose-input" id="composeSubject" type="text" placeholder="عنوان الرسالة…" data-i18n-ph="email.subjectPh" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Attachment bar -->
+        <div class="compose-att-bar">
+          <button class="btn-chip" id="composeAddAttBtn">
+            <span id="clipIcon"></span> <span data-i18n="email.addAtt">إرفاق ملفات…</span>
+          </button>
+          <div class="compose-att-chips" id="composeAttChips"></div>
+        </div>
+
+        <textarea class="compose-body scroll" id="composeBody" placeholder="اكتب رسالتك هنا…" data-i18n-ph="email.bodyPh"></textarea>
+        
+        <div class="compose-status" id="composeStatus" hidden></div>
+      </section>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/email.js"></script>
+</body>
+</html>

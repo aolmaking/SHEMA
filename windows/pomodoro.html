@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="pomo.title" data-kind="widget" data-page="pomodoro">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>مؤقت التركيز</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/tile.css">
+  <link rel="stylesheet" href="css/pomodoro.css">
+</head>
+<body>
+  <div class="plate tile-plate" data-drag>
+    <div class="handle"></div>
+    <div class="tile-actions">
+      <button class="icon-btn" id="transparencyBtn" data-i18n-title="pomo.transparency"></button>
+      <button class="icon-btn" id="settingsBtn" data-i18n-title="pomo.settings"></button>
+      <button class="icon-btn" id="closeBtn" data-i18n-title="common.hide"></button>
+    </div>
+
+    <div class="flipper" id="flipper">
+      <!-- front: the timer -->
+      <div class="side front tile-body pomo" id="front">
+        <section class="timer">
+          <div class="top">
+            <span class="tile-label" id="label" data-i18n="pomo.defaultLabel">مذاكرة</span>
+            <span class="dots" id="dots"></span>
+          </div>
+          <div class="clock-area">
+            <div class="remaining numerals" id="remaining">25:00</div>
+            <div class="bar"><div class="bar-fill" id="bar"></div></div>
+          </div>
+          <div class="controls">
+            <button class="mini" id="resetBtn" data-i18n-title="pomo.reset"></button>
+            <button class="pill" id="mainBtn"><span id="mainIcon"></span><span id="mainText"></span></button>
+            <button class="mini" id="skipBtn" data-i18n-title="pomo.skip"></button>
+          </div>
+        </section>
+
+        <section class="side-panel">
+          <div class="modes" id="modes" role="tablist">
+            <button class="mode" data-mode="focus" id="modeFocus" data-i18n="pomo.f.focus">تركيز</button>
+            <button class="mode" data-mode="short" data-i18n="pomo.short"></button>
+            <button class="mode" data-mode="long" data-i18n="pomo.long"></button>
+          </div>
+          <div class="stats">
+            <div class="stat"><b class="numerals" id="statSessions">0</b><span data-i18n="pomo.sessions"></span></div>
+            <div class="stat"><b class="numerals" id="statMinutes">0</b><span data-i18n="pomo.minutes"></span></div>
+          </div>
+          <div class="next" id="next"></div>
+        </section>
+      </div>
+
+      <!-- back: quick settings -->
+      <div class="side back" id="back" data-drag>
+        <div class="back-head">
+          <span class="tile-label" data-i18n="pomo.settings"></span>
+          <button class="mini" id="doneBtn" data-i18n-title="pomo.done"></button>
+        </div>
+        <div class="back-body scroll" id="form">
+          <label class="f-row f-wide">
+            <span data-i18n="pomo.f.label"></span>
+            <input class="field small" id="fLabel" maxlength="24" autocomplete="off">
+          </label>
+          <div class="f-row" data-key="focus"><span><span data-i18n="pomo.f.focus"></span> <small data-i18n="pomo.min"></small></span><div class="stepper"></div></div>
+          <div class="f-row" data-key="short"><span><span data-i18n="pomo.short"></span> <small data-i18n="pomo.min"></small></span><div class="stepper"></div></div>
+          <div class="f-row" data-key="long"><span><span data-i18n="pomo.long"></span> <small data-i18n="pomo.min"></small></span><div class="stepper"></div></div>
+          <div class="f-row" data-key="every"><span data-i18n="pomo.f.every"></span><div class="stepper"></div></div>
+          <div class="f-row"><span data-i18n="pomo.f.autoBreaks"></span><button class="switch" id="fAutoBreaks" role="switch"></button></div>
+          <div class="f-row"><span data-i18n="pomo.f.autoFocus"></span><button class="switch" id="fAutoFocus" role="switch"></button></div>
+          <div class="f-row"><span data-i18n="pomo.f.sound"></span><button class="switch" id="fSound" role="switch"></button></div>
+          <div class="f-row"><span data-i18n="pomo.f.notify"></span><button class="switch" id="fNotify" role="switch"></button></div>
+          <div class="f-row"><span data-i18n="s.pomodoroPureTransparent"></span><button class="switch" id="fUltraTransparent" role="switch"></button></div>
+          <div class="f-row f-wide">
+            <span data-i18n="pomo.f.volume"></span>
+            <input type="range" id="fVolume" min="0" max="100" step="5">
+          </div>
+          <button class="btn" id="testSound" data-i18n="pomo.f.test"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/pomodoro.js"></script>
+</body>
+</html>

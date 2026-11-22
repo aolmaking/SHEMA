@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="event.titleNew" data-kind="window" data-page="event">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>مناسبة جديدة</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/event.css">
+</head>
+<body>
+  <div class="plate window-plate event-plate" data-drag>
+    <header class="head">
+      <div class="head-icon" id="headIcon">📅</div>
+      <div class="head-text">
+        <div class="head-title" id="eventWinTitle" data-i18n="event.titleNew">إضافة مناسبة جديدة</div>
+        <div class="head-sub" id="eventWinSub">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.close"></button>
+      </div>
+    </header>
+
+    <div class="body scroll" id="body">
+      <form id="eventForm" onsubmit="return false;">
+        
+        <!-- Category Section -->
+        <section class="group">
+          <label class="group-label" data-i18n="event.category">نوع وتصنيف المناسبة</label>
+          <div class="ev-categories-grid" id="evCatGrid"></div>
+        </section>
+
+        <!-- Title Section -->
+        <section class="group">
+          <label for="evTitle" class="group-label" data-i18n="event.titleLabel">عنوان المناسبة</label>
+          <input type="text" id="evTitle" class="field wide" data-i18n-ph="event.titlePh" required maxlength="120" autocomplete="off" spellcheck="false">
+        </section>
+
+        <!-- Date & Time & Recurrence -->
+        <section class="group">
+          <div class="ev-grid-row">
+            <div class="ev-field-cell">
+              <label for="evDate" class="group-label" data-i18n="event.date">التاريخ</label>
+              <input type="date" id="evDate" class="field" required dir="ltr">
+            </div>
+            <div class="ev-field-cell">
+              <label for="evTime" class="group-label" data-i18n="event.time">التوقيت</label>
+              <input type="time" id="evTime" class="field" value="09:00" dir="ltr">
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 8px;">
+            <label for="evRecurring" data-i18n="event.recurrence">التكرار الدوري</label>
+            <select class="picker wide" id="evRecurring">
+              <option value="none" data-i18n="event.recNone" selected>لا يتكرر (مرة واحدة)</option>
+              <option value="yearly" data-i18n="event.recYearly">سنوياً (في نفس التاريخ من كل عام)</option>
+              <option value="monthly" data-i18n="event.recMonthly">شهرياً (في نفس اليوم من كل شهر)</option>
+              <option value="weekly" data-i18n="event.recWeekly">أسبوعياً (في نفس اليوم من كل أسبوع)</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- Notes -->
+        <section class="group">
+          <label for="evNotes" class="group-label" data-i18n="event.notes">ملاحظات أو تفاصيل إضافية</label>
+          <textarea id="evNotes" class="field wide scroll" rows="3" data-i18n-ph="event.notesPh" spellcheck="false"></textarea>
+        </section>
+
+        <!-- WhatsApp Multi-Timing Notifications Card (Requirement #7) -->
+        <section class="group ev-wa-card" id="evWaCard">
+          <div class="ev-wa-header">
+            <div class="ev-wa-title">
+              <span class="ev-wa-icon">💬</span>
+              <span data-i18n="event.waCardTitle">تنبيهات WhatsApp المتقدمة</span>
+            </div>
+            <label class="ev-switch-label">
+              <input type="checkbox" id="evWaEnabled" checked>
+              <span class="ev-slider"></span>
+            </label>
+          </div>
+
+          <div class="ev-wa-body" id="evWaBody">
+            <!-- Multi-Timing Selection -->
+            <div class="ev-wa-subgroup">
+              <label class="ev-wa-label" data-i18n="event.waTimingsTitle">مواعيد إرسال التنبيهات (يمكنك اختيار أكثر من موعد):</label>
+              <div class="ev-timing-chips-grid" id="evTimingsGrid">
+                <label class="timing-chip">
+                  <input type="checkbox" name="waTiming" value="3d_before">
+                  <span class="chip-box"></span>
+                  <span class="chip-text" data-i18n="event.timing3d">📅 قبل المناسبة بـ 3 أيام (9:00 ص)</span>
+                </label>
+                <label class="timing-chip">
+                  <input type="checkbox" name="waTiming" value="1d_before" checked>
+                  <span class="chip-box"></span>
+                  <span class="chip-text" data-i18n="event.timing1d">📅 قبل المناسبة بيوم واحد (9:00 ص)</span>
+                </label>
+                <label class="timing-chip">
+                  <input type="checkbox" name="waTiming" value="morning_of" checked>
+                  <span class="chip-box"></span>
+                  <span class="chip-text" data-i18n="event.timingMorning">☀️ صباح يوم المناسبة (9:00 ص)</span>
+                </label>
+                <label class="timing-chip">
+                  <input type="checkbox" name="waTiming" value="3h_before">
+                  <span class="chip-box"></span>
+                  <span class="chip-text" data-i18n="event.timing3h">⏳ قبل موعد المناسبة بـ 3 ساعات</span>
+                </label>
+                <label class="timing-chip">
+                  <input type="checkbox" name="waTiming" value="1h_before">
+                  <span class="chip-box"></span>
+                  <span class="chip-text" data-i18n="event.timing1h">⏰ قبل موعد المناسبة بساعة واحدة</span>
+                </label>
+                <label class="timing-chip">
+                  <input type="checkbox" name="waTiming" value="at_event">
+                  <span class="chip-box"></span>
+                  <span class="chip-text" data-i18n="event.timingAt">🎯 في توقيت المناسبة تماماً</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Custom Recipient Override -->
+            <div class="ev-wa-subgroup">
+              <label for="evWaRecipient" class="ev-wa-label" data-i18n="event.waRecipientLabel">المستلم المخصص (اختياري):</label>
+              <input type="text" id="evWaRecipient" class="field ltr wide" data-i18n-ph="event.waRecipientPh" autocomplete="off">
+              <p class="hint" data-i18n="event.waRecipientHint">اتركه فارغاً للإرسال التلقائي للرقم أو المجموعة المحددة في الإعدادات.</p>
+            </div>
+
+            <!-- Custom WhatsApp Message Template & Tag Chips -->
+            <div class="ev-wa-subgroup">
+              <div class="ev-wa-template-head">
+                <label for="evWaMessage" class="ev-wa-label" data-i18n="event.waMessageLabel">نص رسالة WhatsApp (أو اتركه للقالب الذكي):</label>
+                <div class="ev-template-tags" id="evTemplateTags">
+                  <button type="button" class="tag-pill" data-tag="{title}">{title}</button>
+                  <button type="button" class="tag-pill" data-tag="{date}">{date}</button>
+                  <button type="button" class="tag-pill" data-tag="{time}">{time}</button>
+                  <button type="button" class="tag-pill" data-tag="{notes}">{notes}</button>
+                </div>
+              </div>
+              <textarea id="evWaMessage" class="field wide scroll" rows="3" data-i18n-ph="event.waMessagePh"></textarea>
+            </div>
+
+            <!-- Live Test Button -->
+            <div class="ev-wa-test-box">
+              <button type="button" class="btn primary" id="evTestWaBtn">
+                <span>🚀</span> <span data-i18n="event.testWaBtn">إرسال تجربة الآن على WhatsApp</span>
+              </button>
+              <div class="ev-test-status" id="evTestStatus" hidden></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Actions Bar -->
+        <div class="row buttons foot-row" style="margin-top: 14px; gap: 8px;">
+          <button type="button" class="btn primary" id="evSaveBtn" data-i18n="event.saveBtn">💾 حفظ المناسبة</button>
+          <button type="button" class="btn danger-btn" id="evDeleteBtn" data-i18n="event.deleteBtn" hidden>🗑️ حذف المناسبة</button>
+          <button type="button" class="btn secondary" id="evCancelBtn" data-i18n="common.cancel">إلغاء</button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="grip"></div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/event.js"></script>
+</body>
+</html>

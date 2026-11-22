@@ -1,0 +1,171 @@
+/* ==========================================================================
+   Compact tiles (clock, calendar, timer)
+
+   Modelled on the reference widgets: no title bar, the content is the
+   widget. The whole tile can be dragged; its few controls and a grab handle
+   only surface while the pointer is over it. Sizes are expressed in
+   container units so the content grows and shrinks with the tile.
+   ========================================================================== */
+
+.tile-plate {
+  container-type: size;
+  container-name: tile plate;
+  cursor: default;
+}
+
+.tile-body {
+  position: relative;
+  z-index: 4;
+  flex: 1;
+  min-height: 0;
+  padding: 13px 14px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Small caps label, like "Study" / "JANUARY" in the reference */
+.tile-label {
+  font-size: calc(10.5px * var(--fs));
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tile-label.accent { color: var(--accent); }
+
+/* Floating controls, top-left (the inline end in RTL) */
+.tile-actions {
+  position: absolute;
+  top: 7px;
+  inset-inline-end: 7px;
+  z-index: 6;
+  display: flex;
+  gap: 3px;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.96);
+  pointer-events: none;
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease-spring);
+}
+.plate:hover .tile-actions,
+.tile-actions:focus-within {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.tile-actions .icon-btn {
+  width: 23px; height: 23px;
+  border-radius: 8px;
+  background: var(--tile);
+  color: var(--ink-2);
+}
+.tile-actions .icon-btn svg { width: 12px; height: 12px; }
+.tile-actions .icon-btn:hover { background: var(--tile-active); color: var(--ink); }
+
+@container tile (max-width: 200px) or (max-height: 200px) {
+  .tile-body {
+    padding: 8px 9px 8px;
+  }
+  .tile-actions {
+    top: 4px;
+    inset-inline-end: 4px;
+    gap: 2px;
+  }
+  .tile-actions .icon-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+  }
+  .tile-actions .icon-btn svg {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Grab handle: a short pill at the top centre, shown on hover */
+.handle {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 26px;
+  height: 4px;
+  margin-left: -13px;
+  border-radius: 999px;
+  background: var(--ink-3);
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity var(--t) var(--ease), width var(--t) var(--ease-spring),
+              margin var(--t) var(--ease-spring);
+}
+.plate:hover .handle { opacity: 0.32; }
+body.dragging .handle { opacity: 0.6; width: 34px; margin-left: -17px; }
+
+/* Big light numerals, the "25:00" look */
+.numerals {
+  font-family: var(--font-num);
+  font-weight: var(--num-weight, 300);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--num-ls, -0.02em);
+  line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* A pill button the full width of the tile, like the reference "Start" */
+.pill {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: calc(30px * var(--fs));
+  border-radius: 999px;
+  background: var(--tile);
+  color: var(--ink);
+  font-size: calc(12px * var(--fs));
+  font-weight: 600;
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring),
+              box-shadow var(--t) var(--ease), color var(--t) var(--ease);
+}
+.pill svg { width: 11px; height: 11px; }
+.pill:hover { background: var(--tile-active); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); }
+.pill:active { transform: scale(0.97); }
+.pill.on { background: var(--accent); color: var(--ink-on-accent); }
+.pill.on:hover { box-shadow: 0 6px 18px var(--accent-soft); }
+
+/* Small round button for secondary actions */
+.mini {
+  padding: 0;
+  width: calc(26px * var(--fs));
+  height: calc(26px * var(--fs));
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--tile);
+  color: var(--ink-2);
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring), color var(--t) var(--ease);
+}
+.mini svg { width: 12px; height: 12px; }
+.mini:hover { background: var(--tile-active); color: var(--ink); transform: translateY(-1px); }
+.mini:active { transform: scale(0.92); }
+
+/* Tooltip used by the calendar */
+.tip {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  padding: 5px 9px;
+  border-radius: 9px;
+  background: var(--tip-bg, rgba(22, 28, 40, 0.92));
+  color: #F2F5FA;
+  font-size: calc(10.5px * var(--fs));
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 120ms var(--ease), transform 160ms var(--ease-out);
+}
+.tip.show { opacity: 1; transform: none; }

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="emailView.title" data-kind="window" data-page="email-view">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data: https: blob:; frame-src 'self' data: blob:;">
+  <title>البريد الإلكتروني</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/email-view.css">
+</head>
+<body>
+  <div class="plate email-view-plate window-plate" data-drag>
+    <!-- Header -->
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" id="headTitle" data-i18n="emailView.title">البريد الإلكتروني</div>
+        <div class="head-sub" id="headSub">—</div>
+      </div>
+      <div class="head-actions" id="headActions">
+        <!-- Reading mode actions -->
+        <button class="icon-btn" id="newMsgBtn" data-i18n-title="emailView.newMsg" title="رسالة جديدة"></button>
+        <button class="icon-btn" id="replyBtn" data-i18n-title="emailView.reply" title="رد على الرسالة"></button>
+        <button class="icon-btn" id="forwardBtn" data-i18n-title="emailView.forward" title="إعادة توجيه"></button>
+        <button class="icon-btn" id="copyBtn" data-i18n-title="emailView.copy" title="نسخ نص الرسالة"></button>
+        <button class="icon-btn" id="toggleReadBtn" data-i18n-title="emailView.toggleRead" title="تبديل القراءة"></button>
+        <button class="icon-btn danger" id="deleteBtn" data-i18n-title="emailView.delete" title="حذف الرسالة"></button>
+        <!-- Compose mode back button (hidden when in pure new email mode) -->
+        <button class="icon-btn" id="backToReadBtn" data-i18n-title="emailView.backToRead" title="العودة للرسالة" hidden></button>
+        <!-- Close Window Button (Always present and visible in windows) -->
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.close" title="إغلاق"></button>
+      </div>
+    </header>
+
+    <div class="body scroll" id="scroll">
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- VIEW 1: Reading Mode (قراءة الرسالة)            -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="mode-view reading-view" id="readingView">
+        <!-- Sender & Metadata Hero Card -->
+        <section class="sender-hero-card">
+          <div class="sender-avatar" id="avatar">✉</div>
+          <div class="sender-info">
+            <div class="sender-top-line">
+              <span class="sender-name" id="fromName">—</span>
+              <span class="sender-address" id="fromAddress"></span>
+              <button class="copy-address-btn" id="copyAddressBtn" title="نسخ عنوان البريد" data-i18n-title="emailView.copyAddress">📋</button>
+            </div>
+            <div class="sender-bottom-line">
+              <span class="email-date-pill" id="date">—</span>
+              <span class="recipient-info" id="toInfo"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Subject Banner -->
+        <section class="subject-banner" id="subjectBanner">
+          <h2 class="subject-title" id="subjectText">—</h2>
+        </section>
+
+        <!-- Attachments Section -->
+        <section class="attachments-card" id="attachmentsBox" hidden>
+          <div class="att-head">
+            <span class="att-icon" id="attIcon">📎</span>
+            <span class="att-title" id="attTitle" data-i18n="emailView.attachments">المرفقات</span>
+            <span class="att-count-badge" id="attCount"></span>
+          </div>
+          <div class="att-list" id="attachmentsList"></div>
+        </section>
+
+        <!-- Message Body Content -->
+        <section class="content-card" id="contentCard">
+          <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <span data-i18n="emailView.loading">جارٍ جلب نص ومرفقات الرسالة…</span>
+          </div>
+          <div class="error-banner" id="errorBanner" hidden></div>
+          <div class="email-body-content" id="emailBody"></div>
+        </section>
+
+        <!-- Quick Reply Bar -->
+        <footer class="quick-reply-bar" id="quickReplyBar">
+          <div class="quick-reply-prompt" id="quickReplyPrompt">
+            <span class="quick-reply-icon">↩</span>
+            <span class="quick-reply-text" id="quickReplyText" data-i18n="emailView.quickReplyPrompt">الرد السريع على هذه الرسالة…</span>
+          </div>
+          <button class="btn accent small" id="openFullReplyBtn">
+            <span data-i18n="emailView.replyBtn">رد على الرسالة</span>
+          </button>
+        </footer>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- VIEW 2: Full Dedicated Compose Mode (إنشاء / رد) -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="mode-view compose-view" id="composeView" hidden>
+        <div class="compose-card">
+          <div class="compose-header-bar">
+            <div class="compose-mode-badge" id="composeModeBadge" data-i18n="emailView.newMsg">رسالة جديدة</div>
+            <div class="compose-shortcuts-hint" data-i18n="emailView.shortcutHint">Ctrl + Enter للإرسال السريع</div>
+          </div>
+
+          <!-- Fields -->
+          <div class="compose-fields-grid">
+            <!-- To Row -->
+            <div class="compose-field-row">
+              <label class="compose-field-lbl" for="composeTo" data-i18n="emailView.to">إلى:</label>
+              <div class="compose-field-wrap">
+                <input class="field ltr compose-input" id="composeTo" type="email" placeholder="example@domain.com" autocomplete="off">
+              </div>
+              <div class="compose-toggles">
+                <button type="button" class="field-toggle-btn" id="toggleCcBtn" data-i18n="emailView.addCc">+ نسخة (Cc)</button>
+                <button type="button" class="field-toggle-btn" id="toggleBccBtn" data-i18n="emailView.addBcc">+ مخفية (Bcc)</button>
+              </div>
+            </div>
+
+            <!-- Cc Row (collapsible) -->
+            <div class="compose-field-row" id="ccRow" hidden>
+              <label class="compose-field-lbl" for="composeCc" data-i18n="emailView.cc">نسخة:</label>
+              <div class="compose-field-wrap">
+                <input class="field ltr compose-input" id="composeCc" type="text" placeholder="cc@domain.com" autocomplete="off">
+              </div>
+            </div>
+
+            <!-- Bcc Row (collapsible) -->
+            <div class="compose-field-row" id="bccRow" hidden>
+              <label class="compose-field-lbl" for="composeBcc" data-i18n="emailView.bcc">مخفية:</label>
+              <div class="compose-field-wrap">
+                <input class="field ltr compose-input" id="composeBcc" type="text" placeholder="bcc@domain.com" autocomplete="off">
+              </div>
+            </div>
+
+            <!-- Subject Row -->
+            <div class="compose-field-row">
+              <label class="compose-field-lbl" for="composeSubject" data-i18n="emailView.subj">الموضوع:</label>
+              <div class="compose-field-wrap">
+                <input class="field compose-input" id="composeSubject" type="text" placeholder="عنوان موضوع الرسالة…" data-i18n-ph="emailView.subjectPh" autocomplete="off">
+              </div>
+            </div>
+          </div>
+
+          <!-- Attachments Bar -->
+          <div class="compose-attachments-bar">
+            <button type="button" class="btn-chip" id="composeAttachBtn">
+              <span id="composeClipIcon">📎</span>
+              <span data-i18n="emailView.addAtt">إرفاق ملفات من الجهاز…</span>
+            </button>
+            <div class="compose-att-chips" id="composeAttChips"></div>
+          </div>
+
+          <!-- Editor Body -->
+          <div class="compose-editor-box">
+            <textarea class="field compose-body-input scroll" id="composeBody" placeholder="اكتب نص الرسالة هنا…" data-i18n-ph="emailView.bodyPh"></textarea>
+          </div>
+
+          <!-- Action Footer -->
+          <div class="compose-action-footer">
+            <div class="compose-status-area">
+              <span class="compose-status-pill" id="composeStatus" hidden></span>
+            </div>
+            <div class="compose-btn-group">
+              <button type="button" class="btn secondary" id="composeDiscardBtn" data-i18n="emailView.discard">إلغاء</button>
+              <button type="button" class="btn accent send-mail-btn" id="composeSendBtn">
+                <span id="sendMailIcon">✈</span>
+                <span data-i18n="emailView.send">إرسال الرسالة</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/email-view.js"></script>
+</body>
+</html>

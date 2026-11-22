@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="w.folder" data-kind="widget" data-page="folder">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>المجلد الذكي</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/folder.css">
+</head>
+<body>
+  <div class="folder-plate" id="folderPlate" data-drag>
+    
+    <!-- 1. COMPACT 2x2 CLOSED SMART FOLDER -->
+    <div class="folder-compact-view" id="folderCompactView">
+      <div class="folder-squircle-card" id="folderSquircleCard">
+        <div class="folder-grid-2x2" id="folderGrid2x2">
+          <!-- Populated by folder.js: Adaptive smart layout -->
+        </div>
+      </div>
+      <div class="folder-label-wrap" id="folderLabelWrap">
+        <span class="folder-label-text" id="compactFolderTitle" data-i18n="folder.defaultTitle">أدوات مساعدة</span>
+      </div>
+    </div>
+
+    <!-- 2. EXPANDED FULL FOLDER MODAL OVERLAY -->
+    <div class="folder-expanded-view" id="folderExpandedView" style="display: none;">
+      <div class="folder-expanded-backdrop" id="folderExpandedBackdrop"></div>
+      
+      <div class="folder-expanded-card" id="folderExpandedCard">
+        <!-- Header -->
+        <div class="expanded-header">
+          <div class="expanded-title-box">
+            <input type="text" id="inputFolderTitle" class="expanded-title-input" value="أدوات مساعدة" maxlength="24" spellcheck="false" data-i18n-title="folder.editTitlePh" data-i18n-ph="folder.defaultTitle" title="انقر لتعديل الاسم">
+          </div>
+
+          <button class="folder-header-btn close-btn" id="btnCloseExpanded" data-i18n-title="folder.closeEsc" title="إغلاق (Esc)">✕</button>
+        </div>
+
+        <!-- Expanded Items Grid -->
+        <div class="expanded-grid-container">
+          <div class="expanded-grid" id="expandedGrid">
+            <!-- Populated by folder.js: list of all included widgets -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. WIDGET PICKER & MANAGER MODAL -->
+    <div class="folder-manager-overlay" id="folderManagerOverlay" style="display: none;">
+      <div class="folder-manager-card" id="folderManagerCard">
+        <div class="manager-header">
+          <span class="manager-title" data-i18n="folder.managerTitle">تخصيص ويتجات المجلد</span>
+          <button class="folder-header-btn close-btn" id="btnCloseManager" data-i18n-title="common.close">✕</button>
+        </div>
+        <p class="manager-sub" data-i18n="folder.managerSub">حدد الويتجات التي تريد وضعها داخل المجلد، ويمكنك إعادة ترتيبها بالسحب والإفلات:</p>
+        
+        <div class="manager-items-list" id="managerItemsList">
+          <!-- Checkbox + move up/down rows -->
+        </div>
+
+        <div class="manager-footer">
+          <button class="mgr-btn save-btn" id="btnSaveManager" data-i18n="folder.saveChanges">حفظ التغييرات</button>
+          <button class="mgr-btn cancel-btn" id="btnCancelManager" data-i18n="common.cancel">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/folder-art.js"></script>
+  <script src="js/adaptive-layout-engine.js"></script>
+  <script src="js/flip-motion.js"></script>
+  <script src="js/folder.js"></script>
+</body>
+</html>

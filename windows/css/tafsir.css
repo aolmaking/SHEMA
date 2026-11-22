@@ -1,0 +1,211 @@
+.body { padding: 0 var(--pad) var(--pad); }
+
+section { margin-bottom: 16px; }
+
+/* ---------- ayah ---------- */
+
+.ayah-block {
+  background: var(--field);
+  border-radius: var(--radius-lg);
+  padding: 20px 20px 14px;
+  border: 1px solid var(--line);
+}
+
+.ayah {
+  margin: 0;
+  font-family: var(--font-quran);
+  font-size: calc(21px * var(--fs));
+  line-height: calc(2.25 * var(--lh-k, 1));
+  text-align: center;
+  color: var(--ink);
+  user-select: text;
+  overflow-wrap: break-word;
+}
+.ayah.long { font-size: calc(18px * var(--fs)); line-height: calc(2.15 * var(--lh-k, 1)); }
+.ayah.xlong { font-size: calc(16px * var(--fs)); line-height: calc(2.05 * var(--lh-k, 1)); text-align: justify; }
+
+.ayah-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: calc(10.5px * var(--fs));
+  color: var(--ink-3);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  font-weight: 500;
+}
+.badge svg { width: 11px; height: 11px; }
+
+.src { user-select: text; }
+
+/* ---------- why ---------- */
+
+.why {
+  border-radius: var(--radius-lg);
+  background: var(--tile);
+  padding: 13px 15px;
+  border: 1px dashed var(--line);
+}
+.why-head {
+  display: flex; align-items: center; gap: 7px;
+  font-size: calc(11.5px * var(--fs));
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.why-head svg { width: 13px; height: 13px; color: var(--accent); }
+
+.why-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.why-list li {
+  font-size: calc(10.5px * var(--fs));
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tile-hover);
+  color: var(--ink-2);
+}
+
+.why-note {
+  margin: 9px 0 0;
+  font-size: calc(9.5px * var(--fs));
+  color: var(--ink-3);
+  line-height: calc(1.6 * var(--lh-k, 1));
+}
+
+/* ---------- tafsir ---------- */
+
+.tafsir-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+.tafsir-name { font-size: calc(13px * var(--fs)); font-weight: 600; }
+.tafsir-author { font-size: calc(10.5px * var(--fs)); color: var(--ink-3); margin-top: 2px; line-height: calc(1.5 * var(--lh-k, 1)); }
+
+.picker {
+  -webkit-app-region: no-drag;
+  flex: none;
+  max-width: 45%;
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  font-size: calc(11px * var(--fs));
+  color: var(--ink);
+  outline: none;
+  cursor: pointer;
+  transition: background var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+.picker:hover { background: var(--tile-hover); }
+.picker:focus { border-color: var(--accent-soft); box-shadow: 0 0 0 3px var(--accent-soft); }
+.picker option { background: #1b2230; color: #eef1f8; }
+
+.tafsir-text {
+  font-family: var(--font-read);
+  font-size: calc(13.5px * var(--fs));
+  line-height: calc(2.05 * var(--lh-k, 1));
+  color: var(--ink-2);
+  user-select: text;
+  background: var(--field);
+  border-radius: var(--radius-lg);
+  padding: 15px 17px;
+  border: 1px solid var(--line);
+}
+.tafsir-text:empty { display: none; }
+.tafsir-text p { margin: 0 0 0.9em; }
+.tafsir-text p:last-child { margin-bottom: 0; }
+.tafsir-text b, .tafsir-text strong { color: var(--ink); font-weight: 600; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.tafsir-text.fresh, .ayah.fresh { animation: fade-up var(--t-slow) var(--ease-out) both; }
+
+.loading, .failed {
+  display: flex; align-items: center; justify-content: center;
+  gap: 9px;
+  padding: 22px;
+  color: var(--ink-3);
+  font-size: calc(11.5px * var(--fs));
+}
+.failed { flex-direction: column; gap: 12px; text-align: center; }
+.failed p { margin: 0; line-height: calc(1.7 * var(--lh-k, 1)); }
+
+.spinner {
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  border: 2px solid var(--tile-active);
+  border-top-color: var(--accent);
+  animation: spin 720ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- translation ---------- */
+
+.tr-block {
+  background: var(--field);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+}
+.tr-head { font-size: calc(10.5px * var(--fs)); color: var(--ink-3); margin-bottom: 7px; }
+.tr-text {
+  font-family: var(--font-ui);
+  font-size: calc(12.5px * var(--fs));
+  line-height: calc(1.75 * var(--lh-k, 1));
+  color: var(--ink-2);
+  user-select: text;
+  text-align: left;
+}
+
+/* ---------- attribution ---------- */
+
+.attrib {
+  border-top: 1px solid var(--line);
+  padding-top: 13px;
+  font-size: calc(10.5px * var(--fs));
+  color: var(--ink-3);
+}
+.attrib-row { display: flex; gap: 10px; margin-bottom: 5px; align-items: baseline; }
+.attrib-key { flex: none; width: 62px; color: var(--ink-3); opacity: 0.85; }
+.attrib-val { flex: 1; color: var(--ink-2); user-select: text; line-height: calc(1.6 * var(--lh-k, 1)); }
+
+.attrib-links { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.link-btn {
+  -webkit-app-region: no-drag;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--tile);
+  color: var(--ink-2);
+  font-size: calc(10.5px * var(--fs));
+  transition: background var(--t) var(--ease), color var(--t) var(--ease),
+              transform var(--t) var(--ease-spring);
+}
+.link-btn svg { width: 11px; height: 11px; }
+.link-btn:hover { background: var(--tile-hover); color: var(--ink); transform: translateY(-1px); }
+.link-btn:active { transform: scale(0.97); }
+
+.attrib-note {
+  margin: 11px 0 0;
+  line-height: calc(1.7 * var(--lh-k, 1));
+  opacity: 0.8;
+}
+
+/* copy confirmation */
+#copyBtn.copied { color: var(--accent); }

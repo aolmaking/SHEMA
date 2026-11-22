@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="photo.title" data-kind="widget" data-page="photo">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data: blob: file: widget-media:;">
+  <title>الصورة المختارة</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/tile.css">
+  <link rel="stylesheet" href="css/photo.css">
+</head>
+<body>
+  <div class="plate tile-plate photo-plate" data-drag id="photoPlate">
+    <div class="handle"></div>
+    <div class="tile-actions">
+      <button class="icon-btn" id="prevBtn" data-i18n-title="photo.prev" hidden></button>
+      <button class="icon-btn" id="nextBtn" data-i18n-title="photo.next" hidden></button>
+      <button class="icon-btn" id="fitBtn" data-i18n-title="photo.fit"></button>
+      <button class="icon-btn" id="adjustBtn" data-i18n-title="photo.adjust"></button>
+      <button class="icon-btn" id="pickBtn" data-i18n-title="photo.change"></button>
+      <button class="icon-btn" id="settingsBtn" data-i18n-title="common.settings"></button>
+      <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.hide"></button>
+    </div>
+
+    <div class="photo-container" id="container">
+      <div class="photo-frame" id="frame">
+        <img id="photoImg" alt="Selected photo" class="photo-img" hidden>
+      </div>
+
+      <!-- Quick Adjust Floating Glass Toolbar -->
+      <div class="photo-adjust-bar" id="adjustBar" hidden>
+        <button type="button" class="adjust-tool-btn" id="adjZoomOut" data-i18n-title="photo.zoomOut" title="تصغير -">−</button>
+        <span class="adjust-val" id="adjZoomVal">100%</span>
+        <button type="button" class="adjust-tool-btn" id="adjZoomIn" data-i18n-title="photo.zoomIn" title="تكبير +">+</button>
+        <div class="adjust-sep"></div>
+        <button type="button" class="adjust-tool-btn" id="adjRotate" data-i18n-title="photo.rotate" title="تدوير 90°">⟳</button>
+        <button type="button" class="adjust-tool-btn" id="adjGrayscale" data-i18n-title="photo.grayscale" title="أبيض وأسود">◐</button>
+        <button type="button" class="adjust-tool-btn" id="adjReset" data-i18n-title="photo.reset" title="إعادة ضبط">↺</button>
+        <div class="adjust-sep"></div>
+        <button type="button" class="adjust-tool-btn close" id="adjClose" data-i18n-title="common.close" title="إغلاق">✕</button>
+      </div>
+
+      <!-- Empty / Dropzone state -->
+      <div class="photo-empty" id="emptyState">
+        <div class="empty-icon" id="photoIcon"></div>
+        <p class="empty-title" data-i18n="photo.emptyTitle">اختر صورة</p>
+        <p class="empty-sub" data-i18n="photo.emptySub">اسحب صورة إلى هنا أو انقر للاختيار من جهازك.</p>
+        <button class="btn accent" id="selectBtn" data-i18n="photo.selectBtn">اختيار صورة…</button>
+      </div>
+
+      <!-- Caption bar -->
+      <div class="photo-caption" id="caption" hidden></div>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/photo.js"></script>
+</body>
+</html>

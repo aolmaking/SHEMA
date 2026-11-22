@@ -1,0 +1,696 @@
+/* ---------- the flip card ---------- */
+
+.flipper {
+  position: relative;
+  z-index: 4;
+  flex: 1;
+  min-height: 0;
+  perspective: 900px;
+}
+
+.side {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transition: transform 560ms var(--ease-spring), opacity 300ms var(--ease);
+}
+.back { transform: rotateY(180deg); opacity: 0; display: flex; flex-direction: column; padding: 12px 12px 10px; }
+.flipped .front { transform: rotateY(-180deg); opacity: 0; pointer-events: none; }
+.flipped .back { transform: rotateY(0); opacity: 1; }
+.flipped ~ .grip, .plate:has(.flipped) .tile-actions { display: none; }
+
+/* ---------- small: timer only ---------- */
+
+.pomo {
+  --phase: var(--accent);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
+  gap: 8px;
+  padding: 12px 14px 10px;
+}
+.pomo[data-mode='short'], .pomo[data-mode='long'] { --phase: #2F9E86; }
+
+.timer {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  container-type: inline-size;
+  container-name: timer;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  /* Leaves room for the floating buttons that show on hover. */
+  padding-inline-end: 54px;
+  transition: padding var(--t) var(--ease);
+}
+.plate:not(:hover) .top { padding-inline-end: 0; }
+.tile-label {
+  font-size: calc(11.5px * var(--fs));
+  font-weight: 700;
+  color: var(--ink-2);
+  display: block !important;
+}
+
+.dots { display: flex; gap: 4px; flex: none; align-items: center; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--tile-active);
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring);
+}
+.dot.done { background: var(--phase); }
+.dot.live { background: var(--phase); animation: breathe 1.8s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: 0.35; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.15); } }
+
+.clock-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: auto 0;
+}
+
+.remaining {
+  font-size: calc(clamp(30px, 28cqi, 48px) * var(--fs));
+  color: var(--ink);
+  text-align: center !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  transition: color var(--t) var(--ease), transform var(--t-slow) var(--ease-spring);
+  transform-origin: center center;
+}
+.pomo[data-status='idle'] .remaining { color: var(--ink-2); }
+.plate:hover .remaining { transform: scale(1.03); }
+
+.bar {
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  width: 0;
+  margin-inline-start: 0;
+  border-radius: inherit;
+  background: var(--phase);
+  transition: width 1s linear, background var(--t) var(--ease);
+}
+.bar-fill.instant { transition: width var(--t) var(--ease), background var(--t) var(--ease); }
+
+/* Running State Focus Aura Animation */
+.pomo[data-status='running'] .bar-fill {
+  box-shadow: 0 0 10px var(--phase);
+  animation: pomoBarBreathe 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes pomoBarBreathe {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 2px var(--phase));
+  }
+  100% {
+    filter: brightness(1.28) drop-shadow(0 0 7px var(--phase));
+  }
+}
+
+.pomo[data-status='running'] .remaining {
+  animation: pomoFocusPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes pomoFocusPulse {
+  0% {
+    text-shadow: 0 0 0 transparent;
+  }
+  100% {
+    text-shadow: 0 0 16px rgba(var(--accent-rgb, 120, 120, 200), 0.28);
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+.controls .pill {
+  flex: none;
+  min-width: 110px;
+  height: 30px;
+  padding: 4px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.controls .pill span { display: inline !important; }
+.controls .pill.on { background: var(--phase) !important; color: #ffffff !important; }
+.controls .mini {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  opacity: 0.7;
+  transform: none;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: opacity var(--t) var(--ease), background var(--t) var(--ease);
+}
+.plate:hover .controls .mini, .pomo[data-status='paused'] .controls .mini { opacity: 1; }
+
+/* ---------- the side panel ---------- */
+
+.side-panel { display: none; min-width: 0; flex-direction: column; justify-content: center; gap: 10px; }
+
+.modes {
+  display: flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: var(--tile);
+}
+.mode {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 4px;
+  border-radius: 999px;
+  font-size: calc(10.5px * var(--fs));
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+.mode:hover { background: var(--tile-hover); color: var(--ink); }
+.mode.on { background: var(--tile-active); color: var(--ink); font-weight: 600; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 9px;
+  border-radius: 12px;
+  background: var(--tile);
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring);
+}
+.stat:hover { background: var(--tile-hover); transform: translateY(-1px); }
+.stat b { font-size: calc(17px * var(--fs)); font-weight: 400; color: var(--ink); text-align: start; }
+.stat span { font-size: calc(9.5px * var(--fs)); color: var(--ink-3); }
+
+.next { font-size: calc(10px * var(--fs)); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- medium: timer beside modes and stats ---------- */
+
+@container tile (min-width: 280px) {
+  .pomo { grid-template-columns: minmax(0, 0.52fr) minmax(0, 0.48fr); }
+  .side-panel { display: flex; }
+  .top { padding-inline-end: 0; }
+  .plate:not(:hover) .pomo .controls .mini { width: calc(26px * var(--fs)); margin: 0; }
+  .controls .mini { opacity: 1; transform: none; }
+  /* The floating buttons sit over the side panel's top edge in this size. */
+  .side-panel { padding-top: 16px; }
+}
+
+/* ---------- large: timer on top ---------- */
+
+@container tile (min-width: 280px) and (min-height: 260px) {
+  .pomo { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .remaining { text-align: center; transform-origin: center; }
+  .side-panel { padding-top: 0; }
+}
+
+/* ---------- Smart Downscaling & Responsive Miniaturization ---------- */
+
+@container tile (max-width: 220px) or (max-height: 200px) {
+  .pomo {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .top {
+    padding-inline-end: 0;
+  }
+  .remaining {
+    font-size: calc(clamp(24px, 28cqi, 48px) * var(--fs));
+    text-align: center;
+  }
+  .controls {
+    justify-content: center;
+  }
+  .controls .pill {
+    height: 26px;
+    font-size: 11px;
+    padding: 0 10px;
+    max-width: 140px;
+  }
+}
+
+/* Ultra-Compact HUD Dial Mode */
+@container tile (max-width: 155px) and (max-height: 155px) {
+  .pomo {
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+  .top {
+    width: 100%;
+    justify-content: center;
+    gap: 4px;
+    padding-inline-end: 0;
+  }
+  .tile-label {
+    display: none;
+  }
+  .clock-area {
+    align-items: center;
+    width: 100%;
+  }
+  .remaining {
+    text-align: center;
+    font-size: clamp(22px, 32cqi, 36px);
+    letter-spacing: -0.04em;
+    transform: none !important;
+  }
+  .bar {
+    width: 82%;
+    height: 2.5px;
+    margin: 0 auto;
+  }
+  .controls {
+    justify-content: center;
+    width: 100%;
+  }
+  .controls .pill {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 0;
+    min-width: 30px;
+    flex: none;
+  }
+  .controls .pill span[data-i18n] {
+    display: none;
+  }
+  .controls .pill svg {
+    width: 12px;
+    height: 12px;
+  }
+  .controls .mini {
+    display: none !important;
+  }
+}
+
+:root[data-compact="ultra"] .pomo {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+:root[data-compact="ultra"] .top {
+  width: 100%;
+  justify-content: center;
+  gap: 4px;
+  padding-inline-end: 0;
+}
+:root[data-compact="ultra"] .tile-label {
+  display: none;
+}
+:root[data-compact="ultra"] .clock-area {
+  align-items: center;
+  width: 100%;
+}
+:root[data-compact="ultra"] .remaining {
+  text-align: center;
+  font-size: clamp(22px, 32cqi, 36px);
+  letter-spacing: -0.04em;
+  transform: none !important;
+}
+:root[data-compact="ultra"] .bar {
+  width: 82%;
+  height: 2.5px;
+  margin: 0 auto;
+}
+:root[data-compact="ultra"] .controls {
+  justify-content: center;
+  width: 100%;
+}
+:root[data-compact="ultra"] .controls .pill {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 0;
+  min-width: 30px;
+  flex: none;
+}
+:root[data-compact="ultra"] .controls .pill span[data-i18n] {
+  display: none;
+}
+:root[data-compact="ultra"] .controls .pill svg {
+  width: 12px;
+  height: 12px;
+}
+:root[data-compact="ultra"] .controls .mini {
+  display: none !important;
+}
+
+/* ---------- finished ---------- */
+
+@keyframes pop { 0% { transform: scale(1); } 30% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes flash { 0% { opacity: 0; } 25% { opacity: 0.9; } 100% { opacity: 0; } }
+.plate.celebrate .remaining { animation: pop 700ms var(--ease-spring); }
+.plate.celebrate .sheen { animation: flash 1.4s var(--ease-out); --mx: 50%; --my: 45%; }
+
+/* ---------- back: settings ---------- */
+
+.back-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.back-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 7px; padding-inline-end: 2px; }
+.back-body > * { flex: none; }
+.f-row small { color: var(--ink-3); font-size: 0.9em; }
+.f-row > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.back-body .btn { align-self: flex-start; padding: 6px 12px; margin-top: 2px; }
+
+.f-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: calc(10.5px * var(--fs));
+  color: var(--ink-2);
+  min-height: 24px;
+}
+.f-row > span { flex: 1; min-width: 0; }
+.f-wide { flex-direction: column; align-items: stretch; gap: 4px; }
+.field.small { padding: 6px 9px; border-radius: 9px; font-size: calc(11px * var(--fs)); }
+
+.stepper { display: flex; align-items: center; gap: 2px; flex: none; }
+.stepper.bounce { animation: nudge 260ms var(--ease); }
+@keyframes nudge { 30% { transform: translateX(-3px); } 70% { transform: translateX(3px); } }
+.step {
+  width: 21px; height: 21px;
+  display: grid; place-items: center;
+  border-radius: 7px;
+  background: var(--tile);
+  color: var(--ink-2);
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring);
+}
+.step svg { width: 10px; height: 10px; }
+.step:hover { background: var(--tile-active); color: var(--ink); }
+.step:active { transform: scale(0.88); }
+.step-val { min-width: 26px; text-align: center; font-size: calc(12px * var(--fs)); color: var(--ink); font-weight: 400; }
+
+/* Switch and slider, matching the settings window */
+.switch {
+  flex: none;
+  width: 34px; height: 20px;
+  border-radius: 999px;
+  background: var(--tile-active);
+  position: relative;
+  transition: background var(--t) var(--ease);
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  inset-inline-start: 3px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform var(--t) var(--ease-spring), background var(--t) var(--ease);
+}
+.switch[aria-checked='true'] { background: var(--accent); }
+.switch[aria-checked='true']::after { transform: translateX(calc(-14px * var(--dir))); background: var(--ink-on-accent); }
+
+input[type='range'] {
+  direction: ltr;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--tile-active);
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--ink);
+}
+
+/* ── Lined Notebook Theme for Pomodoro ── */
+:root[data-theme='notebook'] .remaining,
+body.theme-notebook .remaining {
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  font-weight: 800;
+  color: #1a1e24 !important;
+}
+
+:root[data-theme='notebook'] .step-val,
+body.theme-notebook .step-val {
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  font-weight: 700;
+  color: #1a1e24 !important;
+}
+
+:root[data-theme='notebook'] .bar,
+body.theme-notebook .bar {
+  background: rgba(60, 68, 78, 0.15) !important;
+  border: 1px dashed rgba(60, 68, 78, 0.45) !important;
+  height: 5px !important;
+  border-radius: 4px !important;
+}
+
+:root[data-theme='notebook'] .bar-fill,
+body.theme-notebook .bar-fill {
+  background: #d93829 !important;
+  box-shadow: none !important;
+  border-radius: 3px !important;
+}
+
+:root[data-theme='notebook'] .dot,
+body.theme-notebook .dot {
+  border: 1.2px solid #3c424a !important;
+  background: #ffffff !important;
+}
+
+:root[data-theme='notebook'] .dot.done,
+body.theme-notebook .dot.done {
+  background: #d93829 !important;
+  border-color: #d93829 !important;
+}
+
+:root[data-theme='notebook'] .pill,
+body.theme-notebook .pill,
+:root[data-theme='notebook'] .step,
+body.theme-notebook .step,
+:root[data-theme='notebook'] .mode,
+body.theme-notebook .mode {
+  border: 1.5px solid #3c424a !important;
+  border-radius: 6px !important;
+  box-shadow: 1.5px 2px 0 rgba(40, 45, 55, 0.2) !important;
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  font-weight: 700;
+}
+
+:root[data-theme='notebook'] .pill.on,
+body.theme-notebook .pill.on,
+:root[data-theme='notebook'] .mode.active,
+body.theme-notebook .mode.active {
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  border-color: #1e3a8a !important;
+}
+
+:root[data-theme='notebook'] .modes,
+body.theme-notebook .modes {
+  background: rgba(60, 68, 78, 0.08) !important;
+  border: 1.5px solid #3c424a !important;
+  border-radius: 8px !important;
+}
+
+/* ==========================================================================
+   الشفافية القصوى 100% (Pure Transparency Mode - Floating Pomodoro Timer)
+   ========================================================================== */
+
+.plate[data-transparency='max'],
+:root[data-pomodoro-transparency='max'] .plate {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+.plate[data-transparency='max']::before,
+.plate[data-transparency='max']::after {
+  display: none !important;
+  opacity: 0 !important;
+  content: none !important;
+}
+
+/* Subtle hover outline for moving/resizing safely */
+.plate[data-transparency='max']:hover {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Crisp floating digits and typography */
+.plate[data-transparency='max'] .remaining {
+  color: var(--custom-font-color, #000000) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+.plate[data-transparency='max'] #label,
+.plate[data-transparency='max'] .tile-label {
+  color: var(--custom-font-color, #000000) !important;
+  text-shadow: none !important;
+  font-weight: 700;
+}
+
+/* Progress bar & dots floating aesthetics */
+.plate[data-transparency='max'] .bar {
+  background: rgba(0, 0, 0, 0.12) !important;
+}
+
+.plate[data-transparency='max'] .bar-fill {
+  background: var(--phase, #e11d48) !important;
+}
+
+.plate[data-transparency='max'] .dot {
+  background: rgba(0, 0, 0, 0.15) !important;
+}
+
+.plate[data-transparency='max'] .dot.done,
+.plate[data-transparency='max'] .dot.live {
+  background: var(--phase, #e11d48) !important;
+}
+
+/* Frosted glass controls and pill buttons */
+.plate[data-transparency='max'] .controls .pill {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.10) !important;
+  color: #000000 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.plate[data-transparency='max'] .controls .pill.on {
+  background: var(--phase, #e11d48) !important;
+  color: #ffffff !important;
+}
+
+.plate[data-transparency='max'] .controls .mini {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #000000 !important;
+}
+
+.plate[data-transparency='max'] .tile-actions .icon-btn {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  color: #000000 !important;
+}
+
+#transparencyBtn.active {
+  color: var(--accent, #38bdf8) !important;
+  background: var(--tile-active) !important;
+}
+
+/* Side panel floating modes & stats */
+.plate[data-transparency='max'] .modes {
+  background: rgba(255, 255, 255, 0.50) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.plate[data-transparency='max'] .mode {
+  color: #000000 !important;
+}
+
+.plate[data-transparency='max'] .mode.on {
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+}
+
+.plate[data-transparency='max'] .stat {
+  background: rgba(255, 255, 255, 0.50) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.plate[data-transparency='max'] .stat b {
+  color: #000000 !important;
+}
+
+.plate[data-transparency='max'] .stat span {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+.plate[data-transparency='max'] .next {
+  color: rgba(0, 0, 0, 0.70) !important;
+}
+
+/* Flip Back Settings Plate - Pure High-Legibility Frosted Panel */
+.plate[data-transparency='max'] .side.back {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-radius: inherit !important;
+  border: 1px solid rgba(0, 0, 0, 0.10) !important;
+  color: #000000 !important;
+}
+
+.plate[data-transparency='max'] .side.back span,
+.plate[data-transparency='max'] .side.back small {
+  color: #000000 !important;
+}
+

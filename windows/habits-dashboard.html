@@ -1,0 +1,2182 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="habits.dashboardTitle" data-kind="window" data-page="habits-dashboard">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>لوحة تحليلات العادات والبوليت جورنال</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/habits-dashboard.css">
+</head>
+
+<body>
+  <div class="dash-window plate window-plate" id="dashWindowPlate" data-drag>
+    <!-- Top Header Bar -->
+    <header class="dash-header" data-drag>
+      <div class="dash-header-left">
+        <div class="dash-logo" title="لوحة تحليلات العادات والبوليت جورنال">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+            <path d="M6 6h10M6 10h10M6 14h6" />
+          </svg>
+        </div>
+        <div class="dash-header-title-group">
+          <h1 class="dash-title" data-i18n="habits.dashTitle">لوحة تحليلات العادات والبوليت جورنال</h1>
+          <div class="dash-subtitle" data-i18n="habits.dashSubtitle">الذكاء الإحصائي ومصفوفة الإنجاز الشهري</div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="dash-header-actions" data-nodrag>
+        <!-- Theme Selector (Configured via Settings window) -->
+        <div class="dash-theme-picker-wrap" style="display: none !important;" hidden>
+          <span class="theme-picker-icon">🎨</span>
+          <select class="dash-theme-select" id="dashThemeSelect" title="نمط ومظهر الواجهة (Theme)">
+            <option value="match" data-i18n="habits.themeMatch">مطابق للنظام (App Theme)</option>
+            <option value="dark-modern">🌙 داكن عصري (Modern Dark)</option>
+            <option value="oled">⚫ شاشة سوداء (Pure OLED)</option>
+            <option value="minimal-light">💡 أبيض ناصع (Minimal Light)</option>
+            <option value="emerald">🌿 الغابة الزمردية (Royal Emerald)</option>
+            <option value="ocean">🌊 أزرق محيطي (Ocean Cyan)</option>
+            <option value="amber">🍂 كهرمان دافئ (Warm Amber)</option>
+            <option value="dotgrid">🎯 كراسة منقطة (Dot Grid)</option>
+            <option value="graphpaper">📐 ورق مربعات (Graph Paper)</option>
+            <option value="sketch">✏️ كروكي رسم (Pencil Sketch)</option>
+            <option value="notebook">📝 كراسة مسطرة (Lined Notebook)</option>
+            <option value="craft">📜 ورق كرافت (Vintage Craft)</option>
+          </select>
+        </div>
+
+        <button class="dash-action-btn subtle" id="btnHeaderSettings" title="إعدادات العادات / Habits Settings">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+        <button class="dash-action-btn subtle" id="btnHeaderLang" title="تغيير اللغة / Switch Language">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20" />
+          </svg> <span id="headerLangLabel">EN</span>
+        </button>
+        <button class="dash-action-btn primary" id="btnHeaderNewHabit" title="إضافة عادة جديدة">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <span data-i18n="habits.newHabit">عادة جديدة</span>
+        </button>
+        <button class="icon-btn danger dash-close-btn" id="btnDashClose" title="إغلاق" data-i18n-title="common.hide">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="dash-nav-tabs" data-nodrag>
+      <div class="dash-tab-indicator" id="dashTabIndicator"></div>
+      <button class="dash-tab active" data-tab="grid">
+        <span class="tab-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="14" width="7" height="7" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+          </svg>
+        </span>
+        <span data-i18n="habits.tabGrid">مصفوفة البوليت جورنال</span>
+      </button>
+      <button class="dash-tab" data-tab="sleep-mood">
+        <span class="tab-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </span>
+        <span data-i18n="habits.tabSleepMood">مختبر النوم والمزاج</span>
+      </button>
+      <button class="dash-tab" data-tab="kpis">
+        <span class="tab-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18" />
+            <path d="m19 9-5 5-4-4-3 3" />
+          </svg>
+        </span>
+        <span data-i18n="habits.tabKpis">محرك الـ KPIs والترابط</span>
+      </button>
+      <button class="dash-tab" data-tab="manager">
+        <span class="tab-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </span>
+        <span data-i18n="habits.tabManager">إدارة وبناء العادات</span>
+      </button>
+      <button class="dash-tab" data-tab="atlas" id="tabAtlas">
+        <span class="tab-icon">🗺️</span>
+        <span data-i18n="habits.tabAtlas">أطلس العوالم الحيّة (The Living Atlas)</span>
+      </button>
+      <button class="dash-tab" data-tab="gamification">
+        <span class="tab-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+          </svg>
+        </span>
+        <span data-i18n="habits.tabGamification">تحديات السلاسل والأوسمة (Streaks)</span>
+      </button>
+      <button class="dash-tab" data-tab="backup">
+        <span class="tab-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+        </span>
+        <span data-i18n="habits.tabBackup">النسخ الاحتياطي والتقارير</span>
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="dash-main scroll">
+      <!-- Top Executive HUD Summary Strip -->
+      <section class="dash-quick-hud" id="dashQuickHud">
+        <div class="hud-chip">
+          <div class="hud-chip-icon-box cyan">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="6" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+          </div>
+          <div class="hud-chip-info">
+            <span class="hud-chip-label" data-i18n="habits.todayProgress">إنجاز اليوم</span>
+            <div class="hud-chip-val-row">
+              <span class="hud-chip-val" id="hudTodayVal">0 / 0</span>
+              <span class="hud-chip-sub" id="hudTodayPct">0%</span>
+            </div>
+            <div class="hud-chip-progress-bar">
+              <div class="hud-chip-progress-fill" id="hudTodayBar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-chip">
+          <div class="hud-chip-icon-box emerald">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+            </svg>
+          </div>
+          <div class="hud-chip-info">
+            <span class="hud-chip-label" data-i18n="habits.bestStreak">أعلى سلسلة نشطة</span>
+            <div class="hud-chip-val-row">
+              <span class="hud-chip-val" id="hudStreakVal">0 يوم</span>
+            </div>
+            <span class="hud-chip-subtext" id="hudStreakHabit">—</span>
+          </div>
+        </div>
+
+        <div class="hud-chip">
+          <div class="hud-chip-icon-box purple">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 3h12l4 6-10 12L2 9l4-6z" />
+              <path d="M11 3 8 9l4 12 4-12-3-6" />
+              <path d="M2 9h20" />
+            </svg>
+          </div>
+          <div class="hud-chip-info">
+            <span class="hud-chip-label" data-i18n="habits.monthConsistency">انضباط الشهر الحالي</span>
+            <div class="hud-chip-val-row">
+              <span class="hud-chip-val" id="hudConsistencyVal">0%</span>
+            </div>
+            <span class="hud-chip-subtext" id="hudConsistencySub">معدل الإنجاز العام</span>
+          </div>
+        </div>
+
+        <div class="hud-chip">
+          <div class="hud-chip-icon-box amber">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+          </div>
+          <div class="hud-chip-info">
+            <span class="hud-chip-label" data-i18n="habits.activeHabitsCount">العادات الفعالة</span>
+            <div class="hud-chip-val-row">
+              <span class="hud-chip-val" id="hudActiveCount">0</span>
+            </div>
+            <span class="hud-chip-subtext" id="hudActiveSub">عادات قيد المتابعة</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. BULLET JOURNAL MATRIX TAB -->
+      <section class="dash-pane active" id="pane-grid">
+        <div class="matrix-card">
+          <!-- View Modes & Action Switcher Bar -->
+          <div class="matrix-view-bar">
+            <div class="matrix-view-switcher" id="matrixViewSwitcher" role="radiogroup">
+              <button type="button" class="view-switch-btn active" data-view="weekly" id="viewModeWeekly">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <circle cx="12" cy="12" r="5" />
+                  <circle cx="12" cy="12" r="1.5" />
+                </svg> <span data-i18n="habits.viewWeekly">أسبوعي مركز</span>
+              </button>
+              <button type="button" class="view-switch-btn" data-view="compact" id="viewModeCompact">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg> <span data-i18n="habits.viewCompact">شهري مدمج</span>
+              </button>
+              <button type="button" class="view-switch-btn" data-view="cards" id="viewModeCards">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M7 7h10M7 12h10M7 17h6" />
+                </svg> <span data-i18n="habits.viewCards">بطاقات اليوم</span>
+              </button>
+              <button type="button" class="view-switch-btn" data-view="table" id="viewModeTable">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
+                </svg> <span data-i18n="habits.viewTable">جدول كامل</span>
+              </button>
+            </div>
+
+            <!-- Routine Filter & Search -->
+            <div class="matrix-controls-group">
+              <div class="matrix-search-wrap">
+                <input type="text" class="dash-input-search" id="matrixSearchInput" placeholder="بحث في العادات..."
+                  data-i18n-ph="habits.searchPh">
+              </div>
+              <div class="matrix-filter">
+                <select class="dash-select" id="matrixRoutineFilter">
+                  <option value="all" data-i18n="habits.allRoutines">كل الفترات (All Routines)</option>
+                  <option value="morning" data-i18n="habits.routineMorning">☀️ الصباح</option>
+                  <option value="afternoon" data-i18n="habits.routineAfternoon">🌤️ بعد الظهر</option>
+                  <option value="evening" data-i18n="habits.routineEvening">🌙 المساء</option>
+                  <option value="anytime" data-i18n="habits.routineAnytime">⚡ أي وقت</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly Navigation Bar (Visible in weekly view mode) -->
+          <div class="weekly-nav-bar" id="weeklyNavBar">
+            <button type="button" class="week-nav-btn" id="btnPrevWeek" title="الأسبوع السابق">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              <span data-i18n="habits.prevWeek">السابق</span>
+            </button>
+            <div class="week-title-badge" id="weekTitleBadge">الأسبوع الحالي</div>
+            <button type="button" class="week-nav-btn" id="btnNextWeek" title="الأسبوع التالي">
+              <span data-i18n="habits.nextWeek">التالي</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Monthly Navigation Bar (Visible in monthly view modes) -->
+          <div class="monthly-nav-bar" id="monthlyNavBar" style="display: none;">
+            <button type="button" class="week-nav-btn" id="btnPrevMonth" title="الشهر السابق"
+              data-i18n-title="habits.prevMonth">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              <span data-i18n="habits.prevMonth">السابق</span>
+            </button>
+            <div class="week-title-badge" id="monthTitleDisplay">—</div>
+            <div style="display: inline-flex; align-items: center; gap: 8px;">
+              <button type="button" class="week-nav-btn" id="btnNextMonth" title="الشهر التالي"
+                data-i18n-title="habits.nextMonth">
+                <span data-i18n="habits.nextMonth">التالي</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+              <button type="button" class="btn-today" id="btnTodayMonth" data-i18n="habits.today">اليوم</button>
+            </div>
+          </div>
+
+          <!-- Secondary Toolbar: Legend -->
+          <div class="matrix-toolbar">
+            <div class="matrix-legend">
+              <span class="legend-item"><span class="legend-dot done">✓</span> <span
+                  data-i18n="habits.legendDone">مكتملة</span></span>
+              <span class="legend-item"><span class="legend-dot skip">⏸</span> <span data-i18n="habits.legendSkip">تخطي
+                  (إجازة/عذر)</span></span>
+              <span class="legend-item"><span class="legend-dot partial">½</span> <span
+                  data-i18n="habits.legendPartial">جزئية</span></span>
+              <span class="legend-item"><span class="legend-dot empty"></span> <span data-i18n="habits.legendEmpty">غير
+                  منجزة</span></span>
+            </div>
+          </div>
+
+          <!-- 1. Weekly Focus Grid View Container -->
+          <div class="weekly-view-wrap" id="weeklyViewWrap">
+            <div class="weekly-grid-table" id="weeklyGridContainer">
+              <!-- Dynamically populated in JS -->
+            </div>
+          </div>
+
+          <!-- 2. Compact Month View Container -->
+          <div class="compact-view-wrap" id="compactViewWrap" style="display: none;">
+            <div class="compact-grid-table" id="compactGridContainer">
+              <!-- Dynamically populated in JS -->
+            </div>
+          </div>
+
+          <!-- 3. Today's Action Cards Container -->
+          <div class="cards-view-wrap" id="cardsViewWrap" style="display: none;">
+            <div class="habit-cards-grid" id="cardsGridContainer">
+              <!-- Dynamically populated in JS -->
+            </div>
+          </div>
+
+          <!-- 4. The Scrollable Monthly Grid Table (Classic Table View) -->
+          <div class="bujo-grid-wrap scroll" id="bujoGridWrap" style="display: none;">
+            <table class="bujo-table" id="bujoTable">
+              <!-- Rendered dynamically -->
+            </table>
+          </div>
+        </div>
+
+        <!-- 90-Day GitHub-Style Activity Contribution Heatmap (HabitFlow) Collapsible Section -->
+        <div class="dash-accordion-item" id="heatmapSectionAccordion">
+          <button type="button" class="dash-accordion-btn" id="btnToggleHeatmap">
+            <div class="acc-btn-title">
+              <span class="heatmap-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+                  style="color: #10b981; vertical-align: middle;">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+              </span>
+              <span data-i18n="habits.heatmapTitle">خريطة النشاط والاستمرارية (Activity Heatmap - 90 Days)</span>
+            </div>
+            <span class="acc-arrow" id="heatmapAccArrow">▾</span>
+          </button>
+          <div class="heatmap-card">
+            <div class="heatmap-header">
+              <div class="heatmap-title-group">
+                <span class="heatmap-icon">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+                    style="color: #10b981; vertical-align: middle;">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 class="heatmap-title" data-i18n="habits.heatmapTitle">خريطة النشاط والاستمرارية (Activity Heatmap
+                    - 90 Days)</h3>
+                  <div class="heatmap-sub" data-i18n="habits.heatmapSub">مصفوفة إنجاز العادات عبر آخر 90 يوماً مثل نشاط
+                    GitHub</div>
+                </div>
+              </div>
+              <div class="heatmap-controls-row">
+                <select class="dash-select" id="heatmapHabitFilter">
+                  <option value="all">🌐 كل العادات (مؤشر الإنجاز الإجمالي)</option>
+                </select>
+                <div class="heatmap-legend">
+                  <span class="hm-legend-lbl" data-i18n="habits.heatmapLess">أقل</span>
+                  <span class="hm-cell lvl-0" title="0%"></span>
+                  <span class="hm-cell lvl-1" title="1-25%"></span>
+                  <span class="hm-cell lvl-2" title="26-50%"></span>
+                  <span class="hm-cell lvl-3" title="51-75%"></span>
+                  <span class="hm-cell lvl-4" title="76-100%"></span>
+                  <span class="hm-legend-lbl" data-i18n="habits.heatmapMore">أكثر</span>
+                </div>
+              </div>
+            </div>
+            <div class="heatmap-grid-scroll scroll">
+              <div class="heatmap-grid" id="heatmapGrid">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Reflection Micro-Note Box (OpenHabitTracker) -->
+        <div class="reflection-card" id="reflectionCard">
+          <div class="reflection-header">
+            <div class="reflection-title-group">
+              <span class="reflection-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+              </span>
+              <h4 class="reflection-title" data-i18n="habits.dailyReflection">خاطرة وتأمل اليوم (Daily Reflection)</h4>
+            </div>
+            <span class="reflection-date-tag" id="reflectionDateTag">—</span>
+          </div>
+          <div class="reflection-body">
+            <textarea class="reflection-textarea" id="reflectionTextarea" rows="2"
+              placeholder="اكتب فكرة سريعة أو تأمل عن إنجازك اليوم..."
+              data-i18n-ph="habits.dailyReflectionPh"></textarea>
+            <div class="reflection-actions">
+              <span class="reflection-status" id="reflectionSaveStatus"></span>
+              <button class="dash-action-btn primary" id="btnSaveReflection" data-i18n="habits.saveNote">حفظ
+                الخاطرة</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. SLEEP & MOOD LAB TAB -->
+      <section class="dash-pane" id="pane-sleep-mood">
+        <div class="lab-grid">
+          <!-- Mood & Stress Correlation Chart -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                    <line x1="9" y1="9" x2="9.01" y2="9" />
+                    <line x1="15" y1="9" x2="15.01" y2="9" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartMoodTitle">مخطط المزاج ومستوى التوتر (Mood & Stress
+                    Tracker)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartMoodSub">منحنى تقلبات المزاج متراكب مع مؤشر التوتر
+                    اليومي عبر الشهر</div>
+                </div>
+              </div>
+              <div class="chart-legend-row">
+                <span class="chart-tag mood-tag" data-i18n="habits.legendMoodTag">● المزاج (1-5)</span>
+                <span class="chart-tag stress-tag" data-i18n="habits.legendStressTag">● التوتر (1-10)</span>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartMoodContainer">
+              <!-- SVG chart rendered dynamically with REAL data only -->
+            </div>
+          </div>
+
+          <!-- Sleep Duration & Bedtime Zone Chart -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartSleepTitle">مختبر ساعات النوم ونطاقات الراحة (Sleep
+                    Duration & Zones)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartSleepSub">أعمدة ساعات النوم (الأخضر: 7-9س صحي، الأصفر:
+                    6-7س، الأحمر: أقل من 6س)</div>
+                </div>
+              </div>
+              <div class="chart-legend-row">
+                <span class="chart-tag sleep-good" data-i18n="habits.legendSleepGood">■ نوم مثالي (7-9h)</span>
+                <span class="chart-tag sleep-warn" data-i18n="habits.legendSleepWarn">■ نوم خفيف (6-7h)</span>
+                <span class="chart-tag sleep-bad" data-i18n="habits.legendSleepBad">■ حرمان من النوم (&lt;6h)</span>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartSleepContainer">
+              <!-- SVG chart rendered dynamically with REAL data only -->
+            </div>
+          </div>
+
+          <!-- Screen Time vs Bedtime Delay Correlation -->
+          <div class="chart-box" id="screenChartBox">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                    <line x1="12" y1="18" x2="12.01" y2="18" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartScreenTitle">مقارنة وقت الشاشة وساعات النوم (Screen
+                    Time vs Sleep)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartScreenSub">يوضح الترابط بين السهر على الأجهزة
+                    الإلكترونية ونقص ساعات النوم</div>
+                </div>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartScreenContainer">
+              <!-- SVG chart rendered dynamically with REAL data only -->
+            </div>
+          </div>
+
+          <!-- Quick Day Log Editor inside Lab -->
+          <div class="chart-box lab-quick-editor">
+            <div class="chart-header">
+              <span class="chart-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+              </span>
+              <h3 class="chart-title" data-i18n="habits.quickLogDay">توثيق بيانات يوم محدد</h3>
+            </div>
+            <div class="lab-editor-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.selectDate">التاريخ</label>
+                  <input type="date" class="form-input" id="labEditDate">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.sleepHours">ساعات النوم (س)</label>
+                  <input type="number" step="0.5" min="0" max="24" class="form-input" id="labEditSleepHours"
+                    placeholder="7.5">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.bedtime">وقت النوم</label>
+                  <input type="time" class="form-input" id="labEditBedtime" value="23:30">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.wakeTime">وقت الاستيقاظ</label>
+                  <input type="time" class="form-input" id="labEditWakeTime" value="07:30">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.moodRating">تقييم المزاج (1-5)</label>
+                  <select class="form-input" id="labEditMoodRating">
+                    <option value="5" data-i18n="habits.moodOpt5">😁 5 - رائع ومبتهج (Great)</option>
+                    <option value="4" selected data-i18n="habits.moodOpt4">🙂 4 - جيد ومستقر (Good)</option>
+                    <option value="3" data-i18n="habits.moodOpt3">😐 3 - متوسط (Meh)</option>
+                    <option value="2" data-i18n="habits.moodOpt2">😣 2 - متوتر ومجهد (Stressed)</option>
+                    <option value="1" data-i18n="habits.moodOpt1">😡 1 - سيئ أو محبط (Down)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.stressLevel">مستوى التوتر (1-10)</label>
+                  <input type="number" min="1" max="10" class="form-input" id="labEditStress" placeholder="3">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.screenHours">وقت الشاشة (ساعات)</label>
+                  <input type="number" step="0.5" min="0" max="24" class="form-input" id="labEditScreen"
+                    placeholder="3.5">
+                </div>
+                <div class="form-group form-actions-align">
+                  <button type="button" class="btn-save-lab" id="btnSaveLabDay" data-i18n="habits.saveRecord">حفظ
+                    التوثيق</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. KPIS & CORRELATIONS TAB -->
+      <section class="dash-pane" id="pane-kpis">
+        <div class="kpi-cards-grid">
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-icon">🏆</span>
+              <span class="kpi-label" data-i18n="habits.consistencyScore">مؤشر الانضباط العام</span>
+            </div>
+            <div class="kpi-value" id="kpiConsistencyVal">—</div>
+            <div class="kpi-sub" data-i18n="habits.consistencySub">بناءً على الأيام النشطة المستهدفة</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-icon">🛌</span>
+              <span class="kpi-label" data-i18n="habits.avgSleep">متوسط ساعات النوم</span>
+            </div>
+            <div class="kpi-value" id="kpiAvgSleepVal">—</div>
+            <div class="kpi-sub" id="kpiSleepDiffSub">—</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-icon">🔥</span>
+              <span class="kpi-label" data-i18n="habits.longestStreak">أطول سلسلة استمرار</span>
+            </div>
+            <div class="kpi-value" id="kpiLongestStreakVal">—</div>
+            <div class="kpi-sub" id="kpiStreakHabitTitle">—</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-icon">⚡</span>
+              <span class="kpi-label" data-i18n="habits.bestDay">أفضل أيام الأسبوع</span>
+            </div>
+            <div class="kpi-value" id="kpiBestDayVal">—</div>
+            <div class="kpi-sub" id="kpiBestDayRate">—</div>
+          </div>
+        </div>
+
+        <!-- Pearson Correlation Matrix Cards -->
+        <div class="kpi-section-title">
+          <span>🧠</span> <span data-i18n="habits.correlationsTitle">الترابط الإحصائي ومعامل بيرسون (Pearson Correlation
+            r)</span>
+        </div>
+        <div class="corr-cards-grid">
+          <div class="corr-card">
+            <div class="corr-header">
+              <span class="corr-tag" data-i18n="habits.tagSleepMood">نوم vs مزاج</span>
+              <span class="corr-r-badge" id="corrSleepMoodVal">—</span>
+            </div>
+            <div class="corr-desc" id="corrSleepMoodDesc" data-i18n="habits.corrSleepMoodDesc">
+              يتم قياس مدى تأثير ساعات النوم الإيجابي على استقرار وتقييم المزاج.
+            </div>
+          </div>
+
+          <div class="corr-card">
+            <div class="corr-header">
+              <span class="corr-tag" data-i18n="habits.tagSleepHabits">نوم vs إنجاز العادات</span>
+              <span class="corr-r-badge" id="corrSleepHabitsVal">—</span>
+            </div>
+            <div class="corr-desc" id="corrSleepHabitsDesc" data-i18n="habits.corrSleepHabitsDesc">
+              يتم رصد تأثير النوم الكافي على طاقة إنجاز العادات اليومية في اليوم التالي.
+            </div>
+          </div>
+
+          <div class="corr-card">
+            <div class="corr-header">
+              <span class="corr-tag" data-i18n="habits.tagMoodStress">مزاج vs توتر</span>
+              <span class="corr-r-badge" id="corrMoodStressVal">—</span>
+            </div>
+            <div class="corr-desc" id="corrMoodStressDesc" data-i18n="habits.corrMoodStressDesc">
+              ترابط عكسي طبيعي: انخفاض مستوى التوتر يرتبط مباشرة بتحسن ملحوظ في مؤشرات العافية.
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Behavioral Analytics Charts -->
+        <div class="kpi-section-title" style="margin-top: 24px;">
+          <span>📊</span> <span data-i18n="habits.kpiChartsTitle">المخططات البيانية للسلوك والإنتاجية (Behavioral
+            Analytics Charts)</span>
+        </div>
+        <div class="kpi-charts-two-col">
+          <!-- Chart 1: Routine Adherence Comparison -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">☀️</span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartRoutineTitle">مقارنة الانضباط حسب فترات اليوم (Routine
+                    Adherence)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartRoutineSub">نسب الإنجاز بين الصباح، بعد الظهر، المساء،
+                    وأي وقت</div>
+                </div>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartRoutineAdherence"></div>
+          </div>
+
+          <!-- Chart 2: Day-of-Week Distribution & Drop-offs -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">📅</span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartDayOfWeekTitle">توزيع الإنجاز عبر أيام الأسبوع
+                    (Day-of-Week Drop-offs)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartDayOfWeekSub">رصد أيام التراجع وانخفاض الإنتاجية (من
+                    السبت إلى الجمعة)</div>
+                </div>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartDayOfWeek"></div>
+          </div>
+        </div>
+
+        <div class="kpi-charts-two-col" style="margin-top: 16px;">
+          <!-- Chart 3: Sleep vs Completion Correlation Curve -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">🛌</span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartSleepCompletionTitle">منحنى تأثير النوم على إنجاز
+                    العادات (Sleep vs Completion)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartSleepCompletionSub">العلاقة المباشرة بين ساعات النوم
+                    ونسبة إنجاز المهام في اليوم التالي</div>
+                </div>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartSleepCompletionCorr"></div>
+          </div>
+
+          <!-- Chart 4: Mood Impact on Productivity -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <span class="chart-icon">😊</span>
+                <div>
+                  <h3 class="chart-title" data-i18n="habits.chartMoodProdTitle">تأثير الحالة المزاجية على الإنتاجية
+                    (Mood vs Productivity)</h3>
+                  <div class="chart-sub" data-i18n="habits.chartMoodProdSub">معدل الإنجاز في أيام المزاج المرتفع مقارنة
+                    بأيام التوتر والإرهاق</div>
+                </div>
+              </div>
+            </div>
+            <div class="svg-chart-container" id="chartMoodProductivity"></div>
+          </div>
+        </div>
+
+        <!-- Habit Strength Rankings Table -->
+        <div class="kpi-section-title" style="margin-top: 24px;">
+          <span>⭐</span> <span data-i18n="habits.habitStrengthTitle">مؤشر قوة واستقرار العادات (Habit Strength
+            Index)</span>
+        </div>
+        <div class="strength-table-wrap">
+          <table class="strength-table" id="strengthTable">
+            <thead>
+              <tr>
+                <th data-i18n="habits.colHabit">العادة</th>
+                <th data-i18n="habits.colRoutine">الفترة</th>
+                <th data-i18n="habits.colStrength">مؤشر القوة</th>
+                <th data-i18n="habits.colStreak">السلسلة الحالية</th>
+                <th data-i18n="habits.colLongest">أطول سلسلة</th>
+              </tr>
+            </thead>
+            <tbody id="strengthTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+          <!-- Habit Priority & Urgency Matrix -->
+          <div class="kpi-section-title" style="margin-top: 28px;">
+            <span>🎯</span> <span data-i18n="habits.urgencyMatrixTitle">مصفوفة أولوية واستحقاق العادات (Habit Priority &
+              Urgency)</span>
+          </div>
+          <p class="kpi-section-desc" data-i18n="habits.urgencyMatrixDesc">ترتيب ذكي للعادات وفق موعد استحقاقها وجدولها
+            الزمني لتنظيم اليوم بدون ضغط نفسي.</p>
+          <div class="urgency-grid" id="urgencyHabitsGrid">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Weekly Drop-Off Pattern Detector & Slump Alert -->
+          <div class="kpi-section-title" style="margin-top: 28px;">
+            <span>📊</span> <span data-i18n="habits.weeklyPatternTitle">تحليل الثبات والنمط الأسبوعي (Weekly Consistency
+              Insights)</span>
+          </div>
+          <p class="kpi-section-desc" data-i18n="habits.weeklyPatternDesc">رصد أيام الذروة الإيجابية وفجوات التراجع
+            لمساعدتك على توزيع الجهد وتجنب الركود.</p>
+          <div class="slump-card" id="slumpAlertCard">
+            <div class="slump-icon" id="slumpIcon">📈</div>
+            <div class="slump-info">
+              <h4 class="slump-title" id="slumpTitle">تحليل ثبات الإنجاز عبر أيام الأسبوع</h4>
+              <p class="slump-advice" id="slumpAdviceText">جاري فحص مؤشرات الأيام ورصد فجوات الركود...</p>
+            </div>
+          </div>
+      </section>
+
+      <!-- 4. HABIT BUILDER & MANAGER TAB -->
+      <section class="dash-pane" id="pane-manager">
+        <!-- TOP: Ultra-Fast Hero Quick Add Bar (3-Second Habit Creation) -->
+        <div class="quick-add-hero-card">
+          <div class="quick-add-header">
+            <div class="quick-add-badge">⚡ إضافة فورية في 3 ثوانٍ (Quick Add)</div>
+            <h3 class="quick-add-title">أضف عادة جديدة بأبسط وأسرع طريقة</h3>
+            <p class="quick-add-sub">اكتب اسم العادة وحدد الفترة وسيقوم النظام بتفعيلها فوراً دون أي تعقيد</p>
+          </div>
+          <div class="quick-add-bar-wrap">
+            <div class="quick-emoji-wrap">
+              <button type="button" class="quick-emoji-btn" id="quickHabitIconBtn" title="تغيير الأيقونة">⭐</button>
+              <input type="hidden" id="quickHabitIconVal" value="⭐">
+              <div class="quick-emoji-popover" id="quickEmojiPopover" hidden>
+                <div class="quick-emoji-grid">
+                  <span class="emoji-pick-item">⭐</span>
+                  <span class="emoji-pick-item">📖</span>
+                  <span class="emoji-pick-item">🕌</span>
+                  <span class="emoji-pick-item">🤲</span>
+                  <span class="emoji-pick-item">💧</span>
+                  <span class="emoji-pick-item">🏃‍♂️</span>
+                  <span class="emoji-pick-item">🏋️‍♂️</span>
+                  <span class="emoji-pick-item">😴</span>
+                  <span class="emoji-pick-item">📚</span>
+                  <span class="emoji-pick-item">💻</span>
+                  <span class="emoji-pick-item">🥗</span>
+                  <span class="emoji-pick-item">✍️</span>
+                  <span class="emoji-pick-item">🧘‍♂️</span>
+                  <span class="emoji-pick-item">🎯</span>
+                  <span class="emoji-pick-item">💊</span>
+                  <span class="emoji-pick-item">📵</span>
+                  <span class="emoji-pick-item">🛑</span>
+                </div>
+              </div>
+            </div>
+            <div class="quick-input-wrap">
+              <input type="text" class="quick-habit-input" id="quickHabitInputTitle"
+                placeholder="اكتب اسم العادة هنا... (مثال: شرب 2 لتر ماء، قراءة صفحتين، أذكار الصباح)"
+                autocomplete="off">
+            </div>
+            <div class="quick-routine-selector" id="quickRoutineSelector">
+              <button type="button" class="quick-routine-btn active" data-routine="anytime">⚡ أي وقت</button>
+              <button type="button" class="quick-routine-btn" data-routine="morning">🌅 صباحاً</button>
+              <button type="button" class="quick-routine-btn" data-routine="afternoon">🌤️ ظهراً</button>
+              <button type="button" class="quick-routine-btn" data-routine="evening">🌙 مساءً</button>
+            </div>
+            <button type="button" class="btn-quick-add-submit" id="btnQuickAddSubmit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>+ أضف العادة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- BENTO: Curated 1-Click Ready Habit Packs -->
+        <div class="curated-packs-section">
+          <div class="curated-packs-header">
+            <div class="curated-packs-title-group">
+              <h4 class="curated-packs-title">✨ قوالب العادات المقترحة الجاهزة (اضغط للإضافة الفورية المباشرة)</h4>
+              <span class="curated-packs-sub">اختر من أفضل العادات اليومية المجربة، يمكنك إضافتها بضغطة زر واحدة أو
+                تخصيصها</span>
+            </div>
+          </div>
+          <div class="curated-packs-grid" id="curatedHabitPacksGrid">
+            <!-- Dynamically populated with 4 curated category packs -->
+          </div>
+        </div>
+
+        <div class="manager-layout">
+          <!-- Form: Add or Edit Habit -->
+          <div class="manager-form-box">
+            <div class="manager-form-header">
+              <h3 class="manager-form-title" id="managerFormTitle" data-i18n="habits.createNewHabit">إنشاء عادة مخصصة أو
+                تعديلها</h3>
+              <span class="manager-form-hint">نموذج مرن لتخصيص العادات والمؤشرات والأهداف</span>
+            </div>
+            <input type="hidden" id="editHabitId">
+
+            <!-- Quick 1-Click Habit Presets Bar right inside the form -->
+            <div class="dash-presets-box" id="dashPresetsBox">
+              <div class="dash-presets-label" data-i18n="habits.presetsQuickBar">⚡ قوالب سريعة معدة مسبقاً (اضغط لتعبئة
+                النموذج بضغطة واحدة):</div>
+              <div class="dash-presets-chips" id="dashPresetsChips"></div>
+            </div>
+
+            <!-- Live Habit Preview Tile -->
+            <div class="habit-live-preview-box">
+              <div class="preview-badge">✨ معاينة مباشرة لشكل العادة في البطاقات والجدول</div>
+              <div class="preview-tile" id="liveHabitPreviewTile">
+                <div class="preview-tile-icon" id="previewTileIcon">⭐</div>
+                <div class="preview-tile-content">
+                  <div class="preview-tile-title" id="previewTileTitle">اسم العادة</div>
+                  <div class="preview-tile-meta" id="previewTileMeta">أي وقت • إنجاز يومي</div>
+                </div>
+                <div class="preview-tile-status">✓</div>
+              </div>
+            </div>
+
+            <!-- Name and Icon Row -->
+            <div class="form-row-custom-name">
+              <div class="custom-icon-picker-box">
+                <label class="form-label" data-i18n="habits.iconEmoji">الأيقونة</label>
+                <div class="icon-input-wrap">
+                  <input type="text" class="form-input form-icon-input" id="habitInputIcon" value="⭐" maxlength="4">
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label class="form-label" data-i18n="habits.habitName">اسم العادة</label>
+                <input type="text" class="form-input form-title-input" id="habitInputTitle"
+                  placeholder="مثال: قراءة 20 صفحة، ركوب الدراجة..." data-i18n-ph="habits.habitNamePh" required>
+              </div>
+            </div>
+
+            <!-- Optional English Title toggle -->
+            <div class="form-group-optional-en">
+              <button type="button" class="btn-toggle-en-title" id="btnToggleEnTitle">+ إضافة اسم بالإنجليزية (اختياري /
+                Optional English Title)</button>
+              <div class="en-title-box" id="enTitleBox" style="display: none; margin-top: 6px;">
+                <label class="form-label" data-i18n="habits.habitNameEn">اسم العادة بالإنجليزية</label>
+                <input type="text" class="form-input" id="habitInputTitleEn"
+                  placeholder="e.g. Daily Reading, Cycling..." data-i18n-ph="habits.habitNameEnPh">
+              </div>
+            </div>
+
+            <!-- Visual Routine Pill Selector -->
+            <div class="form-group">
+              <label class="form-label" data-i18n="habits.routineLabel">فترة الروتين اليومي</label>
+              <div class="visual-routine-pills" id="visualRoutinePills">
+                <div class="vis-routine-card active" data-val="anytime">
+                  <span class="vis-icon">⚡</span>
+                  <span class="vis-text">أي وقت (Anytime)</span>
+                </div>
+                <div class="vis-routine-card" data-val="morning">
+                  <span class="vis-icon">☀️</span>
+                  <span class="vis-text">الصباح (Morning)</span>
+                </div>
+                <div class="vis-routine-card" data-val="afternoon">
+                  <span class="vis-icon">🌤️</span>
+                  <span class="vis-text">بعد الظهر (Afternoon)</span>
+                </div>
+                <div class="vis-routine-card" data-val="evening">
+                  <span class="vis-icon">🌙</span>
+                  <span class="vis-text">المساء (Evening)</span>
+                </div>
+              </div>
+              <!-- Hidden or synced select for backwards-compatibility -->
+              <select class="form-input" id="habitInputRoutine" style="display: none;">
+                <option value="anytime" selected data-i18n="habits.routineAnytime">⚡ أي وقت خلال اليوم (Anytime)
+                </option>
+                <option value="morning" data-i18n="habits.routineMorning">☀️ الصباح (Morning)</option>
+                <option value="afternoon" data-i18n="habits.routineAfternoon">🌤️ بعد الظهر (Afternoon)</option>
+                <option value="evening" data-i18n="habits.routineEvening">🌙 المساء (Evening)</option>
+              </select>
+            </div>
+
+            <!-- Visual Input Type Pills -->
+            <div class="form-group">
+              <label class="form-label" data-i18n="habits.inputTypeLabel">نوع قياس العادة وإنجازها</label>
+              <div class="visual-type-pills" id="visualTypePills">
+                <div class="vis-type-card active" data-type="boolean">
+                  <span class="vis-icon">✓</span>
+                  <span class="vis-text">علامة صح (نعم / لا)</span>
+                </div>
+                <div class="vis-type-card" data-type="number">
+                  <span class="vis-icon">🔢</span>
+                  <span class="vis-text">كمية وعداد أرقام</span>
+                </div>
+                <div class="vis-type-card" data-type="duration">
+                  <span class="vis-icon">⏱️</span>
+                  <span class="vis-text">مدة زمنية (دقائق)</span>
+                </div>
+                <div class="vis-type-card" data-type="percentage">
+                  <span class="vis-icon">📊</span>
+                  <span class="vis-text">نسبة مئوية %</span>
+                </div>
+              </div>
+              <!-- Hidden or synced select for backwards-compatibility -->
+              <select class="form-input" id="habitInputType" style="display: none;">
+                <option value="boolean" selected data-i18n="habits.typeBoolean">✓ علامة صح أو خطأ (Yes / No)</option>
+                <option value="number" data-i18n="habits.typeNumber">🔢 عدد كمي مستهدف (Numeric Target)</option>
+                <option value="duration" data-i18n="habits.typeDuration">⏱️ مدة زمنية (Duration / Minutes)</option>
+                <option value="percentage" data-i18n="habits.typePercentage">📊 نسبة مئوية (Percentage 0-100%)</option>
+                <option value="rating" data-i18n="habits.typeRating">⭐ تقييم تدريجي (Rating)</option>
+              </select>
+            </div>
+
+            <!-- Target Value Group (HIDDEN BY DEFAULT for boolean checkmark habits!) -->
+            <div class="form-group" id="targetValueGroup" style="display: none;">
+              <label class="form-label" id="targetValueLabel" data-i18n="habits.targetValLabel">الهدف المستهدف
+                والوحدة</label>
+              <div class="target-value-inputs">
+                <input type="number" class="form-input target-val-num" id="habitInputTarget" value="1" min="1">
+                <input type="text" class="form-input target-val-unit" id="habitInputUnit"
+                  placeholder="الوحدة: صفحة، كوب، دقيقة..." data-i18n-ph="habits.unitPh">
+              </div>
+            </div>
+
+            <!-- Collapsible Advanced Settings Accordion -->
+            <div class="advanced-settings-accordion">
+              <button type="button" class="btn-toggle-adv-accordion" id="btnToggleAdvOptions">
+                <span class="adv-label">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                      d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                  </svg>
+                  <span>خيارات متقدمة وتكاملات إضافية (تذكير، تقويم، مهام، خطوات فرعية)</span>
+                </span>
+                <span class="adv-chevron" id="advAccordionChevron">▾</span>
+              </button>
+
+              <div class="adv-accordion-content" id="advOptionsContent" style="display: none;">
+                <!-- Category & Direction -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="habits.categoryLabel">التصنيف (Category)</label>
+                    <select class="form-input" id="habitInputCategory">
+                      <option value="general" selected data-i18n="habits.catGeneral">⭐ عام (General)</option>
+                      <option value="health" data-i18n="habits.catHealth">🏃‍♂️ صحة ولياقة (Health)</option>
+                      <option value="productivity" data-i18n="habits.catProductivity">🎯 إنتاجية وعمل (Productivity)
+                      </option>
+                      <option value="learning" data-i18n="habits.catLearning">📖 تعلم ومعرفة (Learning)</option>
+                      <option value="spirit" data-i18n="habits.catSpirit">✨ روحانيات وتأمل (Spirit)</option>
+                      <option value="mind" data-i18n="habits.catMind">🧘‍♂️ عقل وتطوير ذات (Mind)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="habits.directionLabel">مسار العادة (Direction)</label>
+                    <select class="form-input" id="habitInputDirection">
+                      <option value="positive" selected data-i18n="habits.dirPositive">🚀 عادة إيجابية لبنائها</option>
+                      <option value="negative" data-i18n="habits.dirNegative">🛑 كاسر عادة للإقلاع عنها</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Difficulty & Color -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="habits.difficultyLabel">مستوى الصعوبة (Difficulty)</label>
+                    <select class="form-input" id="habitInputDifficulty">
+                      <option value="trivial" data-i18n="habits.diffTrivial">بسيطة (+10 XP)</option>
+                      <option value="easy" selected data-i18n="habits.diffEasy">سهلة (+20 XP)</option>
+                      <option value="medium" data-i18n="habits.diffMedium">متوسطة (+40 XP)</option>
+                      <option value="hard" data-i18n="habits.diffHard">صعبة (+80 XP)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="habits.colorPicker">لون التمييز (Color)</label>
+                    <input type="color" class="form-color-picker" id="habitInputColor" value="#3b82f6">
+                  </div>
+                </div>
+
+                <!-- Flexible Frequency Selector -->
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.frequencyLabel">التكرار والأيام المرنة (Flexible
+                    Frequency)</label>
+                  <select class="form-input" id="habitInputFreqType">
+                    <option value="daily" selected data-i18n="habits.freqDaily">يومي (كل يوم)</option>
+                    <option value="weekly_target" data-i18n="habits.freqWeekly">عدد مرات أسبوعياً (مثلاً 3 مرات في
+                      الأسبوع)</option>
+                    <option value="specific_days" data-i18n="habits.freqSpecific">أيام محددة من الأسبوع (Specific Days)
+                    </option>
+                    <option value="every_x_days" data-i18n="habits.freqInterval">كل عدد أيام محدد (Every X Days)
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="freqIntervalGroup" hidden>
+                  <label class="form-label" data-i18n="habits.intervalDays">كل كم يوم؟</label>
+                  <input type="number" min="2" max="30" class="form-input" id="habitInputIntervalDays" value="2">
+                </div>
+
+                <div class="form-group" id="freqWeeklyGroup" hidden>
+                  <label class="form-label" data-i18n="habits.targetDaysPerWeek">كم يوماً في الأسبوع؟</label>
+                  <input type="number" min="1" max="7" class="form-input" id="habitInputTargetDays" value="3">
+                </div>
+
+                <div class="form-group" id="freqSpecificDaysGroup" hidden>
+                  <label class="form-label" data-i18n="habits.selectDays">اختر الأيام النشطة</label>
+                  <div class="days-checkbox-grid">
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="6"> <span
+                        data-i18n="habits.daySat">السبت</span></label>
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="0"> <span
+                        data-i18n="habits.daySun">الأحد</span></label>
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="1"> <span
+                        data-i18n="habits.dayMon">الاثنين</span></label>
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="2"> <span
+                        data-i18n="habits.dayTue">الثلاثاء</span></label>
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="3"> <span
+                        data-i18n="habits.dayWed">الأربعاء</span></label>
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="4"> <span
+                        data-i18n="habits.dayThu">الخميس</span></label>
+                    <label class="day-check-label"><input type="checkbox" name="freqDay" value="5"> <span
+                        data-i18n="habits.dayFri">الجمعة</span></label>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 4px;">
+                  <label class="custom-chk-label"
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="habitInputEnablePomodoro">
+                    <span data-i18n="habits.enablePomodoroLabel">⏱️ تفعيل مؤقت بومودورو للتركيز لهذه العادة</span>
+                  </label>
+                  <span class="hint" style="font-size: 11px; color: var(--dash-text-sub); margin-top: 2px;"
+                    data-i18n="habits.enablePomodoroHint">يظهر زر التركيز السريع (⏱️) مباشرة على بطاقة العادة لبدء جلسة
+                    عمل مركّزة فوراً.</span>
+                </div>
+
+                <div class="form-group" style="margin-top: 10px;">
+                  <label class="custom-chk-label"
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="habitInputSyncToTodo">
+                    <span data-i18n="habits.syncToTodoLabel">📋 إضافة مهمة تلقائية في قائمة المهام (To-Do List)</span>
+                  </label>
+                  <div id="habitInputTodoPrioGroup"
+                    style="display: none; margin-top: 8px; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--dash-border); border-radius: 8px;">
+                    <label class="form-label" style="font-size: 11px; margin-bottom: 6px;"
+                      data-i18n="habits.todoPriorityLabel">أولوية المهمة في To-Do:</label>
+                    <select class="form-input" id="habitInputTodoPriority">
+                      <option value="0" data-i18n="habits.prioNormal">عادية 🟢 (Normal)</option>
+                      <option value="1" selected data-i18n="habits.prioImportant">مهمة ⚡ 🟠 (Important)</option>
+                      <option value="2" data-i18n="habits.prioUrgent">عاجلة 🚨 🔴 (Urgent)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Calendar Integration -->
+                <div class="form-group" style="margin-top: 10px;">
+                  <label class="custom-chk-label"
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="habitInputSyncToCalendar">
+                    <span data-i18n="habits.syncToCalendarLabel">📅 ربط بالتقويم وإنشاء حدث يومي تلقائي (Calendar
+                      Event)</span>
+                  </label>
+                  <div id="habitInputCalGroup"
+                    style="display: none; margin-top: 8px; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--dash-border); border-radius: 8px;">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label" style="font-size: 11px;" data-i18n="habits.calTimeLabel">توقيت الحدث
+                          في التقويم:</label>
+                        <input type="time" class="form-input" id="habitInputCalTime" value="08:00">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size: 11px;" data-i18n="habits.calDurationLabel">مدة
+                          الحدث:</label>
+                        <select class="form-input" id="habitInputCalDuration">
+                          <option value="15">15 دقيقة</option>
+                          <option value="30" selected>30 دقيقة</option>
+                          <option value="45">45 دقيقة</option>
+                          <option value="60">60 دقيقة</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Habit Cue & Trigger -->
+                <div class="form-group" style="margin-top: 10px;">
+                  <label class="form-label" data-i18n="habits.triggerCueLabel">المحفز أو الإشارة البديهية (Trigger /
+                    Cue)</label>
+                  <input type="text" class="form-input" id="habitInputTriggerCue"
+                    placeholder="مثال: بعد صلاة الفجر، عند فتح الحاسوب..." data-i18n-ph="habits.triggerCuePh">
+                </div>
+
+                <!-- Reminder & Streak Target -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="habits.reminderTimeLabel">وقت التذكير اليومي (Time)</label>
+                    <input type="time" class="form-input" id="habitInputReminderTime" value="08:00">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="habits.targetGoalStreakLabel">الهدف المستهدف للسلسلة
+                      (أيام)</label>
+                    <input type="number" min="7" max="365" class="form-input" id="habitInputTargetStreak" value="30">
+                  </div>
+                </div>
+
+                <!-- Dedicated WhatsApp Reminder for this Habit -->
+                <div class="form-group habit-wa-reminder-box"
+                  style="margin-top: 10px; background: rgba(37, 211, 102, 0.08); border: 1px solid rgba(37, 211, 102, 0.25); border-radius: 8px; padding: 10px 12px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="custom-chk-label"
+                      style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; margin-bottom: 0;">
+                      <input type="checkbox" id="habitInputWaReminderEnabled">
+                      <span>💬 تفعيل تذكير WhatsApp خاص بهذه العادة</span>
+                    </label>
+                    <span class="badge-mini"
+                      style="font-size: 10px; background: rgba(37, 211, 102, 0.2); color: #128c7e; padding: 2px 6px; border-radius: 4px; font-weight: 600;">تنبيه
+                      ذكي</span>
+                  </div>
+                  <div id="habitWaReminderFields" style="margin-top: 10px; display: none;">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label" style="font-size: 11px;">⏰ موعد إرسال التذكير:</label>
+                        <input type="time" class="form-input" id="habitInputWaReminderTime" value="08:00">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size: 11px;">📱 وجهة الإرسال (رقم أو مجموعة):</label>
+                        <select class="form-input" id="habitInputWaRecipientMode">
+                          <option value="default">🌐 الرقم / الجروب الافتراضي للعادات</option>
+                          <option value="custom">✏️ رقم أو مجموعة مخصصة لهذه العادة</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group" id="habitWaCustomRecipientWrap" style="margin-top: 6px; display: none;">
+                      <input type="text" class="form-input" id="habitInputWaRecipientCustom"
+                        placeholder="رقم هاتف (e.g. 201012345678) أو معرف جروب (e.g. 120363@g.us)">
+                      <small style="opacity: 0.7; font-size: 10px;">يمكنك كتابة رقم هاتف مباشر أو معرّف مجموعة واتساب
+                        (Group JID)</small>
+                    </div>
+                    <div class="form-group" style="margin-top: 6px;">
+                      <label class="form-label" style="font-size: 11px;">✍️ رسالة تحفيزية مخصصة (اختياري):</label>
+                      <input type="text" class="form-input" id="habitInputWaCustomPrompt"
+                        placeholder="مثال: جهّز كتابك وكوب القهوة وابدأ قراءة 15 دقيقة!">
+                    </div>
+                    <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                      <button type="button" class="dash-action-btn subtle small" id="btnTestHabitWaReminder"
+                        style="color: #128c7e; border-color: rgba(37, 211, 102, 0.4);">
+                        <span>🚀</span> <span>إرسال تذكير تجريبي الآن</span>
+                      </button>
+                      <span id="habitWaTestStatus" class="hint inline" style="font-size: 11px;"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- OpenHabitTracker: Atomic Checklist Sub-Items (Micro-Steps / Habit Stacking) -->
+                <div class="form-group" style="margin-top: 10px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label class="form-label" style="margin-bottom: 0;">📋 خطوات العادة الصغرى (Micro-Steps /
+                      Sub-Items)</label>
+                    <button type="button" class="dash-action-btn subtle small" id="btnAddSubItemInput">+ إضافة
+                      خطوة</button>
+                  </div>
+                  <div class="subitems-builder-list" id="subItemsBuilderList"
+                    style="display: flex; flex-direction: column; gap: 6px;">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- OpenHabitTracker Live Stopwatch Mode -->
+                <div class="form-group" style="margin-top: 6px;">
+                  <label class="custom-chk-label"
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="habitInputTimerMode">
+                    <span>⏱️ تفعيل وضع المؤقت الحي وساعة الإيقاف (Live Stopwatch Mode)</span>
+                  </label>
+                </div>
+
+                <!-- Habitica Attribute Affinity -->
+                <div class="form-group" style="margin-top: 8px;">
+                  <label class="form-label">السمة الأساسية المرتبطة (RPG Core Attribute Affinity)</label>
+                  <select class="form-input" id="habitInputAttributeAffinity">
+                    <option value="" selected>تلقائي حسب التصنيف</option>
+                    <option value="str">💪 القوة (STR - صحة وبدنية)</option>
+                    <option value="int">🧠 الذكاء (INT - علم وتطوير)</option>
+                    <option value="con">🛡️ البنية (CON - روتين ونوم)</option>
+                    <option value="per">👁️ الفطنة (PER - روحانيات وإنتاجية)</option>
+                  </select>
+                </div>
+
+                <!-- Notes & Motivation -->
+                <div class="form-group">
+                  <label class="form-label" data-i18n="habits.notesLabel">الدافع والغاية وملاحظات تحفيزية</label>
+                  <textarea class="form-input" id="habitInputNotes" rows="2"
+                    placeholder="لماذا أريد الالتزام بهذه العادة؟ وكيف ستغير حياتي؟"
+                    data-i18n-ph="habits.notesPh"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="manager-form-actions">
+              <button type="button" class="btn-primary-large" id="btnSaveHabitForm" data-i18n="habits.saveHabitBtn">حفظ
+                العادة</button>
+              <button type="button" class="btn-cancel-large" id="btnCancelHabitEdit"
+                data-i18n="habits.cancel">إلغاء</button>
+            </div>
+          </div>
+
+          <!-- Existing Habits Table -->
+          <div class="manager-list-box">
+            <h3 class="manager-form-title" data-i18n="habits.existingHabits">العادات الحالية المفعلة</h3>
+            <div class="habits-manager-items scroll" id="habitsManagerItems">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. BACKUP & WHATSAPP HUB TAB -->
+      <section class="dash-pane" id="pane-backup">
+        <div class="hub-grid">
+          <!-- Backup & Restore Box -->
+          <div class="hub-card">
+            <div class="hub-header">
+              <span class="hub-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="hub-title" data-i18n="habits.backupTitle">النسخ الاحتياطي وتصدير البيانات</h3>
+                <div class="hub-sub" data-i18n="habits.backupSub">تصدير كامل بيانات عاداتك وسجلات النوم والمزاج لضمان
+                  عدم فقدانها</div>
+              </div>
+            </div>
+
+            <div class="backup-actions-row">
+              <button class="btn-backup" id="btnExportJson">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg> <span data-i18n="habits.exportJson">تصدير نسخة JSON شاملة</span>
+              </button>
+              <button class="btn-backup" id="btnExportCsv">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg> <span data-i18n="habits.exportCsv">تصدير جدول بيانات CSV (Excel)</span>
+              </button>
+            </div>
+
+            <div class="import-section">
+              <h4 class="import-title" data-i18n="habits.importTitle">استرجاع أو دمج نسخة سابقة:</h4>
+              <div class="import-controls">
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                <button class="btn-import" id="btnPickImportFile">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg> <span data-i18n="habits.pickBackupFile">اختيار ملف النسخة الاحتياطية</span>
+                </button>
+                <span class="import-file-name" id="importFileNameDisplay" data-i18n="habits.noFileSelected">لم يتم
+                  اختيار ملف</span>
+              </div>
+              <div class="import-actions" id="importActionsRow" hidden>
+                <button class="btn-confirm-import" id="btnConfirmImport" data-i18n="habits.applyRestore">تطبيق الاسترجاع
+                  والدمج</button>
+              </div>
+              <div class="backup-status-msg" id="backupStatusMsg"></div>
+            </div>
+          </div>
+
+          <!-- WhatsApp Executive Report Box -->
+          <div class="hub-card">
+            <div class="hub-header">
+              <span class="hub-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12.01" y2="18" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="hub-title" data-i18n="habits.waHubTitle">تقارير الواتساب التنفيذية الذكية</h3>
+                <div class="hub-sub" data-i18n="habits.waHubSub">توليد رسالة إنفوجرافيك بأشرطة يونيكود مع إمكانية
+                  المعاينة والإرسال المباشر</div>
+              </div>
+            </div>
+
+            <div class="wa-report-selector">
+              <div class="wa-type-toggle">
+                <button class="wa-type-btn active" id="btnWaMonthlyType" data-i18n="habits.monthlyReport">تقرير
+                  شهري</button>
+                <button class="wa-type-btn" id="btnWaWeeklyType" data-i18n="habits.weeklyReport">تقرير أسبوعي</button>
+              </div>
+              <div class="wa-lang-toggle" style="display: flex; gap: 4px; margin-inline: 8px;">
+                <button class="wa-type-btn active" id="btnWaLangAr">العربية</button>
+                <button class="wa-type-btn" id="btnWaLangEn">English</button>
+              </div>
+              <button class="btn-wa-send" id="btnSendWaNow">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m22 2-7 20-4-9-9-4Z" />
+                  <path d="M22 2 11 13" />
+                </svg> <span data-i18n="habits.sendWaNow">إرسال التقرير للواتساب الآن</span>
+              </button>
+            </div>
+
+            <!-- WhatsApp Message Preview Screen -->
+            <div class="wa-phone-preview">
+              <div class="wa-chat-bubble">
+                <pre class="wa-preview-text" id="waPreviewText">
+جاري توليد التقرير...
+                </pre>
+              </div>
+            </div>
+            <div class="wa-dispatch-status" id="waDispatchStatus"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. STREAK CHALLENGE & GAMIFIED MILESTONES TAB (Image 2 Duolingo / Fitness Style) -->
+      <section class="dash-pane" id="pane-gamification">
+        <!-- Duolingo/Fitness Inspired Streak Challenge & Milestones Hub (Image 2 Reference) -->
+        <div class="streak-hub-card">
+          <div class="streak-hub-hero">
+            <div class="streak-flame-mascot-box">
+              <div class="streak-flame-glow-effect"></div>
+              <svg class="streak-flame-svg" viewBox="0 0 48 48" width="84" height="84">
+                <defs>
+                  <linearGradient id="streakFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#ea580c" />
+                    <stop offset="45%" stop-color="#f97316" />
+                    <stop offset="85%" stop-color="#fbbf24" />
+                    <stop offset="100%" stop-color="#fef08a" />
+                  </linearGradient>
+                  <linearGradient id="streakInnerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="100%" stop-color="#fffbeb" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M24 4C24 4 14 16 14 27C14 34.732 20.268 41 28 41C35.732 41 42 34.732 42 27C42 14 28 7 28 7C28 7 30 16 25 19C20 22 24 4 24 4Z"
+                  fill="url(#streakFlameGrad)" />
+                <path
+                  d="M26 23C26 23 21 29 21 33C21 36.314 23.686 39 27 39C30.314 39 33 36.314 33 33C33 27 26 23 26 23Z"
+                  fill="url(#streakInnerFlame)" />
+                <!-- Mascot eyes -->
+                <circle cx="25" cy="31" r="1.5" fill="#ea580c" />
+                <circle cx="29" cy="31" r="1.5" fill="#ea580c" />
+              </svg>
+            </div>
+            <div class="streak-hero-count" id="streakHeroCount">0</div>
+            <div class="streak-hero-title" data-i18n="habits.daysStreak">أيام متتالية من الإنجاز! (days streak!)</div>
+
+            <!-- Weekly 7-Day Flame Strip -->
+            <div class="streak-week-flames-row" id="streakWeekFlamesRow">
+              <!-- Dynamically populated with 7 days and flames -->
+            </div>
+          </div>
+
+          <!-- Streak 14-Day Challenge Box -->
+          <div class="streak-challenge-container">
+            <div class="streak-challenge-top">
+              <span class="streak-challenge-lbl" data-i18n="habits.streakChallengeTitle">تحدي السلاسل (Streak
+                challenge)</span>
+              <span class="streak-challenge-fraction" id="streakChallengeFraction">اليوم 0 من 14</span>
+            </div>
+            <div class="streak-challenge-name-row">
+              <span class="challenge-name-tag" id="streakChallengeName">14 days challenge</span>
+              <span class="challenge-status-pct" id="streakChallengePercent">0%</span>
+            </div>
+            <div class="streak-challenge-track">
+              <div class="streak-challenge-fill" id="streakChallengeFill" style="width: 0%"></div>
+              <div class="challenge-pin" style="left: 21%;" title="3 Days"><span class="pin-badge">3</span></div>
+              <div class="challenge-pin" style="left: 50%;" title="7 Days"><span class="pin-badge">7</span></div>
+              <div class="challenge-pin" style="left: 100%;" title="14 Days"><span class="pin-badge">14</span></div>
+            </div>
+
+            <!-- Streak Started & Record Stats -->
+            <div class="streak-two-stats">
+              <div class="streak-stat-card">
+                <div class="streak-stat-val" id="streakStartedDate">—</div>
+                <div class="streak-stat-lbl" data-i18n="habits.streakStarted">تاريخ بدء السلسلة (Streak started)</div>
+              </div>
+              <div class="streak-stat-card">
+                <div class="streak-stat-val" id="streakRecordDays">0 يوم</div>
+                <div class="streak-stat-lbl" data-i18n="habits.streakRecord">أعلى رقم قياسي (Streak record)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Streak Milestones Trophies -->
+          <div class="streak-milestones-box">
+            <h4 class="streak-milestones-title" data-i18n="habits.streakMilestones">محطات الأوسمة المتتالية (Streak
+              milestones)</h4>
+            <div class="streak-milestones-cards" id="streakMilestonesCards">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Character / RPG Level Card -->
+        <div class="hero-rpg-card">
+          <div class="hero-rpg-main">
+            <div class="hero-avatar-box">
+              <span class="hero-avatar-icon" id="heroAvatarIcon">🛡️</span>
+              <span class="hero-lvl-badge" id="heroLevelBadge">Lv.1</span>
+            </div>
+            <div class="hero-meta">
+              <div class="hero-title-row">
+                <h2 class="hero-rank-title" id="heroRankTitle">مبتدئ واعد</h2>
+                <span class="hero-subtitle" data-i18n="habits.heroLevelTitle">مستوى الانضباط والبطولة</span>
+              </div>
+              <div class="hero-xp-bar-wrap">
+                <div class="hero-xp-bar-fill" id="heroXpBarFill" style="width: 0%"></div>
+              </div>
+              <div class="hero-xp-numbers">
+                <span id="heroXpCurrent">0 XP</span>
+                <span id="heroXpPct">0%</span>
+                <span id="heroXpTarget">100 XP للمستوى التالي</span>
+              </div>
+              <div class="hero-hp-bar-wrap" title="شريط الصحة (HP) - يتأثر عند الانتكاس في كاسر العادات">
+                <div class="hero-hp-bar-fill" id="heroHpBarFill" style="width: 100%"></div>
+              </div>
+              <!-- Mana Bar (MP) -->
+              <div class="hero-mana-bar-wrap" title="شريط الطاقة السحرية (Mana - MP) - لإطلاق مهارات البطل">
+                <div class="hero-mana-bar-fill" id="heroManaBarFill" style="width: 100%"></div>
+              </div>
+              <div class="hero-resource-labels">
+                <span class="hp-txt"><span style="color:#ef4444">❤️ HP:</span> <span
+                    id="heroHpText">100/100</span></span>
+                <span class="mp-txt"><span style="color:#3b82f6">🔮 MP:</span> <span
+                    id="heroManaText">50/70</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-stats-row">
+            <div class="hero-stat-card coins-card">
+              <span class="hero-stat-icon">🪙</span>
+              <div class="hero-stat-info">
+                <span class="hero-stat-val" id="heroCoinsVal">0</span>
+                <span class="hero-stat-lbl" data-i18n="habits.coins">العملات الذهبية</span>
+              </div>
+            </div>
+            <div class="hero-stat-card vitality-card">
+              <span class="hero-stat-icon">❤️</span>
+              <div class="hero-stat-info">
+                <span class="hero-stat-val" id="heroHpVal">100 / 100</span>
+                <span class="hero-stat-lbl">نقاط الصحة (HP)</span>
+              </div>
+            </div>
+            <div class="hero-stat-card shields-card">
+              <span class="hero-stat-icon">🛡️</span>
+              <div class="hero-stat-info">
+                <span class="hero-stat-val" id="heroShieldsVal">0</span>
+                <span class="hero-stat-lbl">دروع التجميد</span>
+              </div>
+            </div>
+            <!-- Habitica 4 Core Stats Grid -->
+            <div class="hero-stat-card attributes-stat-card" id="heroAttributesCard">
+              <div class="attr-chip" title="القوة (STR): ترفع ضرر ضربات الزعيم (+صحة وبدنية)">
+                <span class="attr-chip-icon">💪</span> <span class="attr-chip-name">STR</span> <span
+                  class="attr-chip-val" id="statStrVal">10.0</span>
+              </div>
+              <div class="attr-chip" title="الذكاء (INT): يزيد سعة وتجدد طاقة المانا MP (+علم وتطوير)">
+                <span class="attr-chip-icon">🧠</span> <span class="attr-chip-name">INT</span> <span
+                  class="attr-chip-val" id="statIntVal">10.0</span>
+              </div>
+              <div class="attr-chip" title="البنية (CON): تحمي الصحة ضد كواسر العادات (+نوم وروتين)">
+                <span class="attr-chip-icon">🛡️</span> <span class="attr-chip-name">CON</span> <span
+                  class="attr-chip-val" id="statConVal">10.0</span>
+              </div>
+              <div class="attr-chip" title="الفطنة (PER): تزيد الغنائم ومعدل إسقاط الذهب (+روحانيات وإنتاجية)">
+                <span class="attr-chip-icon">👁️</span> <span class="attr-chip-name">PER</span> <span
+                  class="attr-chip-val" id="statPerVal">10.0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Classes Selector (Habitica Style) -->
+          <div class="hero-classes-grid" id="heroClassesGrid">
+            <button class="hero-class-btn active" data-class="warrior" type="button">
+              <span class="class-icon">⚔️</span>
+              <span class="class-name">محارب (Warrior)</span>
+              <span class="class-perk">+25% XP للعادات الصعبة</span>
+            </button>
+            <button class="hero-class-btn" data-class="healer" type="button">
+              <span class="class-icon">🔮</span>
+              <span class="class-name">معالج (Healer)</span>
+              <span class="class-perk">+50% كفاءة استشفاء الصحة</span>
+            </button>
+            <button class="hero-class-btn" data-class="rogue" type="button">
+              <span class="class-icon">🏹</span>
+              <span class="class-name">محتال (Rogue)</span>
+              <span class="class-perk">+30% ذهب ومكافآت</span>
+            </button>
+            <button class="hero-class-btn" data-class="mage" type="button">
+              <span class="class-icon">🧙‍♂️</span>
+              <span class="class-name">ساحر (Mage)</span>
+              <span class="class-perk">+35% سرعة رفع المستويات</span>
+            </button>
+            <button class="hero-class-btn" data-class="scholar" type="button">
+              <span class="class-icon">📚</span>
+              <span class="class-name">عالم (Scholar)</span>
+              <span class="class-perk">+25% XP للعادات الذهنية والقراءة</span>
+            </button>
+            <button class="hero-class-btn" data-class="monk" type="button">
+              <span class="class-icon">🧘</span>
+              <span class="class-name">ناسك (Monk)</span>
+              <span class="class-perk">+50% حماية HP ضد كواسر العادات</span>
+            </button>
+            <button class="hero-class-btn" data-class="architect" type="button">
+              <span class="class-icon">🏛️</span>
+              <span class="class-name">معماري (Architect)</span>
+              <span class="class-perk">+40% مضاعفة لمكافآت السلاسل</span>
+            </button>
+          </div>
+
+          <!-- Hero Active Skill Box (Habitica Mana Skills) -->
+          <div class="hero-active-skill-box" id="heroActiveSkillBox">
+            <div class="skill-info-row">
+              <span class="skill-icon" id="skillIcon">⚔️</span>
+              <div class="skill-details">
+                <h4 class="skill-name" id="skillName">ضربة الشجاعة (Valorous Strike)</h4>
+                <p class="skill-desc" id="skillDesc">توجيه ضربة حاسمة بـ 50 ضرر لزعيم الأسبوع</p>
+              </div>
+              <div class="skill-action-col">
+                <span class="skill-cost-badge" id="skillCostBadge">🔮 20 MP</span>
+                <button type="button" class="dash-action-btn primary" id="btnCastHeroSkill">⚡ إطلاق المهارة</button>
+              </div>
+            </div>
+            <div class="skill-status-msg" id="skillStatusMsg"></div>
+          </div>
+        </div>
+
+        <!-- Weekly Boss Battle Arena (Habitica Style) -->
+        <div class="boss-battle-card" id="bossBattleBox" style="margin-top: 16px; margin-bottom: 16px;">
+          <div class="boss-header">
+            <div class="boss-title-group">
+              <span class="boss-avatar-icon" id="bossAvatarIcon">🐲</span>
+              <div>
+                <div class="boss-badge-row">
+                  <span class="boss-type-tag">زعيم الأسبوع (Weekly Boss)</span>
+                  <span class="boss-bounty-tag" id="bossBountyTag">🏆 غنيمة: +100🪙 & +200 XP</span>
+                </div>
+                <h3 class="boss-name" id="bossName">تنين الخمول والتسويف</h3>
+              </div>
+            </div>
+            <div class="boss-actions">
+              <button type="button" class="dash-action-btn danger small" id="btnQuickAttackBoss">⚔️ هجوم خاطف (-15
+                HP)</button>
+            </div>
+          </div>
+          <div class="boss-hp-section">
+            <div class="boss-hp-bar-wrap">
+              <div class="boss-hp-bar-fill" id="bossHpBarFill" style="width: 100%"></div>
+            </div>
+            <div class="boss-hp-numbers">
+              <span id="bossHpText">300 / 300 HP</span>
+              <span id="bossHpPct">100%</span>
+            </div>
+          </div>
+          <div class="boss-combat-log-wrap">
+            <h5 class="combat-log-title">سجل المعركة المباشر (Combat Log):</h5>
+            <div class="boss-combat-log scroll" id="bossCombatLog">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Quests & Boss Battles (Habitica Style) -->
+        <div class="quests-card" id="questsBox" style="margin-top: 16px; margin-bottom: 16px;">
+          <div class="quests-header">
+            <div class="quests-title-group">
+              <span class="quests-icon">📜</span>
+              <div>
+                <h3 class="quests-title" data-i18n="habits.questsTitle">المهام اليومية وتحديات الزعيم (Daily Quests &
+                  Boss Bounties)</h3>
+                <div class="quests-sub" data-i18n="habits.questsSub">أنجز أهدافك اليومية لتحصيل جوائز إضافية من الذهب
+                  والخبرة ودروع السلاسل</div>
+              </div>
+            </div>
+          </div>
+          <div class="quests-grid" id="questsGrid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <div class="gamification-two-col">
+          <!-- Self-Reward Shop -->
+          <div class="shop-box">
+            <div class="shop-header">
+              <div class="shop-title-group">
+                <span class="shop-icon">🎁</span>
+                <div>
+                  <h3 class="shop-title" data-i18n="habits.shopTitle">متجر المكافآت الذاتية (Self-Reward Shop)</h3>
+                  <div class="shop-sub" data-i18n="habits.shopSub">استبدل عملاتك الذهبية بمكافآت حقيقية تحفزك على
+                    الالتزام اليومي</div>
+                </div>
+              </div>
+              <button class="dash-action-btn primary" id="btnAddNewReward" data-i18n="habits.addReward">+ إضافة
+                مكافأة</button>
+            </div>
+            <div class="rewards-grid" id="rewardsGrid">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Claimed Rewards History -->
+            <div class="claimed-history-box">
+              <h4 class="claimed-title" data-i18n="habits.claimedHistory">سجل المكافآت المستبدلة</h4>
+              <div class="claimed-list scroll" id="claimedRewardsList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Bad Habit Breaker Resilience Focus -->
+          <div class="breaker-box">
+            <div class="breaker-header">
+              <span class="breaker-icon">🛑</span>
+              <div>
+                <h3 class="breaker-title" data-i18n="habits.badHabitTitle">كاسر العادات ومقاومتها (Habit Breaker)</h3>
+                <div class="breaker-sub" data-i18n="habits.badHabitSub">تتبع العادات التي تريد الإقلاع عنها، كل يوم صمود
+                  يمنحك نقاط مرونة ومكافآت مضاعفة</div>
+              </div>
+            </div>
+            <div class="breakers-list" id="breakersList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. THE LIVING ATLAS (أطلس العوالم الحيّة) TAB -->
+      <section class="dash-pane" id="pane-atlas">
+        <!-- Haven Hero Banner -->
+        <div class="atlas-haven-hero">
+          <div class="atlas-miro-hub">
+            <div class="atlas-miro-avatar-box" id="atlasMiroAvatarBox" title="ميرو: رفيق الدرب من طائر الحبر ونور النجوم"></div>
+            <div class="atlas-miro-bubble-wrap">
+              <div class="atlas-miro-speech" id="atlasMiroSpeech">"أهلاً بك في الملاذ الأول... خطواتك الصادقة تضيء النسيج وتطرد العتمة."</div>
+              <button type="button" class="atlas-miro-interact-btn" id="atlasMiroInteractBtn">✨ استشر ميرو (Ask Miro)</button>
+            </div>
+          </div>
+
+          <div class="atlas-wayfinder-status">
+            <div class="atlas-wf-header">
+              <div class="atlas-wf-rank">
+                <span class="atlas-level-pill" id="atlasWayfinderLevel">Level 1</span>
+                <span class="atlas-title-text" id="atlasWayfinderTitle">غارس الخطوة الأولى</span>
+              </div>
+              <div class="atlas-header-currencies">
+                <div class="atlas-gold-badge" title="ذهب الملاذ المكتسب من إتمام العادات">🪙 <span id="atlasHavenGold">0</span> <span data-i18n="atlas.havenGold">ذهب الملاذ</span></div>
+                <div class="atlas-materials-badges">
+                  <span class="atlas-mat-badge aether" title="أحجار الأثير: لترميم المنشآت والجسور">💎 <span id="atlasAetherCount">0</span></span>
+                  <span class="atlas-mat-badge manuscript" title="قصاصات المخطوطات: لحفظ الخرائط والتوثيق">📜 <span id="atlasManuscriptCount">0</span></span>
+                  <span class="atlas-mat-badge seeds" title="بذور النور: لحديقة السكينة والاستشفاء">🌱 <span id="atlasSeedsCount">0</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- XP Track -->
+            <div class="atlas-xp-wrap">
+              <div class="atlas-xp-bar">
+                <div class="atlas-xp-fill" id="atlasXpFill" style="width: 0%"></div>
+              </div>
+              <div class="atlas-xp-meta">
+                <span>XP: <strong id="atlasXpCurrent">0</strong> / <span id="atlasXpRequired">300</span></span>
+                <span class="atlas-xp-pct" id="atlasXpPct">0%</span>
+              </div>
+            </div>
+
+            <!-- The 4 World Affinities -->
+            <div class="atlas-affinities-row">
+              <div class="affinity-chip vit" title="الحيوية (Vitality)">🌱 <span class="aff-lbl">VIT:</span> <strong id="atlasVitScore">0</strong></div>
+              <div class="affinity-chip wis" title="الحكمة (Wisdom)">📜 <span class="aff-lbl">WIS:</span> <strong id="atlasWisScore">0</strong></div>
+              <div class="affinity-chip ser" title="السكينة (Serenity)">✨ <span class="aff-lbl">SER:</span> <strong id="atlasSerScore">0</strong></div>
+              <div class="affinity-chip dis" title="الانضباط (Discipline)">⚔️ <span class="aff-lbl">DIS:</span> <strong id="atlasDisScore">0</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Atlas Sub-Navigation Bar -->
+        <div class="atlas-subnav-bar">
+          <button type="button" class="atlas-subnav-btn active" id="atlasBtnTabMap" data-atlas-view="map">🗺️ <span>الخريطة والملاذ</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabSkills" data-atlas-view="skills">🧭 <span>أسطرلاب المهارات</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabWorkshop" data-atlas-view="workshop">🛠️ <span>ورشة الترميم</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabTrials" data-atlas-view="trials">⚔️ <span>المحاكمات والعقبات</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜 <span>سجل الأطلس</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق المكافآت</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو والخصوصية</span></button>
+        </div>
+
+        <!-- Foreshadowing Whispers (If Active) -->
+        <div class="atlas-foreshadowing-banner" id="atlasForeshadowingBanner" style="display: none;">
+          <span class="foreshadow-icon">🔮</span>
+          <div class="foreshadow-text" id="atlasForeshadowingText"></div>
+        </div>
+
+        <!-- SUB-VIEW 1: Living Map & Haven Facilities -->
+        <div class="atlas-subview active" id="atlasSubViewMap">
+          <!-- Two Column Content: Parchment Map & Haven Facilities -->
+          <div class="atlas-content-grid">
+            <!-- Left: Living Parchment Interactive Map -->
+            <div class="atlas-card map-card">
+              <div class="atlas-card-head">
+                <div class="atlas-card-title-group">
+                  <span class="atlas-card-icon">🗺️</span>
+                  <div>
+                    <h3 class="atlas-card-title">خريطة النسيج الحيّة (The Living Parchment)</h3>
+                    <div class="atlas-card-sub">معالم الأقاليم تتكشف بنور عاداتك وتثبيتها في الواقع</div>
+                  </div>
+                </div>
+              </div>
+              <div class="atlas-map-canvas-container" id="atlasMapContainer">
+                <div class="atlas-region-node unlocked" id="nodeHaven" data-region="haven">
+                  <div class="node-icon">🏰</div>
+                  <div class="node-title">الملاذ الأول</div>
+                  <div class="node-status">منطقة آمنة (Safe Anchor)</div>
+                </div>
+                <div class="atlas-region-connector haven-woods"></div>
+                <div class="atlas-region-node" id="nodeWoods" data-region="whispering_woods">
+                  <div class="node-icon">🌲</div>
+                  <div class="node-title">غابات الهمس</div>
+                  <div class="node-status">تتطلب رتبة 2 (Level 2)</div>
+                </div>
+                <div class="atlas-region-connector woods-peaks"></div>
+                <div class="atlas-region-node" id="nodePeaks" data-region="ironfrost_peaks">
+                  <div class="node-icon">🏔️</div>
+                  <div class="node-title">قمم الصقيع</div>
+                  <div class="node-status">تتطلب رتبة 4 (Level 4)</div>
+                </div>
+                <div class="atlas-region-connector peaks-spires"></div>
+                <div class="atlas-region-node" id="nodeSpires" data-region="sunken_spires">
+                  <div class="node-icon">🌊</div>
+                  <div class="node-title">الأبراج الغارقة</div>
+                  <div class="node-status">تتطلب رتبة 6 (Level 6)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Haven Facilities Upgrade -->
+            <div class="atlas-card facilities-card">
+              <div class="atlas-card-head">
+                <div class="atlas-card-title-group">
+                  <span class="atlas-card-icon">🏛️</span>
+                  <div>
+                    <h3 class="atlas-card-title">منشآت الملاذ الأول (Haven Facilities)</h3>
+                    <div class="atlas-card-sub">قم بتوسيع الملاذ بالذهب المكتسب من إنجازاتك اليومية</div>
+                  </div>
+                </div>
+              </div>
+              <div class="atlas-facilities-list" id="atlasFacilitiesList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Clue Registry & Narrative Chronicles -->
+          <div class="atlas-card clues-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">📜</span>
+                <div>
+                  <h3 class="atlas-card-title">سجل شظايا الأطلس وشجرة الغموض (Mystery Graph)</h3>
+                  <div class="atlas-card-sub">أسرار انحلال العالم وولادة ميرو تنكشف كلما تقدمت خطواتك الصادقة</div>
+                </div>
+              </div>
+              <span class="badge-mini" id="atlasCluesCount">0 / 6 شظايا</span>
+            </div>
+            <div class="atlas-clues-grid" id="atlasCluesGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 2: Astrolabe Behavioral Skill Tree -->
+        <div class="atlas-subview" id="atlasSubViewSkills" style="display: none;">
+          <div class="atlas-card skills-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">🧭</span>
+                <div>
+                  <h3 class="atlas-card-title">أسطرلاب المهارات السلوكية (The Astrolabe Medallion)</h3>
+                  <div class="atlas-card-sub">كفاءات نفسية وبيئية واقعية غير مدفوعة؛ تُفتح حصراً بالإنجاز الفعلي للعادات</div>
+                </div>
+              </div>
+              <span class="badge-mini" id="atlasSkillsCount">0 / 5 مهارات مفعلة</span>
+            </div>
+            <div class="atlas-skills-branches-bar">
+              <div class="branch-pill perc">👁️ البصيرة واليقظة</div>
+              <div class="branch-pill prep">🛠️ الإعداد والتمهيد</div>
+              <div class="branch-pill resi">🛡️ الصمود والنهوض</div>
+              <div class="branch-pill adap">🌊 التكيف والمرونة</div>
+              <div class="branch-pill main">⚓ الصيانة والاستقرار</div>
+            </div>
+            <div class="atlas-skills-grid" id="atlasSkillsGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 3: Haven Restoration Workshop -->
+        <div class="atlas-subview" id="atlasSubViewWorkshop" style="display: none;">
+          <div class="atlas-card workshop-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">🛠️</span>
+                <div>
+                  <h3 class="atlas-card-title">ورشة ترميم الملاذ والأطلس (Haven Workshop)</h3>
+                  <div class="atlas-card-sub">استثمر خامات الحياة المكتسبة في إعادة إعمار جسور وفوانيس وحدائق النسيج القديم</div>
+                </div>
+              </div>
+              <span class="badge-mini" id="atlasProjectsCount">0 / 4 مشاريع مكتملة</span>
+            </div>
+            <div class="atlas-workshop-grid" id="atlasWorkshopGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 4: Major Trials & Living Obstacles -->
+        <div class="atlas-subview" id="atlasSubViewTrials" style="display: none;">
+          <!-- Major Trials Section (Boss Replacement) -->
+          <div class="atlas-card trials-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">⚔️</span>
+                <div>
+                  <h3 class="atlas-card-title">المحاكمات الكبرى ومشاريع النسيج (Major Trials)</h3>
+                  <div class="atlas-card-sub">بديل مواجهات الخصوم؛ مشاريع ممتدة تُنجز بتراكم الخطوات الصادقة دون أشرطة دم أو ضرر أو هزيمة</div>
+                </div>
+              </div>
+            </div>
+            <div class="atlas-trials-grid" id="atlasTrialsGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Environmental Obstacles & 3-Tier Victory Progression -->
+          <div class="atlas-card obstacles-prog-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">🛡️</span>
+                <div>
+                  <h3 class="atlas-card-title">عراقيل الأقاليم ونموذج الانتصار الثلاثي (3-Tier Obstacles)</h3>
+                  <div class="atlas-card-sub">تفكيك الاحتكاك الواقعي: الانفراج الأول ➔ التثبيت والاستقرار ➔ الإتقان والتحول لأثر خامل في الأرشيف</div>
+                </div>
+              </div>
+            </div>
+            <div class="atlas-obstacles-grid" id="atlasObstaclesGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 5: Deterministic Narrative Chronicles Journal -->
+        <div class="atlas-subview" id="atlasSubViewChronicles" style="display: none;">
+          <div class="atlas-card chronicles-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">📜</span>
+                <div>
+                  <h3 class="atlas-card-title">سجل وقائع الأطلس والرحلة (The Living Chronicles)</h3>
+                  <div class="atlas-card-sub">تاريخ أدبي موثق بأرقام الأحداث دون اختلاق؛ يسجل ارتقاءك وكشوفاتك وانتصاراتك على العراقيل</div>
+                </div>
+              </div>
+            </div>
+            <div class="atlas-chronicles-list" id="atlasChroniclesList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 6: Real-World Rewards Bazaar -->
+        <div class="atlas-subview" id="atlasSubViewBazaar" style="display: none;">
+          <div class="atlas-card bazaar-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">🎁</span>
+                <div>
+                  <h3 class="atlas-card-title">سوق مكافآت الملاذ بالذهب الحي (Haven Bazaar)</h3>
+                  <div class="atlas-card-sub">استبدل ذهب الملاذ المكتسب بمكافآت واقعية حقيقية تسعد بها نفسك وتغذي همتك دون لوم</div>
+                </div>
+              </div>
+              <button type="button" class="dash-action-btn primary" id="atlasOpenRewardModalBtn">➕ إضافة مكافأة جديدة</button>
+            </div>
+            <div class="atlas-bazaar-grid" id="atlasBazaarGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 7: Miro Multi-Modal Alcove & Privacy Sovereignty -->
+        <div class="atlas-subview" id="atlasSubViewMiro" style="display: none;">
+          <div class="atlas-card miro-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">✨</span>
+                <div>
+                  <h3 class="atlas-card-title">مجلس ميرو واستشارات الدرب (Miro's Alcove)</h3>
+                  <div class="atlas-card-sub">جلسات استشارية هادئة تمزج حكمة النسيج بعلم تكوين العادات وتثبيتها دون لوم</div>
+                </div>
+              </div>
+            </div>
+            <div class="miro-consultation-modes">
+              <button type="button" class="miro-mode-btn" data-mode="reflection">
+                <span class="mode-icon">🪞</span>
+                <span class="mode-title">تأمل ويقظة</span>
+                <span class="mode-desc">قراءة سياق يومك</span>
+              </button>
+              <button type="button" class="miro-mode-btn" data-mode="wisdom">
+                <span class="mode-icon">📜</span>
+                <span class="mode-title">حكمة النسيج</span>
+                <span class="mode-desc">بصائر السالكين الأوائل</span>
+              </button>
+              <button type="button" class="miro-mode-btn" data-mode="habit_science">
+                <span class="mode-icon">🔬</span>
+                <span class="mode-title">علم العادات</span>
+                <span class="mode-desc">خفض طاقة التفعيل</span>
+              </button>
+              <button type="button" class="miro-mode-btn" data-mode="calm">
+                <span class="mode-icon">🍃</span>
+                <span class="mode-title">سكينة وسكون</span>
+                <span class="mode-desc">راحة وتطمين النفس</span>
+              </button>
+            </div>
+            <div class="miro-consultation-box" id="atlasMiroConsultationBox">
+              <div class="miro-box-head">
+                <span class="miro-sparkle">✨</span>
+                <span class="miro-box-title" id="atlasMiroConsultationTitle">همسة ميرو الحالية</span>
+              </div>
+              <div class="miro-box-content" id="atlasMiroConsultationContent">"أنا هنا بجوارك دائماً... اختر نوع المشورة التي تبحث عنها، وسنتأمل النسيج سوياً."</div>
+            </div>
+          </div>
+
+          <!-- Miro Context Memory & Privacy Sovereignty Panel -->
+          <div class="atlas-card miro-memory-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">🧠</span>
+                <div>
+                  <h3 class="atlas-card-title">ذاكرة ميرو وسيادة الخصوصية (Privacy & Memory Sovereignty)</h3>
+                  <div class="atlas-card-sub">ذاكرة محلية مشفرة تحفظ فقط ما تصرح به؛ دون أي تقييم نفسي أو استنتاجات سلبية</div>
+                </div>
+              </div>
+            </div>
+            <div class="miro-dimensions-row">
+              <div class="miro-dim-chip">📚 المعرفة: <strong id="miroDimKnowledge">المستوى 1</strong></div>
+              <div class="miro-dim-chip">🤝 الألفة: <strong id="miroDimRelationship">المستوى 1</strong></div>
+              <div class="miro-dim-chip">✨ البيان: <strong id="miroDimExpression">المستوى 1</strong></div>
+            </div>
+            <div class="miro-notes-section">
+              <div class="hd-section-title">
+                <span>📝</span> <span>الملاحظات المصرح بها لميرو (User-Approved Context Notes)</span>
+              </div>
+              <div class="miro-notes-input-row">
+                <input type="text" class="form-input" id="atlasMiroNoteInput" placeholder="أضف ملاحظة يراعيها ميرو (مثال: أفضّل ممارسة القراءة صباحاً)...">
+                <button type="button" class="dash-action-btn primary" id="atlasMiroAddNoteBtn">حفظ الملاحظة</button>
+              </div>
+              <div class="atlas-miro-notes-list" id="atlasMiroNotesList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+            <div class="miro-memory-actions">
+              <button type="button" class="btn btn-subtle" id="atlasMiroResetMemoryBtn" style="color: #ef4444;">🗑️ مسح ذاكرة ميرو والملاحظات (خصوصية تامة)</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add Custom Reward Modal -->
+  <div class="modal-backdrop" id="addRewardModal" hidden>
+    <div class="modal-card modal-compact">
+      <div class="modal-head">
+        <span class="modal-title" data-i18n="habits.addReward">🎁 إضافة مكافأة خاصة جديدة</span>
+        <button class="icon-btn" id="rewardModalCloseBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" data-i18n="habits.habitName">اسم المكافأة</label>
+          <input type="text" class="form-input" id="rewardInputTitle"
+            placeholder="مثال: ساعة ألعاب، وجبة مفضلة، استراحة قهوة..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" data-i18n="habits.rewardCost">التكلفة (عملات ذهبية)</label>
+            <input type="number" min="10" step="10" class="form-input" id="rewardInputCost" value="50">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="habits.iconEmoji">الأيقونة</label>
+            <input type="text" class="form-input" id="rewardInputIcon" value="🎁" maxlength="4"
+              style="text-align: center;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-subtle" id="rewardModalCancelBtn" data-i18n="habits.cancel">إلغاء</button>
+        <button class="dash-action-btn primary" id="rewardModalSaveBtn" data-i18n="habits.saveRecord">حفظ
+          المكافأة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Single Habit Deep-Dive Modal (Loop Habit Tracker Style) -->
+  <div class="modal-backdrop" id="habitDetailModal" hidden>
+    <div class="modal-card habit-detail-card">
+      <div class="modal-head">
+        <div class="hd-head-info">
+          <span class="hd-icon" id="hdIcon">⭐</span>
+          <div>
+            <h3 class="hd-title" id="hdTitle">اسم العادة</h3>
+            <div class="hd-sub" id="hdSub">التصنيف والجدول</div>
+          </div>
+        </div>
+        <button class="icon-btn" id="hdCloseBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="hd-top-stats">
+          <div class="hd-gauge-box">
+            <div class="hd-gauge-ring">
+              <svg viewBox="0 0 80 80" width="70" height="70">
+                <circle class="hd-ring-bg" cx="40" cy="40" r="32"></circle>
+                <circle class="hd-ring-fg" id="hdStrengthRing" cx="40" cy="40" r="32" stroke-dasharray="201.06"
+                  stroke-dashoffset="201.06"></circle>
+              </svg>
+              <span class="hd-gauge-pct" id="hdStrengthPct">0%</span>
+            </div>
+            <div class="hd-gauge-meta">
+              <span class="hd-gauge-lbl" data-i18n="habits.habitStrength">قوة واستقرار العادة</span>
+              <span class="hd-gauge-status" id="hdStrengthStatus">—</span>
+            </div>
+          </div>
+          <div class="hd-records-box">
+            <div class="hd-record-item">
+              <span class="hd-rec-icon">🔥</span>
+              <div>
+                <span class="hd-rec-lbl">السلسلة الحالية</span>
+                <span class="hd-rec-val" id="hdCurrentStreak">0 يوم</span>
+              </div>
+            </div>
+            <div class="hd-record-item">
+              <span class="hd-rec-icon">🏆</span>
+              <div>
+                <span class="hd-rec-lbl">أطول سلسلة قياسية</span>
+                <span class="hd-rec-val" id="hdBestStreak">0 يوم</span>
+              </div>
+            </div>
+            <div class="hd-record-item">
+              <span class="hd-rec-icon">🚨</span>
+              <div>
+                <span class="hd-rec-lbl">مؤشر الاستحقاق (Urgency)</span>
+                <span class="hd-rec-val" id="hdUrgencyVal">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Single Habit 90-Day Mini Matrix -->
+        <div class="hd-section-title">
+          <span>📅</span> <span>سجل الإنجاز خلال آخر 90 يوماً</span>
+        </div>
+        <div class="hd-matrix-wrap scroll">
+          <div class="hd-mini-grid" id="hdMiniGrid"></div>
+        </div>
+
+        <!-- Atomic Sub-Items (Micro-Steps) -->
+        <div class="hd-section-title" id="hdSubItemsTitle" style="display: none;">
+          <span>📋</span> <span>خطوات العادة الصغرى (Micro-Steps)</span>
+        </div>
+        <div class="hd-subitems-list scroll" id="hdSubItemsList" style="display: none;"></div>
+
+        <!-- Notes Log -->
+        <div class="hd-section-title">
+          <span>📝</span> <span>سجل الخواطر والملاحظات</span>
+        </div>
+        <div class="hd-notes-list scroll" id="hdNotesList"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="dash-action-btn subtle" id="hdEditBtn">✏️ تعديل العادة</button>
+        <button type="button" class="dash-action-btn secondary" id="hdExportCsvBtn">📊 تصدير السجل CSV</button>
+        <button type="button" class="dash-action-btn primary" id="hdPomoBtn">⏱️ بدء جلسة بومودورو</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/habits-dashboard.js"></script>
+</body>
+
+</html>

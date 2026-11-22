@@ -1,0 +1,241 @@
+/* Task window */
+
+.title-group { padding: 12px 14px; }
+.title-row { display: flex; align-items: center; gap: 10px; }
+.title-field { flex: 1; font-size: calc(14px * var(--fs)); font-weight: 600; }
+
+.box {
+  width: 22px; height: 22px;
+  flex: none;
+  box-sizing: border-box;
+  padding: 0 !important;
+  margin: 0;
+  border-radius: 7px;
+  border: 1.8px solid var(--ink-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  color: var(--ink-on-accent, #ffffff);
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--t) var(--ease), border-color var(--t) var(--ease), transform var(--t-fast) var(--ease-spring);
+}
+.box svg {
+  display: block;
+  width: 13px; height: 13px;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24; stroke-dashoffset: 24;
+  opacity: 0;
+  pointer-events: none;
+  transition: stroke-dashoffset var(--t) var(--ease-out), opacity var(--t-fast) var(--ease);
+}
+.box:hover { border-color: var(--accent); transform: scale(1.08); }
+.box.on {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--ink-on-accent, #ffffff) !important;
+}
+.box.on svg { stroke-dashoffset: 0; opacity: 1; }
+
+.notes-field {
+  display: block;
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.7;
+  font-size: calc(12.5px * var(--fs));
+  font-family: var(--font-ui);
+}
+
+/* reminders */
+.reminders { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.reminder {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: var(--radius-md);
+  background: var(--tile);
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring);
+  animation: item-in var(--t) var(--ease-out) both;
+}
+.reminder:hover { background: var(--tile-hover); transform: translateX(calc(-2px * var(--dir))); }
+.r-icon { color: var(--accent); display: grid; place-items: center; }
+.r-icon svg { width: 14px; height: 14px; }
+.reminder.fired .r-icon { color: var(--ink-3); }
+.r-text { flex: 1; min-width: 0; }
+.r-when { font-size: calc(12px * var(--fs)); font-weight: 600; }
+.r-status { font-size: calc(10.5px * var(--fs)); color: var(--ink-3); }
+.reminder.fired .r-when { color: var(--ink-2); text-decoration: line-through; text-decoration-color: var(--ink-3); }
+.r-actions { display: flex; align-items: center; gap: 4px; flex: none; }
+
+.quick { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.chip {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--tile);
+  color: var(--ink);
+  font-size: calc(11px * var(--fs));
+  font-weight: 500;
+  text-shadow: none;
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring), color var(--t) var(--ease);
+}
+.chip:hover { background: color-mix(in srgb, var(--accent) 22%, var(--tile)); transform: translateY(-1px); }
+.chip:active { transform: scale(0.95); }
+.chip.small { padding: 3px 8px; font-size: calc(10px * var(--fs)); }
+
+.alarm-check-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.alarm-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: calc(11.5px * var(--fs));
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  user-select: none;
+}
+.alarm-check-label input[type='checkbox'] {
+  accent-color: var(--accent);
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+}
+.alarm-check-label:hover {
+  color: var(--ink);
+}
+
+.chip.alarm-toggle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--tile);
+  color: var(--ink-2);
+  cursor: pointer;
+  border: 1px solid var(--line);
+}
+.chip.alarm-toggle-chip:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+.chip.alarm-toggle-chip.on {
+  background: color-mix(in srgb, #f59e0b 16%, var(--tile)) !important;
+  color: #d97706 !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  font-weight: 600;
+}
+
+.custom-row { margin: 0; }
+.when-field, .date-field { flex: 1.3; min-width: 0; padding: 7px 10px; font-size: calc(12px * var(--fs)); }
+.when-field::-webkit-calendar-picker-indicator, .date-field::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+
+.segmented { display: flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--tile); flex: none; }
+.segmented button {
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: calc(11px * var(--fs));
+  color: var(--ink-2);
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+.segmented button:hover { background: var(--tile-hover); color: var(--ink); }
+.segmented button.on { background: var(--tile-active); color: var(--ink); font-weight: 600; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); }
+.segmented button[data-p='1'].on { color: #B7791F; }
+.segmented button[data-p='2'].on { color: #D2463F; }
+
+#clearDue svg { width: 12px; height: 12px; }
+
+.foot-row { justify-content: flex-end; margin-top: 4px; }
+.danger-btn:hover { background: rgba(224, 86, 79, 0.18); color: #D2463F; }
+
+.hint.warn { color: #D2463F; }
+.gone { padding: 40px 10px; text-align: center; color: var(--ink-3); }
+
+/* ── Classroom Info Card ── */
+.cr-task-card {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(29, 78, 216, 0.08)) !important;
+  border: 1px solid rgba(96, 165, 250, 0.35) !important;
+  padding: 12px 14px;
+}
+.cr-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cr-card-icon {
+  font-size: 20px;
+}
+.cr-card-text {
+  flex: 1;
+  min-width: 0;
+}
+.cr-card-course {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent, #2563eb);
+}
+.cr-card-status {
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+.cr-card-status.submitted {
+  color: #10b981;
+  font-weight: 600;
+}
+.small-btn {
+  padding: 5px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Lined Notebook Theme for Task Window */
+:root[data-theme='notebook'] .box,
+body.theme-notebook .box {
+  border: 2px solid #3c424a !important;
+  border-radius: 5px !important;
+  background: #ffffff !important;
+  box-shadow: 1px 1.5px 0 rgba(40, 45, 55, 0.2) !important;
+}
+:root[data-theme='notebook'] .box.on,
+body.theme-notebook .box.on {
+  background: #eff6ff !important;
+  border-color: #1e3a8a !important;
+}
+:root[data-theme='notebook'] .box.on svg,
+body.theme-notebook .box.on svg {
+  display: none !important;
+}
+:root[data-theme='notebook'] .box.on::after,
+body.theme-notebook .box.on::after {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1e3a8a;
+  line-height: 1;
+}
+
+:root[data-theme='notebook'] .title-field,
+body.theme-notebook .title-field,
+:root[data-theme='notebook'] .notes-field,
+body.theme-notebook .notes-field {
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  font-weight: 700;
+  color: #181b20 !important;
+}
+

@@ -1,0 +1,1092 @@
+@import url('widget-icons-3d.css');
+
+/* ==========================================================================
+   SMART FOLDER WIDGET STYLES (مجلد الويتجات الذكي)
+   Authentic iOS/macOS App Library & Large Folder Design with Apple Glassmorphism
+   ========================================================================== */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent !important;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: var(--font-ui, 'IBM Plex Sans Arabic', -apple-system, sans-serif);
+}
+
+.folder-plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+.folder-plate::before,
+.folder-plate::after,
+.folder-plate .sheen {
+  display: none !important;
+  content: none !important;
+}
+
+.folder-plate:hover {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.folder-plate .rz {
+  z-index: 20;
+}
+
+.folder-plate.is-expanded .rz {
+  display: none !important;
+}
+
+/* ==========================================================================
+   1. COMPACT 2x2 CLOSED SMART FOLDER
+   ========================================================================== */
+
+.folder-compact-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  cursor: default;
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.folder-plate.is-expanded .folder-compact-view {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
+}
+
+.folder-plate.is-closing .folder-compact-view {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  pointer-events: none;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Apple-style Frosted Squircle (Adaptive Dimensions & Ultra Glassmorphism) */
+.folder-squircle-card {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 20px);
+  max-width: 100%;
+  max-height: calc(100% - 20px);
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: var(--folder-radius, 24px) !important;
+  background: var(--folder-bg, linear-gradient(135deg, rgba(255, 255, 255, calc(var(--folder-opacity, 26) * 0.013)) 0%, rgba(255, 255, 255, calc(var(--folder-opacity, 26) * 0.005)) 100%)) !important;
+  backdrop-filter: blur(var(--folder-blur, 34px)) saturate(200%) brightness(1.05);
+  -webkit-backdrop-filter: blur(var(--folder-blur, 34px)) saturate(200%) brightness(1.05);
+  border: var(--folder-border-width, 1px) solid rgba(255, 255, 255, var(--folder-border-opacity, 0.38)) !important;
+  box-shadow:
+    0 16px 36px -6px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: clamp(6px, 2.5vw, 12px);
+  overflow: hidden;
+  background-clip: padding-box;
+  transform: translateZ(0);
+  transition: box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, border-radius 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: grab;
+  container-type: size;
+  container-name: folderCard;
+}
+
+html[data-compact="ultra"] .folder-label-wrap,
+html.is-dock-h .folder-label-wrap,
+html.is-dock-v .folder-label-wrap {
+  display: none !important;
+}
+
+html[data-compact="ultra"] .folder-squircle-card,
+html.is-dock-h .folder-squircle-card,
+html.is-dock-v .folder-squircle-card {
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
+html.is-dock-h .folder-squircle-card {
+  padding: 6px 12px !important;
+}
+
+html.is-dock-v .folder-squircle-card {
+  padding: 12px 6px !important;
+}
+
+html.is-dock-h .folder-grid-2x2 {
+  max-width: 100% !important;
+  width: 100% !important;
+  grid-template-rows: 1fr !important;
+  justify-content: space-evenly !important;
+}
+
+html.is-dock-v .folder-grid-2x2 {
+  max-height: 100% !important;
+  height: 100% !important;
+  grid-template-columns: 1fr !important;
+  align-content: space-evenly !important;
+}
+
+.folder-squircle-card:hover {
+  box-shadow:
+    0 20px 44px -4px rgba(0, 0, 0, 0.28),
+    0 6px 14px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Drag over active: glowing pulsating aura when desktop icon is dragged over folder */
+.folder-squircle-card.drag-over-active {
+  transform: scale(1.05) translateY(-2px) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  border-color: rgba(62, 124, 190, 0.95) !important;
+  animation: dragOverPulse 1.2s infinite ease-in-out alternate;
+}
+
+@keyframes dragOverPulse {
+  0% {
+    box-shadow: 0 0 0 3px rgba(62, 124, 190, 0.5), 0 0 20px rgba(62, 124, 190, 0.35), 0 16px 40px rgba(0,0,0,0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 6px rgba(62, 124, 190, 0.8), 0 0 36px rgba(62, 124, 190, 0.6), 0 24px 54px rgba(0,0,0,0.34);
+  }
+}
+
+/* Absorb pop: squircle squeeze and bounce upon receiving dropped widget */
+.folder-squircle-card.absorbing {
+  animation: squircleAbsorb 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+@keyframes squircleAbsorb {
+  0% { transform: scale(1.03); }
+  35% { transform: scale(0.95); box-shadow: 0 0 0 3px var(--accent, #3E7CBE), 0 8px 20px rgba(62, 124, 190, 0.35); }
+  70% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Spawn pop: dynamic entrance spring when new folder is created from hover */
+.folder-squircle-card.spawn-pop {
+  animation: folderSpawnSpring 0.36s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+}
+
+@keyframes folderSpawnSpring {
+  0% { transform: scale(0.88); opacity: 0; }
+  70% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Dynamic Responsive Centered Grid / Flex Layout */
+.folder-grid-2x2 {
+  display: grid;
+  grid-template-columns: repeat(var(--folder-cols, 2), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--folder-rows, 2), minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  justify-content: center;
+  gap: var(--folder-gap-y, var(--folder-gap, 6px)) var(--folder-gap-x, var(--folder-gap, 6px));
+  width: 100%;
+  height: 100%;
+  max-width: var(--grid-max-w, 100%);
+  max-height: var(--grid-max-h, 100%);
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  transition: gap 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+
+/* Slots */
+.folder-slot-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  border-radius: var(--slot-radius, 12px);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  width: var(--art-size, 34px);
+  height: var(--slot-h, var(--art-size, 34px));
+  flex-shrink: 0;
+  transition: transform 0.18s cubic-bezier(0.34, 1.45, 0.64, 1), filter 0.16s ease;
+}
+
+.folder-slot-btn:hover {
+  transform: scale(1.07);
+  filter: brightness(1.06);
+  z-index: 5;
+}
+
+.folder-slot-btn:active {
+  transform: scale(0.94);
+  filter: brightness(0.96);
+}
+
+.folder-slot-btn.slot-opening {
+  animation: slotOpeningPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slotOpeningPop {
+  0% { transform: scale(0.94); }
+  50% { transform: scale(1.06); filter: brightness(1.12); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* Compact Slot Running Indicator Dot */
+.slot-status-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.8), 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+  display: none;
+  pointer-events: none;
+  z-index: 5;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.folder-slot-btn.is-active .slot-status-dot {
+  display: block;
+  animation: slotDotPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes slotDotPop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Icon Art Sizing */
+.folder-icon-art {
+  width: var(--art-size, 34px);
+  height: var(--art-size, 34px);
+  border-radius: var(--art-radius, 9px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.20), inset 0 0.5px 1px rgba(255, 255, 255, 0.45);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.folder-slot-title {
+  font-size: var(--title-font-size, 10.5px);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+  display: none;
+  pointer-events: none;
+  line-height: 1.1;
+}
+
+.folder-squircle-card.has-slot-titles .folder-slot-title {
+  display: block;
+}
+
+/* More Badge Slot (+N) */
+.slot-more-badge .art-more-badge {
+  background: rgba(255, 255, 255, 0.22);
+  border: 1.5px dashed rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  font-size: calc(var(--art-size, 34px) * 0.36);
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Disable transitions during active resize for 1:1 hardware performance */
+body.resizing .folder-squircle-card,
+body.resizing .folder-grid-2x2,
+body.resizing .folder-slot-btn,
+body.resizing .folder-icon-art,
+body.resizing .folder-slot-title,
+body.resizing .folder-expanded-card {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Text label underneath squircle */
+.folder-label-wrap {
+  margin-top: 3px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.folder-label-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   2. EXPANDED FULL FOLDER VIEW (iOS ZOOM EXPANSION)
+   ========================================================================== */
+
+.folder-expanded-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.folder-expanded-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  transition: opacity 0.26s ease;
+  border-radius: 24px;
+}
+
+.folder-plate.is-expanded .folder-expanded-backdrop {
+  opacity: 1;
+}
+
+.folder-plate.is-closing .folder-expanded-backdrop {
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+.folder-expanded-card {
+  position: relative;
+  width: calc(100% - 16px);
+  max-width: 620px;
+  height: calc(100% - 16px);
+  max-height: 660px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(34px) saturate(200%);
+  -webkit-backdrop-filter: blur(34px) saturate(200%);
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.28),
+    0 4px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 14px 16px 10px;
+  transform: scale(0.72);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.folder-plate.is-expanded .folder-expanded-card {
+  animation: folderExpandSpring 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+.folder-plate.is-closing .folder-expanded-card {
+  animation: folderCollapseExit 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes folderExpandSpring {
+  0% {
+    transform: scale(0.72) translateY(12px);
+    opacity: 0;
+  }
+  75% {
+    transform: scale(1.015) translateY(-1px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes folderCollapseExit {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.78) translateY(8px);
+    opacity: 0;
+  }
+}
+
+/* Header */
+.expanded-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  min-height: 28px;
+}
+
+.expanded-title-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100% - 70px);
+}
+
+.expanded-title-input {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink, #1f2937);
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: center;
+  width: auto;
+  max-width: 220px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  cursor: text;
+}
+
+.expanded-title-input:hover,
+.expanded-title-input:focus {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.folder-header-btn {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--ink, #374151);
+  cursor: pointer;
+  outline: none;
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.folder-header-btn:hover {
+  background: rgba(0, 0, 0, 0.12);
+  transform: scale(1.08);
+}
+
+.folder-header-btn:active {
+  transform: scale(0.92);
+}
+
+.folder-header-btn.close-btn {
+  font-weight: 800;
+  font-size: 12px;
+  position: absolute;
+  inset-inline-end: 0;
+}
+
+/* Grid Container */
+.expanded-grid-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 2px;
+}
+
+/* Custom minimal scrollbar */
+.expanded-grid-container::-webkit-scrollbar {
+  width: 4px;
+}
+.expanded-grid-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.expanded-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  gap: 14px 10px;
+  justify-items: center;
+}
+
+/* Widget Card in Expanded Grid */
+.expanded-item-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  cursor: pointer;
+  width: 76px;
+  padding: 4px;
+  border-radius: 16px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), background 0.18s ease;
+}
+
+.folder-plate.is-expanded .expanded-item-btn {
+  animation: itemCascadeIn 0.26s cubic-bezier(0.34, 1.35, 0.64, 1) both;
+  animation-delay: calc(var(--item-idx, 0) * 14ms + 15ms);
+}
+
+@keyframes itemCascadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(8px);
+  }
+  75% {
+    transform: scale(1.03) translateY(-1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.expanded-item-btn:hover {
+  transform: scale(1.06);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.expanded-item-btn:active {
+  transform: scale(0.92);
+}
+
+.expanded-icon-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+
+.expanded-icon-wrap .folder-icon-art {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+}
+
+/* Status Indicator Dot */
+.item-status-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.item-status-dot.is-mini {
+  background: #f59e0b;
+}
+
+.item-status-dot.is-closed {
+  display: none;
+}
+
+.expanded-item-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink, #1f2937);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  line-height: 1.2;
+}
+
+
+
+/* ==========================================================================
+   3. WIDGET MANAGER MODAL
+   ========================================================================== */
+
+.folder-manager-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.folder-manager-card {
+  width: 320px;
+  max-width: 96%;
+  max-height: 94%;
+  background: var(--solid, #ffffff);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  padding: 14px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.manager-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink, #111827);
+}
+
+.manager-sub {
+  font-size: 10.5px;
+  color: var(--ink-2, #6b7280);
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+
+.manager-items-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px;
+}
+
+.manager-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.manager-row-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink, #1f2937);
+}
+
+.manager-row-left input {
+  cursor: pointer;
+  accent-color: var(--accent, #3b82f6);
+}
+
+.manager-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.mgr-arrow-btn {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.mgr-arrow-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.manager-footer {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mgr-btn {
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.mgr-btn.save-btn {
+  background: var(--accent, #2563eb);
+  color: #ffffff;
+}
+
+.mgr-btn.cancel-btn {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink, #374151);
+}
+
+/* ==========================================================================
+   4. ICON ARTWORKS STYLING (PROPORTIONALLY SCALED & APPLE HIGH-FIDELITY)
+   ========================================================================== */
+
+.folder-icon-art .icon-glyph {
+  font-size: calc(var(--art-size, 34px) * 0.52);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Clock Icon */
+.art-clock {
+  background: radial-gradient(circle at 50% 30%, #2c2c2e 0%, #1c1c1e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.art-clock .clock-face {
+  position: relative;
+  width: 82%;
+  height: 82%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.art-clock .clock-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  border-radius: 2px;
+}
+.art-clock .hand-h {
+  width: 2px;
+  height: 32%;
+  background: #ffffff;
+  margin-left: -1px;
+}
+.art-clock .hand-m {
+  width: 1.5px;
+  height: 44%;
+  background: #f43f5e;
+  margin-left: -0.75px;
+}
+.art-clock .clock-pin {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  z-index: 5;
+}
+
+/* Pomodoro Icon */
+.art-pomodoro {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.art-pomodoro .pomo-inner {
+  font-size: calc(var(--art-size, 34px) * 0.52);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
+}
+
+/* Calendar Icon */
+.art-calendar {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+.art-calendar .cal-top {
+  width: 100%;
+  height: 30%;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: calc(var(--art-size, 34px) * 0.18);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.art-calendar .cal-body {
+  width: 100%;
+  height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--art-size, 34px) * 0.44);
+  font-weight: 900;
+  color: #1f2937;
+  line-height: 1;
+}
+
+/* Habits Icon */
+.art-habits {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Todo Icon */
+.art-todo {
+  background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Quran Icon */
+.art-quran {
+  background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+  border: 1px solid rgba(217, 119, 6, 0.5);
+}
+
+/* Notes Icon */
+.art-notes {
+  background: linear-gradient(145deg, #f59e0b 0%, #d97706 65%, #b45309 100%) !important;
+  border: 1px solid rgba(253, 230, 138, 0.4) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.art-notes .app-icon-note-fold {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  width: calc(var(--art-size, 34px) * 0.23);
+  height: calc(var(--art-size, 34px) * 0.23);
+  background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.25) 50%),
+              linear-gradient(135deg, #fde68a 50%, #fef3c7 50%);
+  border-bottom-left-radius: 3px;
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.25);
+  z-index: 6;
+}
+.art-notes .app-icon-note-lines {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--art-size, 34px) * 0.08);
+  margin-inline-start: -3px;
+}
+.art-notes .app-icon-note-lines span {
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.88);
+}
+.art-notes .app-icon-note-lines span:nth-child(2) { width: 75%; }
+.art-notes .app-icon-note-lines span:nth-child(3) { width: 55%; }
+.art-notes .app-icon-note-pencil {
+  position: absolute;
+  bottom: calc(var(--art-size, 34px) * 0.08);
+  inset-inline-end: calc(var(--art-size, 34px) * 0.08);
+  width: calc(var(--art-size, 34px) * 0.35);
+  height: calc(var(--art-size, 34px) * 0.35);
+  color: #ffffff;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+  transform: rotate(-15deg);
+}
+
+/* Email Icon */
+.art-email {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Photo Icon */
+.art-photo {
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================================================
+   5. THEME OVERRIDES (HOLISTIC SYNC WITH MIRQAT THEMES)
+   ========================================================================== */
+
+/* Dark / OLED Theme */
+body.theme-oled .folder-squircle-card,
+body.theme-oled .folder-expanded-card {
+  background: rgba(18, 18, 20, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+}
+body.theme-oled .expanded-title-input,
+body.theme-oled .expanded-item-title,
+body.theme-oled .manager-title {
+  color: #ffffff !important;
+}
+
+/* Notebook Theme */
+body.theme-notebook .folder-squircle-card,
+body.theme-notebook .folder-expanded-card {
+  background: #fdfbf7;
+  border: 1.5px solid #2d3748;
+  box-shadow: 3px 4px 0 rgba(45, 55, 72, 0.25);
+}
+body.theme-notebook .folder-label-text {
+  color: #1a202c;
+  text-shadow: none;
+}
+
+/* ==========================================================================
+   6. BIDIRECTIONAL DRAG & DROP GHOST & PLACEHOLDER STYLES
+   ========================================================================== */
+
+.drag-out-ghost {
+  position: fixed;
+  width: 44px;
+  height: 44px;
+  pointer-events: none;
+  z-index: 999999;
+  border-radius: 11px;
+  transform: scale(1.12) rotate(-5deg);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    0 6px 14px rgba(0, 0, 0, 0.2),
+    0 0 0 2px rgba(255, 255, 255, 0.85);
+  transition: transform 0.12s ease, opacity 0.18s ease;
+  will-change: transform, left, top;
+}
+
+.drag-out-ghost .folder-icon-art {
+  width: 100%;
+  height: 100%;
+  border-radius: 11px;
+}
+
+.drag-out-ghost.is-outside {
+  transform: scale(1.18) rotate(-7deg);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.42),
+    0 8px 18px rgba(0, 0, 0, 0.25),
+    0 0 0 3px rgba(62, 124, 190, 0.9);
+}
+
+.drag-out-ghost.ghost-dropping {
+  transform: scale(1.35) rotate(0deg);
+  opacity: 0;
+}
+
+.folder-slot-btn.is-empty-placeholder .folder-icon-art,
+.expanded-item-btn.is-empty-placeholder .folder-icon-art,
+.cluster-mini-item.is-empty-placeholder .folder-icon-art {
+  opacity: 0.55 !important;
+  filter: grayscale(20%);
+}
+
+.folder-slot-btn.is-empty-placeholder,
+.expanded-item-btn.is-empty-placeholder,
+.cluster-mini-item.is-empty-placeholder {
+  opacity: 0.9 !important;
+  border-radius: 14px !important;
+  transform: scale(0.96) !important;
+  transition: all 0.15s ease !important;
+}
+
+/* Container Queries for Smart Adaptive Container */
+@container folderCard (max-width: 110px) {
+  .folder-slot-title {
+    display: none !important;
+  }
+}
+
+@container folderCard (min-width: 280px) and (min-height: 220px) {
+  .folder-squircle-card.has-slot-titles .folder-slot-title {
+    display: block;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .folder-squircle-card,
+  .folder-grid-2x2,
+  .folder-slot-btn,
+  .folder-icon-art {
+    transition: none !important;
+    animation: none !important;
+  }
+}

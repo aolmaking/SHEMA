@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="todo.title" data-kind="widget" data-page="todo">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>المهام</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/todo.css">
+</head>
+<body>
+  <div class="plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" data-i18n="todo.title">المهام</div>
+        <div class="head-sub" id="summary">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn" id="toggleAddBtn" title="إضافة مهمة جديدة" data-i18n-title="todo.toggleAdd"></button>
+        <button class="icon-btn" id="syncBtn" data-i18n-title="todo.syncClassroom" title="مزامنة Google Classroom"></button>
+        <button class="icon-btn" id="crNotifyBtn" data-i18n-title="todo.crNotifyTitle" title="إشعارات Google Classroom" style="position: relative;">
+          <span class="cr-notify-badge" id="crNotifyBadge" hidden></span>
+        </button>
+        <button class="icon-btn" id="filterBtn" data-i18n-title="todo.filter"></button>
+        <button class="icon-btn" id="settingsBtn" data-i18n-title="common.settings"></button>
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.hide"></button>
+      </div>
+    </header>
+
+    <!-- Collapsible animated drawer -->
+    <div class="composer-drawer" id="composerDrawer">
+      <div class="composer">
+        <input class="field" id="input" data-i18n-ph="todo.addPh" maxlength="240" autocomplete="off">
+        <button class="add-btn" id="addBtn" data-i18n-title="todo.addBtn"></button>
+      </div>
+    </div>
+
+    <!-- Classroom Notifications Drawer -->
+    <div class="cr-notify-drawer" id="crNotifyDrawer" hidden>
+      <div class="cr-notify-header">
+        <div class="cr-notify-title">
+          <span>🔔</span> <span data-i18n="todo.crNotifyTitle">إشعارات وتحديثات Classroom</span>
+        </div>
+        <div class="cr-notify-actions">
+          <button type="button" class="cr-notify-clear-btn" id="crMarkReadBtn" data-i18n="todo.crMarkRead">تحديد كمقروء</button>
+          <button type="button" class="cr-notify-close-btn" id="crCloseNotifyBtn" data-i18n-title="common.close" title="إغلاق">✕</button>
+        </div>
+      </div>
+      <div class="cr-notify-list scroll" id="crNotifyList">
+        <div class="cr-notify-empty" id="crNotifyEmpty" data-i18n="todo.crNotifyEmpty">لا توجد إشعارات جديدة حالياً</div>
+      </div>
+    </div>
+
+    <!-- Classroom Auth Disconnected Warning Banner -->
+    <div class="cr-auth-alert" id="crAuthAlert" hidden>
+      <div class="cr-auth-alert-icon">⚠️</div>
+      <div class="cr-auth-alert-body">
+        <div class="cr-auth-alert-title" data-i18n="todo.crAuthAlertTitle">انقطع الاتصال بـ Google Classroom</div>
+        <div class="cr-auth-alert-sub" id="crAuthAlertSub" data-i18n="todo.crAuthAlertSub">انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول لمزامنة الواجبات.</div>
+      </div>
+      <button class="cr-auth-alert-btn" id="crReconnectBtn" data-i18n="todo.reconnect">إعادة الربط</button>
+    </div>
+
+    <div class="body">
+      <div class="progress"><div class="progress-fill" id="bar"></div></div>
+      <ul class="list scroll stagger" id="list"></ul>
+      <div class="empty" id="empty" hidden>
+        <div id="emptyIcon"></div>
+        <p id="emptyText"></p>
+      </div>
+    </div>
+
+    <!-- Classroom Guard Modal -->
+    <div class="cr-modal-overlay" id="crModal" hidden>
+      <div class="cr-modal-card">
+        <div class="cr-modal-icon">📚</div>
+        <div class="cr-modal-title" id="crModalTitle" data-i18n="todo.crModalTitle">تكليف Google Classroom</div>
+        <div class="cr-modal-desc" id="crModalDesc" data-i18n="todo.crModalDesc">لم يُسجَّل تسليم هذا التكليف على Classroom بعد. يمكنك وسمه كمنجز هنا أو المزامنة الآن.</div>
+        <div class="cr-modal-actions">
+          <button type="button" class="cr-btn cr-btn-success" id="crModalMarkDone" data-i18n="todo.crModalMarkDone">✓ تم التسليم (وسم كمنجز)</button>
+          <button type="button" class="cr-btn cr-btn-primary" id="crModalSync" data-i18n="todo.crModalSync">🔄 تحقق الآن من كلاس روم</button>
+          <button type="button" class="cr-btn cr-btn-secondary" id="crModalOpen" data-i18n="todo.crModalOpen">فتح التكليف 🔗</button>
+          <button type="button" class="cr-btn cr-btn-ghost" id="crModalClose" data-i18n="common.cancel">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grip"></div>
+    <canvas class="todo-confetti-canvas" id="todoConfettiCanvas"></canvas>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/tasks-common.js"></script>
+  <script src="js/todo.js"></script>
+</body>
+</html>

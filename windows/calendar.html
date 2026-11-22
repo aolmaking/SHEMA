@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="cal.title" data-kind="widget" data-page="calendar">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>التقويم</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/tile.css">
+  <link rel="stylesheet" href="css/calendar.css">
+</head>
+<body>
+  <div class="plate tile-plate" data-drag>
+    <div class="handle"></div>
+    <header class="cal-header">
+      <div class="cal-view-selector" id="calViewSelector">
+        <div class="cal-view-indicator" id="calViewIndicator"></div>
+        <button type="button" class="cal-view-btn active" data-view="month" id="btnViewMonth" data-i18n-title="cal.viewMonthTitle">📅 <span data-i18n="cal.viewMonth">شهر</span></button>
+        <button type="button" class="cal-view-btn" data-view="split" id="btnViewSplit" data-i18n-title="cal.viewSplitTitle">⚡ <span data-i18n="cal.viewSplit">موجز</span></button>
+        <button type="button" class="cal-view-btn" data-view="week" id="btnViewWeek" data-i18n-title="cal.viewWeekTitle">📆 <span data-i18n="cal.viewWeek">أسبوع</span></button>
+        <button type="button" class="cal-view-btn" data-view="bento" id="btnViewBento" data-i18n-title="cal.viewBentoTitle">🗂️ <span data-i18n="cal.viewBento">بينتو</span></button>
+        <button type="button" class="cal-view-btn" data-view="year" id="btnViewYear" data-i18n-title="cal.viewYearTitle">⏳ <span data-i18n="cal.viewYear">السنة</span></button>
+        <button type="button" class="cal-view-btn" data-view="agenda" id="btnViewAgenda" data-i18n-title="cal.viewAgendaTitle">📋 <span data-i18n="cal.viewAgenda">أجندة</span></button>
+      </div>
+      <div class="tile-actions">
+        <button class="icon-btn" id="toggleHeroBtn" title="إظهار / إخفاء شريط تقدم السنة" data-i18n-title="cal.toggleHero">⏳</button>
+        <button class="icon-btn" id="eventsBtn" title="المناسبات وتنبيهات WhatsApp" data-i18n-title="cal.events" style="position: relative;">
+          <span class="events-badge" id="eventsBadge" hidden></span>
+        </button>
+        <button class="icon-btn" id="settingsBtn" data-i18n-title="cal.settings"></button>
+        <button class="icon-btn" id="closeBtn" data-i18n-title="common.hide"></button>
+      </div>
+    </header>
+
+    <div class="tile-body cal" id="cal">
+      <!-- Year Progress Hero Card (hidden by default) -->
+      <section class="year-progress-hero" id="yearProgressHero" hidden>
+        <div class="yp-header">
+          <div class="yp-pct" id="ypPct">77%</div>
+          <div class="yp-year" id="ypYear">2026</div>
+        </div>
+        <div class="yp-capsules-row" id="ypCapsulesRow">
+          <!-- 12 liquid capsules for 12 months -->
+        </div>
+        <div class="yp-footer">
+          <div class="yp-days-left" id="ypDaysLeft" data-i18n="cal.daysRemaining">—</div>
+          <div class="yp-passed-text" id="ypPassedText" data-i18n="cal.yearPassed">—</div>
+        </div>
+      </section>
+
+      <section class="today-panel" id="today">
+        <div class="tile-label accent" id="tWeekday"></div>
+        <div class="t-day numerals" id="tDay"></div>
+        <div class="t-lines">
+          <div class="t-greg" id="tGreg"></div>
+          <div class="t-hijri" id="tHijri"></div>
+        </div>
+      </section>
+
+      <!-- Month View Grid (Matching Image 1 Bottom-Left) -->
+      <section class="cal-view-pane month" id="monthView">
+        <header class="m-head">
+          <div class="m-head-right">
+            <span class="m-badge-pill" id="mWeekBadge" title="رقم الأسبوع" data-i18n-title="cal.weekNumTitle">14</span>
+          </div>
+          <button class="m-title" id="mTitle" data-i18n-title="cal.today">
+            <span class="tile-label accent" id="mName"></span>
+            <span class="m-hijri" id="mHijri"></span>
+          </button>
+          <div class="m-nav">
+            <button class="m-arrow" id="prev" data-i18n-title="cal.prev"></button>
+            <button class="m-arrow" id="next" data-i18n-title="cal.next"></button>
+          </div>
+        </header>
+        <div class="weekdays" id="weekdays"></div>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <!-- Split View: Upcoming Tasks List Card -->
+      <section class="cal-view-pane split" id="splitView" hidden>
+        <div class="split-container">
+          <!-- Upcoming Tasks List -->
+          <div class="split-tasks-card">
+            <div class="split-card-header">
+              <span class="split-header-title">
+                <span data-i18n="cal.upcomingTitle">القادم</span>
+                <button type="button" class="split-refresh-btn" id="splitRefreshBtn" title="تحديث" data-i18n-title="common.refresh">↻</button>
+              </span>
+            </div>
+            <div class="split-tasks-list scroll" id="splitTasksList">
+              <!-- Rendered items with radio circle checkboxes and timestamps -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Week View 7-Day Columns (Matching Image 2 Middle-Right) -->
+      <section class="cal-view-pane week scroll" id="weekView" hidden>
+        <header class="w-head">
+          <div class="w-title">
+            <span class="tile-label accent" id="wWeekSpan"></span>
+          </div>
+          <div class="m-nav">
+            <button class="m-arrow" id="weekPrev" title="الأسبوع السابق" data-i18n-title="cal.prevWeek"></button>
+            <button class="m-arrow" id="weekNext" title="الأسبوع التالي" data-i18n-title="cal.nextWeek"></button>
+          </div>
+        </header>
+        <!-- Horizontal Multi-Day Banner Strip -->
+        <div class="week-multiday-strip" id="weekMultiDayStrip"></div>
+        <!-- 7-Day Timeline Columns -->
+        <div class="week-columns-grid" id="weekColumnsGrid"></div>
+      </section>
+
+      <!-- Bento Categorized Lists View (Matching Image 2 Bottom-Right) -->
+      <section class="cal-view-pane bento scroll" id="bentoView" hidden>
+        <div class="bento-cards-grid">
+          <!-- Card 1: مهم (Blue) -->
+          <div class="bento-list-card bento-blue" id="bentoCardImportant">
+            <div class="bento-card-top">
+              <span class="bento-badge" id="bentoBadgeImportant">4</span>
+              <span class="bento-title"><span data-i18n="cal.importantTitle">مهم</span> <span class="bento-icon">🗂️</span></span>
+              <button class="bento-add-btn" data-cat="important" title="إضافة مهمة" data-i18n-title="cal.addImportant">+</button>
+            </div>
+            <div class="bento-card-items" id="bentoItemsImportant"></div>
+          </div>
+          <!-- Card 2: عاجل (Red) -->
+          <div class="bento-list-card bento-red" id="bentoCardUrgent">
+            <div class="bento-card-top">
+              <span class="bento-badge" id="bentoBadgeUrgent">2</span>
+              <span class="bento-title"><span data-i18n="cal.urgentTitle">عاجل</span> <span class="bento-icon">🚨</span></span>
+              <button class="bento-add-btn" data-cat="urgent" title="إضافة عاجلة" data-i18n-title="cal.addUrgent">+</button>
+            </div>
+            <div class="bento-card-items" id="bentoItemsUrgent"></div>
+          </div>
+          <!-- Card 3: يوماً ما (Slate/Purple) -->
+          <div class="bento-list-card bento-slate" id="bentoCardSomeday">
+            <div class="bento-card-top">
+              <span class="bento-badge" id="bentoBadgeSomeday">3</span>
+              <span class="bento-title"><span class="bento-icon">≡</span> <span data-i18n="cal.somedayTitle">يوماً ما</span></span>
+              <button class="bento-add-btn" data-cat="someday" title="إضافة فكرة" data-i18n-title="cal.addSomeday">+</button>
+            </div>
+            <div class="bento-card-items" id="bentoItemsSomeday"></div>
+          </div>
+          <!-- Card 4: مواعيد (Amber/Gold) -->
+          <div class="bento-list-card bento-amber" id="bentoCardSchedule">
+            <div class="bento-card-top">
+              <span class="bento-badge" id="bentoBadgeSchedule">5</span>
+              <span class="bento-title"><span data-i18n="cal.scheduleTitle">مواعيد</span> <span class="bento-icon">📅</span></span>
+              <button class="bento-add-btn" data-cat="schedule" title="إضافة موعد" data-i18n-title="cal.addSchedule">+</button>
+            </div>
+            <div class="bento-card-items" id="bentoItemsSchedule"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Full Year Progress View -->
+      <section class="cal-view-pane year scroll" id="yearView" hidden>
+        <div class="year-view-card" id="yearViewCard">
+          <div class="yp-large-container" id="yearLargeContainer"></div>
+        </div>
+      </section>
+
+      <!-- Agenda / Schedule View Timeline -->
+      <section class="cal-view-pane agenda scroll" id="agendaView" hidden>
+        <header class="a-head">
+          <div class="a-title">
+            <span class="tile-label accent" data-i18n="cal.agendaTitle">📋 جدول المواعيد والأجندة</span>
+          </div>
+          <button type="button" class="btn small primary" id="agendaAddBtn" data-i18n="cal.addEventNew">+ مناسبة جديدة</button>
+        </header>
+        <div class="agenda-timeline" id="agendaTimeline"></div>
+      </section>
+    </div>
+
+    <!-- Events Drawer / List -->
+    <div class="events-drawer" id="eventsDrawer" hidden>
+      <div class="ev-drawer-head">
+        <div class="ev-drawer-title">
+          <span>📅</span> <span id="evDrawerTitleText" data-i18n="cal.eventsTitle">المناسبات والتذكيرات</span>
+        </div>
+        <div class="ev-drawer-actions">
+          <button type="button" class="ev-add-btn" id="addEventQuickBtn" title="إضافة مناسبة" data-i18n-title="cal.addEventShort" data-i18n="cal.addEventBtn">+ إضافة</button>
+          <button type="button" class="ev-close-drawer-btn" id="closeEventsDrawerBtn" title="إغلاق" data-i18n-title="common.close">✕</button>
+        </div>
+      </div>
+      <div class="ev-drawer-list scroll" id="eventsList">
+        <!-- Rendered events here -->
+      </div>
+    </div>
+
+    <!-- Event Add / Edit Modal Dialog -->
+    <div class="ev-modal-backdrop" id="eventModal" hidden>
+      <div class="ev-modal">
+        <div class="ev-modal-header">
+          <h3 id="evModalTitle" data-i18n="cal.evModalTitleNew">إضافة مناسبة جديدة</h3>
+          <button type="button" class="ev-modal-close" id="evModalClose" data-i18n-title="common.close">✕</button>
+        </div>
+        <form class="ev-modal-form" id="evForm" onsubmit="return false;">
+          <!-- Category Picker -->
+          <div class="ev-form-group">
+            <label class="ev-label" data-i18n="cal.evType">نوع المناسبة:</label>
+            <div class="ev-categories-grid" id="evCatGrid">
+              <!-- Rendered categories pills -->
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="ev-form-group">
+            <label for="evTitle" class="ev-label" data-i18n="cal.evTitle">عنوان المناسبة:</label>
+            <input type="text" id="evTitle" class="ev-input" placeholder="مثال: عيد ميلاد محمد، مؤتمر الذكاء الاصطناعي..." data-i18n-ph="cal.evTitlePh" required maxlength="120" autocomplete="off">
+          </div>
+
+          <!-- Date & Time -->
+          <div class="ev-form-row">
+            <div class="ev-form-group flex-1">
+              <label for="evDate" class="ev-label" data-i18n="cal.evDate">التاريخ:</label>
+              <input type="date" id="evDate" class="ev-input" required>
+            </div>
+            <div class="ev-form-group flex-1">
+              <label for="evTime" class="ev-label" data-i18n="cal.evTime">التوقيت:</label>
+              <input type="time" id="evTime" class="ev-input" value="09:00">
+            </div>
+          </div>
+
+          <!-- Recurrence -->
+          <div class="ev-form-group">
+            <label for="evRecurring" class="ev-label" data-i18n="cal.evRecurring">التكرار الدوري:</label>
+            <select id="evRecurring" class="ev-select">
+              <option value="none" data-i18n="cal.evRecNone">لا يتكرر (مرة واحدة)</option>
+              <option value="yearly" data-i18n="cal.evRecYearly">سنوياً (في نفس التاريخ من كل عام - أعياد ومناسبات سنوية)</option>
+              <option value="monthly" data-i18n="cal.evRecMonthly">شهرياً (في نفس اليوم من كل شهر)</option>
+              <option value="weekly" data-i18n="cal.evRecWeekly">أسبوعياً (في نفس اليوم من كل أسبوع)</option>
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div class="ev-form-group">
+            <label for="evNotes" class="ev-label" data-i18n="cal.evNotes">ملاحظات أو تفاصيل إضافية:</label>
+            <textarea id="evNotes" class="ev-textarea" rows="2" placeholder="المكان، الرابط، أو أي معلومات تود تذكرها..." data-i18n-ph="cal.evNotesPh"></textarea>
+          </div>
+
+          <!-- WhatsApp Card -->
+          <div class="ev-wa-card">
+            <div class="ev-wa-header">
+              <div class="ev-wa-title">
+                <span>💬</span> <span data-i18n="cal.evWaTitle">تنبيهات WhatsApp</span>
+              </div>
+              <label class="ev-switch-label">
+                <input type="checkbox" id="evWaEnabled" checked>
+                <span class="ev-slider"></span>
+              </label>
+            </div>
+
+            <div class="ev-wa-body" id="evWaBody">
+              <div class="ev-form-group">
+                <label for="evWaTiming" class="ev-label" data-i18n="cal.evWaTiming">موعد إرسال الرسالة:</label>
+                <select id="evWaTiming" class="ev-select">
+                  <option value="morning_of" data-i18n="cal.evWaTimeMorning">في نفس يوم المناسبة (صباحاً 9:00 ص)</option>
+                  <option value="1d_before" data-i18n="cal.evWaTime1d">قبل المناسبة بيوم واحد (صباحاً 9:00 ص)</option>
+                  <option value="at_event" data-i18n="cal.evWaTimeAtEvent">في توقيت المناسبة تماماً</option>
+                  <option value="1h_before" data-i18n="cal.evWaTime1h">قبل موعد المناسبة بساعة</option>
+                  <option value="3h_before" data-i18n="cal.evWaTime3h">قبل موعد المناسبة بـ 3 ساعات</option>
+                </select>
+              </div>
+
+              <div class="ev-form-group">
+                <label for="evWaRecipient" class="ev-label" data-i18n="cal.evWaRecipient">مستلم الرسالة (اختياري - افتراضياً يرسل للإعدادات الحالية):</label>
+                <input type="text" id="evWaRecipient" class="ev-input" placeholder="اتركه فارغاً للإرسال للمجموعة/الرقم المسجل بالإعدادات" data-i18n-ph="cal.evWaRecipientPh">
+              </div>
+
+              <div class="ev-form-group">
+                <label for="evWaMessage" class="ev-label" data-i18n="cal.evWaMessage">نص الرسالة المخصصة (أو اتركه للقالب التلقائي):</label>
+                <textarea id="evWaMessage" class="ev-textarea" rows="3" placeholder="القالب التلقائي المناسب لنوع المناسبة..." data-i18n-ph="cal.evWaMessagePh"></textarea>
+              </div>
+
+              <div class="ev-wa-test-wrap">
+                <button type="button" class="ev-btn-test-wa" id="evTestWaBtn" data-i18n="cal.evTestWa">🚀 إرسال تجربة الآن على WhatsApp</button>
+                <div class="ev-test-status" id="evTestStatus" hidden></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="ev-modal-actions">
+            <button type="button" class="btn primary" id="evSaveBtn" data-i18n="cal.evSave">💾 حفظ المناسبة</button>
+            <button type="button" class="btn danger" id="evDeleteBtn" data-i18n="cal.evDelete" hidden>🗑️ حذف</button>
+            <button type="button" class="btn secondary" id="evCancelBtn" data-i18n="common.cancel">إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Day Micro-Actions Popup (+) and (📝) -->
+    <div class="day-actions-popup" id="dayActionsPopup" hidden>
+      <div class="dap-header">
+        <span class="dap-date" id="dapDateText"></span>
+        <button type="button" class="dap-close-btn" id="dapCloseBtn">✕</button>
+      </div>
+      <div class="dap-buttons">
+        <button type="button" class="dap-btn dap-add-event" id="dapAddEventBtn" data-i18n-title="cal.addEventTitle">
+          <span class="dap-icon">+</span>
+          <span class="dap-text" id="dapEventText" data-i18n="cal.addEventShort">مناسبة</span>
+        </button>
+        <button type="button" class="dap-btn dap-add-note" id="dapAddNoteBtn" data-i18n-title="cal.addNoteTitle">
+          <span class="dap-icon">📝</span>
+          <span class="dap-text" id="dapNoteText" data-i18n="cal.addNoteShort">ملاحظة</span>
+        </button>
+      </div>
+      <div class="dap-day-items scroll" id="dapDayItems" hidden></div>
+    </div>
+
+    <!-- Day Note Modal Dialog -->
+    <div class="ev-modal-backdrop" id="dayNoteModal" hidden>
+      <div class="ev-modal day-note-modal">
+        <div class="ev-modal-header">
+          <div class="dn-head-info">
+            <h3 id="dayNoteTitle" data-i18n="cal.dayNoteTitle">📝 ملاحظة اليوم</h3>
+            <span class="dn-sub-date" id="dayNoteSubDate"></span>
+          </div>
+          <button type="button" class="ev-modal-close" id="dayNoteCloseBtn">✕</button>
+        </div>
+        <form class="ev-modal-form" id="dayNoteForm" onsubmit="return false;">
+          <div class="ev-form-group">
+            <textarea id="dayNoteInput" class="ev-textarea dn-textarea" rows="6" data-i18n-ph="cal.dayNotePh" placeholder="اكتب أفكارك، ملاحظاتك، يومياتك، أو مهامك الخاصة بهذا اليوم بالتفصيل..."></textarea>
+          </div>
+          <div class="ev-modal-actions">
+            <button type="button" class="btn primary" id="dayNoteSaveBtn" data-i18n="cal.saveNoteBtn">💾 حفظ الملاحظة</button>
+            <button type="button" class="btn danger" id="dayNoteDeleteBtn" data-i18n="cal.deleteNoteBtn" hidden>🗑️ حذف الملاحظة</button>
+            <button type="button" class="btn secondary" id="dayNoteCancelBtn" data-i18n="common.cancel">إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+  <div class="tip" id="tip"></div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="quran.title" data-kind="widget" data-page="quran">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>آية</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/quran.css">
+</head>
+<body>
+  <div class="plate quran-plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" id="place">—</div>
+        <div class="head-sub" id="when">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn" id="prevAyahBtn" data-i18n-title="quran.prev" hidden></button>
+        <button class="icon-btn" id="nextAyahBtn" data-i18n-title="quran.nextNav" hidden></button>
+        <button class="icon-btn" id="refreshBtn" data-i18n-title="quran.another"></button>
+        <button class="icon-btn" id="settingsBtn" data-i18n-title="common.settings"></button>
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.hide"></button>
+      </div>
+    </header>
+
+    <div class="body">
+      <button class="ayah-card" id="card">
+        <p class="ayah" id="ayah" dir="rtl" lang="ar"></p>
+        <div class="card-foot">
+          <span class="theme-chip" id="theme"></span>
+          <span class="open-hint" id="hint">
+            <span id="hintLabel" data-i18n="quran.tafsir">التفسير</span>
+          </span>
+        </div>
+      </button>
+
+      <div class="state" id="state" hidden>
+        <div class="spinner" id="spinner"></div>
+        <p id="stateText"></p>
+        <button class="btn" id="retryBtn" hidden data-i18n="quran.retry"></button>
+      </div>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/quran.js"></script>
+</body>
+</html>

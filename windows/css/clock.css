@@ -1,0 +1,1743 @@
+/* ==========================================================================
+   Clock, Alarm & Timer Widget Stylesheet
+   ========================================================================== */
+
+/* ---------- layout: default ---------- */
+
+.clock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+  padding: 4px 20px 6px 20px; /* Generous breathing room on both sides */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.face {
+  position: relative;
+  width: min(100%, 72cqh);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+  container-name: face;
+  margin: 0 auto;
+  transition: transform var(--t-slow) var(--ease-spring);
+  filter: none !important; /* No drop-shadow to prevent weird halos */
+}
+.plate:hover .face { transform: scale(1.02); }
+
+.dial {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: none !important;
+}
+
+.readout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2cqi;
+  width: 100%;
+  max-width: 100%;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  filter: none !important;
+}
+
+/* Pure solid black digits - Zero blur halo */
+.time {
+  font-size: calc(31cqi * var(--fs, 1));
+  color: var(--custom-font-color, #000000) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  letter-spacing: var(--num-ls, -0.02em);
+  font-weight: var(--num-weight, 700);
+  -webkit-font-smoothing: antialiased;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.digit-slot {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  height: 1.15em;
+  line-height: 1.15em;
+  vertical-align: middle;
+  color: var(--custom-font-color, #000000) !important;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  margin: 0 calc(var(--num-ls, -0.02em) * 0.35 + 0.006em);
+}
+
+.digit-val {
+  display: inline-block;
+  line-height: 1.15em;
+  color: var(--custom-font-color, #000000) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  will-change: transform, opacity;
+}
+
+.digit-val.rolling-in {
+  animation: rollInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rollInUp {
+  0% {
+    transform: translateY(60%);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.digit-sep {
+  display: inline-block;
+  line-height: 1.15em;
+  vertical-align: middle;
+  padding: 0 1px;
+  color: var(--custom-font-color, #000000) !important;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  margin: 0 calc(var(--num-ls, -0.02em) * 0.35 + 0.006em);
+  opacity: 0.85;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.sub {
+  font-size: calc(10.5cqi * var(--fs));
+  color: #111827 !important;
+  font-weight: 600 !important;
+  line-height: 1;
+  min-height: 1em;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.dateline {
+  font-size: calc(10.5px * var(--fs));
+  color: #1f2937 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* ---------- ring face ---------- */
+
+.dial .track { fill: none; stroke: var(--tile-active); stroke-width: 5; }
+.dial .arc {
+  fill: none;
+  stroke: var(--accent, #38bdf8);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+.dial .arc.instant { transition: none; }
+
+/* ---------- analog face ---------- */
+
+.clock[data-style='analog'] .readout { display: none; }
+.dial .disc { fill: var(--tile); }
+.dial .tick { stroke: var(--ink-3); stroke-width: 1.4; stroke-linecap: round; }
+.dial .tick.major { stroke: var(--ink-2); stroke-width: 2.4; }
+.dial .hand {
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  transition: transform 420ms var(--ease);
+}
+.dial .hand.second { transition: transform 260ms cubic-bezier(0.4, 2.1, 0.55, 1); }
+.dial .hand.instant { transition: none; }
+.dial .hand line { stroke-linecap: round; }
+.dial .hand.hour line { stroke: #000000; stroke-width: 4; }
+.dial .hand.minute line { stroke: #000000; stroke-width: 2.6; }
+.dial .hand.second line { stroke: var(--accent, #38bdf8); stroke-width: 1.2; }
+.dial .pin { fill: var(--accent, #38bdf8); }
+.dial .pin-hole { fill: var(--ink-on-accent, #fff); }
+
+/* ---------- digital face ---------- */
+
+.clock[data-style='digital'] .face { aspect-ratio: auto; width: 100%; }
+.clock[data-style='digital'] .sub { font-size: calc(11cqi * var(--fs)); }
+
+/* ---------- world clocks disabled ---------- */
+
+.zones { display: none !important; min-width: 0; }
+
+.zone {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  background: var(--tile);
+  min-width: 0;
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring);
+}
+.zone:hover { background: var(--tile-hover); transform: translateX(calc(-2px * var(--dir))); }
+
+.zf { width: 28px; height: 28px; flex: none; }
+.zf-disc { fill: var(--tile-active); transition: fill var(--t-slow) var(--ease); }
+.zf-h, .zf-m { stroke: var(--ink); stroke-linecap: round; }
+.zf-h { stroke-width: 9; }
+.zf-m { stroke-width: 6; }
+.zf-pin { fill: var(--accent, #38bdf8); }
+.zone.night .zf-disc { fill: #1E2533; }
+.zone.night .zf-h, .zone.night .zf-m { stroke: #E9EEF6; }
+
+.z-text { flex: 1; min-width: 0; }
+.z-city { font-size: calc(11px * var(--fs)); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.z-meta { font-size: calc(9.5px * var(--fs)); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.z-time { font-size: calc(13px * var(--fs)); font-weight: 600; color: #000000; white-space: nowrap; }
+
+/* ==========================================================================
+   الشفافية القصوى 100% (Pure Transparency Mode - Floating Digits)
+   ========================================================================== */
+
+.plate[data-transparency='max'],
+:root[data-clock-transparency='max'] .plate {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+.plate[data-transparency='max']::before,
+.plate[data-transparency='max']::after {
+  display: none !important;
+  opacity: 0 !important;
+  content: none !important;
+}
+
+/* Subtle hover guide outline to move/drag widget safely */
+.plate[data-transparency='max']:hover {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Zero halo & pure solid pitch-black digits */
+.plate[data-transparency='max'] .time,
+.plate[data-transparency='max'] .digit-val,
+.plate[data-transparency='max'] .digit-slot,
+.plate[data-transparency='max'] .digit-sep,
+.plate[data-transparency='max'] .sub,
+.plate[data-transparency='max'] .dateline,
+.plate[data-transparency='max'] .timer-clock-digits,
+.plate[data-transparency='max'] .face,
+.plate[data-transparency='max'] .readout {
+  color: var(--custom-font-color, #000000) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+.plate[data-transparency='max'] .face {
+  aspect-ratio: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.plate[data-transparency='max'] .dial .track {
+  stroke: rgba(0, 0, 0, 0.12);
+}
+
+.plate[data-transparency='max'] .dial .arc {
+  stroke: var(--accent, #38bdf8);
+}
+
+.plate[data-transparency='max'] .dial .disc {
+  fill: rgba(0, 0, 0, 0.02);
+}
+
+.plate[data-transparency='max'] .clock-nav {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#transparencyBtn.active {
+  color: var(--accent, #38bdf8);
+  background: var(--tile-active);
+}
+
+/* ==========================================================================
+   Navigation Bar (Clock / Alarm / Timer Tabs) - Appears on Hover Only
+   ========================================================================== */
+
+.clock-nav {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px 4px;
+  margin: 3px auto 1px;
+  width: fit-content;
+  max-width: calc(100% - 64px);
+  border-radius: 999px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  flex: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px) scale(0.96);
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease-spring);
+}
+
+.plate:hover .clock-nav,
+.plate:focus-within .clock-nav,
+.clock-nav:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.clock-tab-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: calc(10px * var(--fs));
+  font-weight: 500;
+  color: var(--ink-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.clock-tab-btn:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+
+.clock-tab-btn.active {
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #ffffff);
+  font-weight: 600;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent, #38bdf8) 40%, transparent);
+}
+
+.tab-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* ==========================================================================
+   Clock Body & Views Container
+   ========================================================================== */
+
+.clock-body {
+  position: relative;
+  z-index: 4;
+  flex: 1;
+  min-height: 0;
+  padding: 2px 14px 4px 14px; /* Balanced horizontal padding */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.clock-view {
+  display: none;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.clock-view.active {
+  display: flex;
+  animation: clockViewIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes clockViewIn {
+  0% { opacity: 0; transform: translateY(3px) scale(0.99); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ==========================================================================
+   Alarm View Styles
+   ========================================================================== */
+
+.alarm-view-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 6px;
+  padding: 2px 0;
+  overflow: hidden;
+}
+
+.alarm-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+  flex: none;
+}
+
+.alarm-count-badge {
+  font-size: calc(10px * var(--fs));
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.alarm-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  color: var(--accent, #38bdf8);
+  font-size: calc(10px * var(--fs));
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.alarm-add-btn:hover {
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #fff);
+}
+
+.plus-icon {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.alarms-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 2px 0;
+  overflow-y: auto;
+}
+
+.alarm-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  transition: all var(--t) var(--ease);
+  flex: none;
+}
+
+.alarm-card:hover {
+  background: var(--tile-hover);
+}
+
+.alarm-card.disabled {
+  opacity: 0.55;
+}
+
+.alarm-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.alarm-card-time {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: calc(16px * var(--fs, 1));
+  font-weight: var(--num-weight, 700);
+  letter-spacing: var(--num-ls, -0.01em);
+  color: #000000 !important;
+  text-shadow: none !important;
+  line-height: 1.1;
+}
+
+.alarm-card-ampm {
+  font-size: calc(9.5px * var(--fs));
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.alarm-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.alarm-card-label {
+  font-size: calc(10px * var(--fs));
+  color: var(--ink-2);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.alarm-days-tag {
+  font-size: calc(8.5px * var(--fs));
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.alarm-task-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: calc(9px * var(--fs));
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, #38bdf8) 18%, transparent);
+  color: var(--accent, #38bdf8);
+  font-weight: 600;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alarm-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.alarm-del-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+  opacity: 0.7;
+}
+
+.alarm-del-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+.alarm-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  color: var(--ink-3);
+  text-align: center;
+  padding: 12px;
+}
+
+.alarm-empty-icon {
+  font-size: 22px;
+  opacity: 0.7;
+}
+
+.alarm-empty-text {
+  font-size: calc(10.5px * var(--fs));
+}
+
+/* ==========================================================================
+   Modernized Add / Edit Alarm Drawer
+   ========================================================================== */
+
+.alarm-drawer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  border-radius: inherit;
+  background: var(--bg-surface, var(--tile-active));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.16));
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.28);
+  animation: drawerSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes drawerSlideUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.alarm-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  flex: none;
+}
+
+.drawer-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.drawer-title-icon {
+  font-size: 13px;
+}
+
+.drawer-title {
+  font-size: calc(11px * var(--fs));
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.drawer-close-btn {
+  background: none;
+  border: none;
+  color: var(--ink-3);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.drawer-close-btn:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+
+.alarm-drawer-body {
+  flex: 1;
+  min-height: 0;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Hero Time Picker Card */
+.alarm-hero-time-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+  flex: none;
+}
+
+.time-picker-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.time-unit-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.time-step-btn {
+  width: 38px;
+  height: 15px;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.time-step-btn:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+  transform: scale(1.1);
+}
+
+.num-picker {
+  width: 44px;
+  height: 32px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  background: var(--bg-surface, var(--tile-hover));
+  color: #000000 !important;
+  font-size: calc(20px * var(--fs, 1));
+  font-weight: var(--num-weight, 800);
+  text-align: center;
+  line-height: 32px;
+  letter-spacing: var(--num-ls, -0.02em);
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.num-picker::-webkit-outer-spin-button,
+.num-picker::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.time-colon {
+  font-size: calc(20px * var(--fs, 1));
+  font-weight: var(--num-weight, 800);
+  color: #000000 !important;
+  margin: 0 1px;
+}
+
+.ampm-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  margin-inline-start: 4px;
+}
+
+.ampm-option {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.ampm-option.active {
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #fff);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--accent, #38bdf8) 35%, transparent);
+}
+
+/* Organized Field Cards */
+.alarm-field-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  flex: none;
+}
+
+.alarm-field-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.field-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.alarm-field-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: calc(9.5px * var(--fs));
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.hint-pill {
+  font-size: 8px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink-3);
+}
+
+.alarm-text-input,
+.alarm-select-input {
+  width: 100%;
+  padding: 4px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  background: var(--bg-surface, var(--tile-hover));
+  color: var(--ink);
+  font-size: calc(10px * var(--fs));
+  box-sizing: border-box;
+}
+
+.alarm-text-input:focus,
+.alarm-select-input:focus {
+  border-color: var(--accent, #38bdf8);
+  outline: none;
+}
+
+.days-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+.day-chip {
+  flex: 1;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  background: var(--tile);
+  color: var(--ink-3);
+  font-size: 9.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.day-chip:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+
+.day-chip.active {
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #fff);
+  border-color: var(--accent, #38bdf8);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--accent, #38bdf8) 35%, transparent);
+}
+
+.days-quick-shortcuts {
+  display: flex;
+  gap: 3px;
+  margin-top: 1px;
+}
+
+.quick-btn {
+  flex: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  background: var(--tile);
+  color: var(--ink-2);
+  font-size: 9px;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.quick-btn:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+
+/* Footer Actions */
+.alarm-drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: auto;
+  padding: 6px 10px;
+  border-top: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  flex: none;
+}
+
+.btn-delete-alarm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.btn-delete-alarm:hover {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.alarm-sound-test-btn {
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  font-size: 9.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.alarm-sound-test-btn:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+
+.alarm-save-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.btn-cancel {
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  color: var(--ink-2);
+}
+
+.btn-cancel:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+}
+
+.btn-save {
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #fff);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent, #38bdf8) 40%, transparent);
+}
+
+.btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent, #38bdf8) 50%, transparent);
+}
+
+/* ==========================================================================
+   Timer View Styles - Modernized UI & Anti-Overflow Architecture
+   ========================================================================== */
+
+.timer-view-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 0;
+  gap: 2px;
+  padding: 1px 8px 3px 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.timer-circle-container {
+  position: relative;
+  width: min(85cqi, 48cqh);
+  min-width: 65px;
+  max-width: 135px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 auto;
+  container-type: inline-size;
+  container-name: timerCircle;
+}
+
+.timer-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: none !important;
+}
+
+.timer-track {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.08);
+  stroke-width: 4.5;
+}
+
+.plate[data-transparency='max'] .timer-track {
+  stroke: rgba(0, 0, 0, 0.12);
+}
+
+.timer-progress {
+  fill: none;
+  stroke: url(#timerGrad);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s linear;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent, #38bdf8) 40%, transparent));
+}
+
+.timer-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: none !important;
+  text-align: center;
+}
+
+/* Pure solid black for timer digits - Zero halo & perfectly fitted inside circle */
+.timer-clock-digits {
+  font-size: calc(clamp(11px, 21cqw, 24px) * var(--fs, 1));
+  color: var(--custom-font-color, #000000) !important;
+  text-shadow: none !important;
+  filter: none !important;
+  font-weight: var(--num-weight, 800);
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: var(--num-ls, -0.02em);
+  -webkit-font-smoothing: antialiased;
+}
+
+.timer-clock-digits[data-has-hours='1'] {
+  font-size: calc(clamp(9.5px, 14cqw, 16px) * var(--fs, 1));
+}
+
+.timer-state-badge {
+  font-size: calc(clamp(7.5px, 8.5cqw, 10px) * var(--fs, 1));
+  font-weight: 700;
+  color: var(--ink-2);
+  text-shadow: none !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.plate[data-transparency='max'] .timer-state-badge {
+  color: #000000 !important;
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(6px);
+}
+
+.timer-state-badge::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.timer-state-badge[data-status='paused']::before {
+  background: #f59e0b;
+}
+
+.timer-state-badge[data-status='finished']::before {
+  background: #ef4444;
+}
+
+/* Middle selection bar: presets or custom input */
+.timer-middle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 auto;
+  min-height: 25px;
+  margin: 1px 0;
+}
+
+.timer-preset-chips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+
+.preset-chip {
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  background: var(--tile);
+  color: var(--ink-2);
+  font-size: calc(9.5px * var(--fs));
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+  white-space: nowrap;
+}
+
+.preset-chip:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.preset-chip.active {
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #fff);
+  border-color: var(--accent, #38bdf8);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent, #38bdf8) 40%, transparent);
+}
+
+.preset-chip.custom-toggle {
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+.timer-custom-inputs {
+  display: flex;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  animation: fadeIn 0.15s ease forwards;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.timer-preset-chips[hidden],
+.timer-custom-inputs[hidden],
+[hidden] {
+  display: none !important;
+}
+
+.timer-input-group {
+  display: inline-flex;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  align-items: center;
+  gap: 2px;
+}
+
+.timer-num-input {
+  width: 28px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.16));
+  background: var(--bg-surface, var(--tile-hover));
+  color: var(--custom-font-color, #000000) !important;
+  font-size: 11px;
+  font-weight: var(--num-weight, 700);
+  text-align: center;
+  line-height: 20px;
+  padding: 0;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.timer-num-input::-webkit-outer-spin-button,
+.timer-num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.timer-input-label {
+  font-size: 9px;
+  color: var(--ink-2);
+  font-weight: 700;
+  user-select: none;
+}
+
+.timer-input-sep {
+  font-size: 11px;
+  color: var(--custom-font-color, #000000) !important;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0 1px;
+  user-select: none;
+}
+
+.timer-custom-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: none;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--t-fast) var(--ease);
+  padding: 0;
+}
+
+.timer-custom-btn.apply {
+  background: var(--accent, #38bdf8);
+  color: #fff;
+}
+
+.timer-custom-btn.cancel {
+  background: var(--tile);
+  color: var(--ink-2);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+}
+
+.timer-custom-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Always pinned and visible controls */
+.timer-action-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  margin-top: auto;
+  padding: 2px 0 3px;
+  width: 100%;
+  z-index: 5;
+}
+
+.timer-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.timer-ctrl-btn.primary {
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: var(--accent, #38bdf8);
+  color: var(--ink-on-accent, #fff);
+  font-size: calc(11px * var(--fs));
+  font-weight: 700;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent, #38bdf8) 45%, transparent);
+}
+
+.timer-ctrl-btn.primary:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent, #38bdf8) 55%, transparent);
+}
+
+.timer-ctrl-btn.secondary {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--tile);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.14));
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.timer-ctrl-btn.secondary:hover {
+  background: var(--tile-hover);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Active Alarm Ringing Overlay
+   ========================================================================== */
+
+.ringing-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: rgba(10, 15, 26, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: overlayFadeIn 0.25s ease forwards;
+}
+
+@keyframes overlayFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.ringing-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 240px;
+  padding: 14px 12px;
+  border-radius: 16px;
+  background: var(--plate);
+  border: 1.5px solid var(--accent, #38bdf8);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.ringing-bell-pulse {
+  font-size: 28px;
+  line-height: 1;
+  animation: bellShake 0.6s infinite ease-in-out;
+}
+
+@keyframes bellShake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-16deg); }
+  75% { transform: rotate(16deg); }
+}
+
+.ringing-time-large {
+  font-size: calc(22px * var(--fs, 1));
+  font-weight: var(--num-weight, 700);
+  letter-spacing: var(--num-ls, -0.02em);
+  color: #000000 !important;
+  text-shadow: none !important;
+  line-height: 1;
+}
+
+.ringing-label-text {
+  font-size: calc(11px * var(--fs));
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.ringing-task-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, #38bdf8) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #38bdf8) 35%, transparent);
+  color: var(--ink);
+  font-size: calc(9.5px * var(--fs));
+  max-width: 100%;
+}
+
+.task-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+.open-task-btn {
+  border: none;
+  background: var(--accent, #38bdf8);
+  color: #fff;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 8.5px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ringing-btn-row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  margin-top: 3px;
+}
+
+.ringing-action-btn {
+  flex: 1;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: calc(10.5px * var(--fs));
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.ringing-action-btn.done {
+  background: #10b981;
+  color: #fff;
+  border: 1px solid #059669;
+}
+
+.ringing-action-btn.done:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.ringing-action-btn.snooze {
+  background: var(--tile);
+  color: var(--ink);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.15));
+}
+
+.ringing-action-btn.dismiss {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* ==========================================================================
+   Responsive Containers & Layout Breakpoints
+   ========================================================================== */
+
+/* ---------- Spacious layout when widened / enlarged ---------- */
+
+@container tile (min-width: 280px) {
+  .clock {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 6px 24px 8px 24px;
+    gap: 8px;
+  }
+  .face {
+    width: min(100%, 76cqh);
+  }
+  .dateline {
+    font-size: calc(clamp(11px, 4.2cqi, 15px) * var(--fs, 1));
+  }
+  .zones {
+    display: none !important;
+  }
+}
+
+/* ---------- large: enlarged clock face and spacious controls ---------- */
+
+@container tile (min-width: 280px) and (min-height: 260px) {
+  .clock {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    padding: 8px 24px 10px 24px;
+    gap: 10px;
+  }
+  .face {
+    width: min(100%, 78cqh);
+  }
+  .dateline {
+    font-size: calc(clamp(12px, 4.5cqi, 16px) * var(--fs, 1));
+  }
+  .zones {
+    display: none !important;
+  }
+  .timer-circle-container {
+    width: min(100%, 46cqh);
+    max-width: 160px;
+  }
+  .alarm-card {
+    padding: 8px 12px;
+  }
+}
+
+/* ---------- Smart Downscaling & Responsive Miniaturization ---------- */
+
+@container tile (max-width: 220px) or (max-height: 200px) {
+  .clock {
+    padding: 3px 14px;
+    gap: 3px;
+  }
+  .face {
+    width: min(100%, 78cqh);
+  }
+  .time {
+    font-size: clamp(17px, 29cqi, 34px);
+  }
+  .sub {
+    font-size: clamp(8px, 9cqi, 11px);
+  }
+  .dateline {
+    font-size: clamp(8px, 6cqi, 9.5px);
+  }
+  .clock-nav {
+    max-width: 100%;
+    margin-top: 2px;
+    margin-bottom: 1px;
+    padding: 1px 3px;
+    gap: 1px;
+  }
+  .clock-tab-btn {
+    padding: 2px 5px;
+    font-size: 9px;
+  }
+  .tab-label {
+    display: none; /* Show icons only to avoid text squishing */
+  }
+  .tab-icon {
+    font-size: 12px;
+  }
+  .timer-circle-container {
+    width: min(100%, 30cqh);
+    min-width: 48px;
+    max-width: 85px;
+  }
+  .timer-clock-digits {
+    font-size: calc(clamp(15px, 20cqi, 24px) * var(--fs, 1));
+    font-weight: var(--num-weight, 800);
+    letter-spacing: var(--num-ls, -0.02em);
+  }
+  .preset-chip {
+    padding: 1px 5px;
+    font-size: 8.5px;
+  }
+  .timer-ctrl-btn.primary {
+    padding: 4px 11px;
+    font-size: 10px;
+  }
+  .timer-ctrl-btn.secondary {
+    width: 24px;
+    height: 24px;
+    font-size: 9.5px;
+  }
+}
+
+/* Horizontal Shape-Shift for Short/Wide Tiles */
+@container tile (max-height: 135px) and (min-width: 170px) {
+  .clock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 3px 14px;
+  }
+  .main {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .face {
+    width: auto;
+    height: 82cqh;
+    aspect-ratio: 1;
+    flex: none;
+  }
+  .dateline {
+    white-space: normal;
+    text-align: start;
+    line-height: 1.35;
+    font-size: 10px;
+    font-weight: 600;
+    max-width: 90px;
+  }
+  .clock-nav {
+    display: flex;
+    margin: 2px auto 0;
+    padding: 1px 3px;
+  }
+  .tab-label {
+    display: none;
+  }
+}
+
+/* Ultra-Compact / Nano Icon Widget Mode */
+@container (max-width: 155px) and (max-height: 155px) {
+  .clock {
+    padding: 3px 6px;
+    gap: 2px;
+  }
+  .face {
+    width: min(94cqi, 82cqh);
+  }
+  .time {
+    font-size: clamp(18px, 32cqi, 30px);
+    letter-spacing: -0.04em;
+  }
+  .sub {
+    display: none;
+  }
+  .dateline {
+    font-size: 8.5px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--tile);
+  }
+  .clock-nav {
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    margin: 1px auto 0;
+    padding: 1px 2px;
+    gap: 1px;
+  }
+  .plate:hover .clock-nav,
+  .plate:focus-within .clock-nav {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+:root[data-compact="ultra"] .clock {
+  padding: 3px 6px;
+  gap: 2px;
+}
+:root[data-compact="ultra"] .face {
+  width: min(94cqi, 82cqh);
+}
+:root[data-compact="ultra"] .time {
+  font-size: clamp(18px, 32cqi, 30px);
+  letter-spacing: -0.04em;
+}
+:root[data-compact="ultra"] .sub {
+  display: none;
+}
+:root[data-compact="ultra"] .dateline {
+  font-size: 8.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--tile);
+}
+:root[data-compact="ultra"] .clock-nav {
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  margin: 1px auto 0;
+  padding: 1px 2px;
+  gap: 1px;
+}
+:root[data-compact="ultra"] .plate:hover .clock-nav,
+:root[data-compact="ultra"] .plate:focus-within .clock-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Lined Notebook Theme for Clock */
+:root[data-theme='notebook'] .face,
+body.theme-notebook .face {
+  filter: drop-shadow(2px 3px 0 rgba(40, 45, 55, 0.2));
+}
+
+:root[data-theme='notebook'] .time,
+body.theme-notebook .time {
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  font-weight: 800;
+  color: #000000 !important;
+}
+
+:root[data-theme='notebook'] .dateline,
+body.theme-notebook .dateline {
+  font-family: 'Segoe Print', 'Caveat', cursive, sans-serif !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1.2px solid #3c424a !important;
+  color: #1e3a8a !important;
+  font-weight: 700;
+}

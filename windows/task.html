@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="task.title" data-kind="window" data-page="task">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>تفاصيل المهمة</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/task.css">
+</head>
+<body>
+  <div class="plate window-plate task-plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" data-i18n="task.title">تفاصيل المهمة</div>
+        <div class="head-sub" id="sub">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.close"></button>
+      </div>
+    </header>
+
+    <div class="body scroll" id="body">
+      <div class="gone" id="gone" hidden><p data-i18n="task.gone"></p></div>
+
+      <div id="form">
+        <section class="group cr-task-card" id="crCard" hidden>
+          <div class="cr-card-header">
+            <span class="cr-card-icon">📚</span>
+            <div class="cr-card-text">
+              <div class="cr-card-course" id="crCourse">—</div>
+              <div class="cr-card-status" id="crStatus">—</div>
+              <div class="cr-card-deadline" id="crDeadline" style="font-size: 11px; color: var(--sub); margin-top: 3px;" hidden>—</div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn primary small-btn" id="crOpenBtn" data-i18n="task.crOpenBtn">فتح في Classroom 🔗</button>
+              <button class="btn danger small-btn" id="crHideCourseBtn" data-i18n="task.crHideCourse" data-i18n-title="task.crHideCourseTitle" title="استبعاد هذه المادة تماماً من الودجت">🚫 إخفاء المادة</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="group title-group">
+          <div class="title-row">
+            <button class="box" id="doneBox"></button>
+            <input class="field title-field" id="text" dir="auto" maxlength="300" autocomplete="off" spellcheck="false">
+          </div>
+          <p class="hint" id="doneInfo" hidden></p>
+        </section>
+
+        <section class="group">
+          <h2 data-i18n="task.notes">ملاحظات</h2>
+          <textarea class="field notes-field scroll" id="notes" dir="auto" data-i18n-ph="task.notesPh" spellcheck="false"></textarea>
+        </section>
+
+        <section class="group">
+          <h2 data-i18n="task.reminders">التذكيرات</h2>
+          <ul class="reminders" id="reminders"></ul>
+          <p class="hint" id="noReminders" data-i18n="task.noReminders"></p>
+          <div class="quick" id="quick"></div>
+          <div class="row custom-row">
+            <input class="field when-field" type="datetime-local" id="when" dir="ltr">
+            <button class="btn primary" id="addReminder" data-i18n="task.add">إضافة</button>
+          </div>
+          <div class="alarm-check-row">
+            <label class="alarm-check-label" for="setClockAlarm">
+              <input type="checkbox" id="setClockAlarm" checked>
+              <span data-i18n="task.setClockAlarm">⏰ تفعيل منبه في الساعة أيضاً</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2 data-i18n="task.details">تفاصيل</h2>
+          <div class="row">
+            <label data-i18n="task.priority">الأولوية</label>
+            <div class="segmented" id="priority">
+              <button data-p="0" data-i18n="task.p0"></button>
+              <button data-p="1" data-i18n="tk.prio1"></button>
+              <button data-p="2" data-i18n="tk.prio2"></button>
+            </div>
+          </div>
+          <div class="row">
+            <label for="due" data-i18n="task.due">تاريخ التسليم</label>
+            <input class="field date-field" type="date" id="due" dir="ltr">
+            <button class="icon-btn" id="clearDue" data-i18n-title="task.clearDue"></button>
+          </div>
+          <div class="row">
+            <label for="hideAfter" data-i18n="task.hideAfter">بعد الإنجاز</label>
+            <select class="picker wide" id="hideAfter"></select>
+          </div>
+          <p class="hint" id="hideInfo" hidden></p>
+        </section>
+
+        <div class="row buttons foot-row">
+          <button class="btn danger-btn" id="deleteBtn" data-i18n="task.delete">حذف المهمة</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grip"></div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/tasks-common.js"></script>
+  <script src="js/task.js"></script>
+</body>
+</html>

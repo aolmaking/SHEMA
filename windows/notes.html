@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="notes.title" data-kind="widget" data-page="notes">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self' blob: data:;">
+  <title>الملاحظات</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/widget-icons-3d.css">
+  <link rel="stylesheet" href="css/notes.css">
+</head>
+
+<body>
+  <div class="plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" id="title"></div>
+        <div class="head-sub" id="sub">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn" id="listBtn" data-i18n-title="notes.all"></button>
+        <button class="icon-btn" id="newBtn" data-i18n-title="notes.new"></button>
+        <button class="icon-btn" id="settingsBtn" data-i18n-title="common.settings"></button>
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.hide"></button>
+      </div>
+    </header>
+
+    <div class="body">
+      <!-- editor -->
+      <section class="pane" id="editorPane">
+        <!-- Audio Recording Live Floating Bar -->
+        <div class="audio-record-bar" id="audioRecordBar" hidden>
+          <div class="record-meta-box">
+            <div class="record-pulse-dot"></div>
+            <span class="record-timer" id="recordTimer">00:00</span>
+          </div>
+          <div class="record-wave">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="record-actions">
+            <button type="button" class="record-save-btn" id="stopRecordBtn" title="إنهاء وحفظ التسجيل" data-i18n-title="notes.stopRecord">
+              <span class="btn-icon">⏹</span>
+              <span class="btn-label" data-i18n="notes.saveVoice">حفظ</span>
+            </button>
+            <button type="button" class="record-cancel-btn" id="cancelRecordBtn" title="إلغاء التسجيل" data-i18n-title="notes.cancelRecord">
+              <span class="btn-label" data-i18n="common.cancel">إلغاء</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Notes Tools Bar (To-Do, Voice Memo, Pin) -->
+        <div class="notes-tools-bar" id="notesToolsBar">
+          <div class="tools-group">
+            <button type="button" class="tool-btn" id="toolTodoBtn" title="إضافة قائمة مهام (To-Do)" data-i18n-title="notes.todoTitle">
+              <span class="tool-icon">☑️</span>
+              <span class="tool-text" data-i18n="notes.todo">مهام</span>
+            </button>
+            <button type="button" class="tool-btn" id="toolVoiceBtn" title="تسجيل صوتي لهذه الملاحظة" data-i18n-title="notes.voiceTitle">
+              <span class="tool-icon">🎙️</span>
+              <span class="tool-text" data-i18n="notes.voice">تسجيل صوت</span>
+            </button>
+            <button type="button" class="tool-btn" id="notePinBtn" title="تثبيت الملاحظة في الأعلى (Pin)" data-i18n-title="notes.pinTitle">
+              <span class="tool-icon">📌</span>
+              <span class="tool-text" data-i18n="notes.pin">تثبيت</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="editor-canvas style-ruled color-white" id="editorCanvas">
+          <!-- Voice Audio Player Attachments Container (Supports Multiple Voice Recordings) -->
+          <div class="note-audios-list" id="noteAudiosList">
+            <div class="note-audio-player" id="noteAudioPlayer" hidden>
+              <button type="button" class="audio-play-btn" id="audioPlayBtn" title="تشغيل / إيقاف" data-i18n-title="notes.playPause">
+                <span id="playIcon">▶</span>
+              </button>
+              <div class="audio-track-box">
+                <div class="audio-meta-row">
+                  <span class="audio-tag" data-i18n="notes.voiceNote">🎙️ تسجيل صوتي</span>
+                  <span class="audio-time" id="audioTime">00:00 / 00:00</span>
+                </div>
+                <div class="audio-waveform-box" id="audioWaveformBox" title="انقر على أي نقطة للانتقال إليها" data-i18n-title="notes.waveformTip"></div>
+                <input type="range" class="audio-scrub" id="audioScrub" min="0" max="100" value="0" step="any">
+              </div>
+              <button type="button" class="audio-del-btn" id="audioDelBtn" title="حذف التسجيل الصوتي" data-i18n-title="notes.deleteAudio">🗑️</button>
+              <audio id="noteAudioEl" preload="auto" hidden></audio>
+            </div>
+          </div>
+
+          <!-- Rich Note Contenteditable Canvas (Native 100% smooth scrolling, WYSIWYG rich text) -->
+          <div class="editor-textarea editor-content scroll" id="editor" contenteditable="true" dir="auto"
+            spellcheck="false" data-i18n-ph="notes.ph"
+            data-placeholder="اكتب ما يخطر لك…&#10;أول سطر يصير عنوان الملاحظة."></div>
+
+          <!-- Interactive To-Do Checklist Section -->
+          <div class="note-checklist-section" id="noteChecklistSection" hidden>
+            <div class="checklist-header" id="checklistHeader" role="button" tabindex="0" title="طي / توسيع المهام" data-i18n-title="notes.toggleChecklist">
+              <div class="checklist-title-box">
+                <span class="checklist-icon">☑️</span>
+                <span class="checklist-title-text" data-i18n="notes.todoList">قائمة المهام</span>
+                <span class="checklist-counter" id="checklistCounter">0/0</span>
+              </div>
+              <button type="button" class="checklist-toggle-btn" id="toggleChecklistBtn" aria-label="طي / توسيع"
+                title="طي / توسيع المهام" data-i18n-title="notes.toggleChecklist">
+                <svg class="checklist-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+              </button>
+            </div>
+            <div class="checklist-body" id="checklistBody">
+              <ul class="checklist-list" id="checklistList"></ul>
+              <button type="button" class="checklist-add-row-btn" id="addChecklistBtn" title="إضافة بند مهمة جديد" data-i18n-title="notes.addChecklistRow">
+                <span class="add-circle-icon">+</span>
+                <span class="add-label-text" data-i18n="notes.addItem">إضافة بند جديد</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-foot">
+          <span id="meta">—</span>
+          <button class="icon-btn danger" id="delBtn" data-i18n-title="notes.delete"></button>
+        </div>
+
+        <!-- Floating Format Sheet Toggle Button (Smart UI in bottom-right corner) -->
+        <button type="button" class="format-fab-btn" id="formatFabBtn" title="تنسيق النص والخط (Format)" data-i18n-title="notes.formatFab">
+          <span class="fab-icon">Aa</span>
+        </button>
+
+        <!-- Bottom Format Sheet / Drawer (Smooth Slide-Up) -->
+        <div class="format-drawer" id="formatDrawer" hidden>
+          <div class="drawer-head">
+            <div class="drawer-title-box">
+              <span class="drawer-icon">🔤</span>
+              <span class="drawer-title" data-i18n="notes.formatTitle">تنسيق النص والخط</span>
+            </div>
+            <button type="button" class="drawer-close-btn" id="formatCloseBtn" title="إغلاق" data-i18n-title="common.close">✕</button>
+          </div>
+          <div class="drawer-content">
+            <!-- 1. Text Hierarchy Tiers (Apple Notes Style) -->
+            <div class="format-section">
+              <div class="format-tier-group">
+                <button type="button" class="tier-btn" data-tier="title" data-i18n="notes.tierTitle">عنوان
+                  رئيسي</button>
+                <button type="button" class="tier-btn" data-tier="heading" data-i18n="notes.tierHeading">عنوان
+                  فرعي</button>
+                <button type="button" class="tier-btn" data-tier="subheading"
+                  data-i18n="notes.tierSubheading">ترويسة</button>
+                <button type="button" class="tier-btn on" data-tier="body" data-i18n="notes.tierBody">نص عادي</button>
+              </div>
+            </div>
+
+            <!-- 2. Text Inline Styles (B, I, U, S) & Alignment -->
+            <div class="format-section-row">
+              <div class="format-btn-group">
+                <button type="button" class="fmt-btn" id="fmtBoldBtn" data-i18n-title="notes.bold"><b>B</b></button>
+                <button type="button" class="fmt-btn" id="fmtItalicBtn" data-i18n-title="notes.italic"><i>I</i></button>
+                <button type="button" class="fmt-btn" id="fmtUnderlineBtn"
+                  data-i18n-title="notes.underline"><u>U</u></button>
+                <button type="button" class="fmt-btn" id="fmtStrikeBtn" data-i18n-title="notes.strike"><s>S</s></button>
+              </div>
+
+              <div class="format-btn-group">
+                <button type="button" class="fmt-btn on" data-align="right" data-i18n-title="notes.alignRight">
+                  <span>⫸</span>
+                </button>
+                <button type="button" class="fmt-btn" data-align="center" data-i18n-title="notes.alignCenter">
+                  <span>≡</span>
+                </button>
+                <button type="button" class="fmt-btn" data-align="left" data-i18n-title="notes.alignLeft">
+                  <span>⫷</span>
+                </button>
+                <button type="button" class="fmt-btn" data-align="justify" data-i18n-title="notes.alignJustify">
+                  <span>≣</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Font Family Selection (Visual Font Cards) -->
+            <div class="format-section">
+              <div class="drawer-subheading" data-i18n="notes.chooseFont">اختر شكل الخط:</div>
+              <div class="font-family-grid">
+                <button type="button" class="font-chip-btn font-card on" data-font="default"
+                  data-i18n-title="notes.fontModern">
+                  <div class="font-card-header">
+                    <span class="font-card-title" data-i18n="notes.fontModern">حديث</span>
+                    <span class="font-card-check">✓</span>
+                  </div>
+                  <div class="font-sample font-sample-default">Aa أ ب 123</div>
+                  <div class="font-card-desc" data-i18n="notes.fontModernDesc">واجهة عصرية سلسة</div>
+                </button>
+                <button type="button" class="font-chip-btn font-card font-hand-btn" data-font="handwriting"
+                  data-i18n-title="notes.fontHand">
+                  <div class="font-card-header">
+                    <span class="font-card-title" data-i18n="notes.fontHand">يدوي</span>
+                    <span class="font-card-check">✓</span>
+                  </div>
+                  <div class="font-sample font-sample-hand">Aa أ ب 123</div>
+                  <div class="font-card-desc" data-i18n="notes.fontHandDesc">خط يدوي انسيابي</div>
+                </button>
+                <button type="button" class="font-chip-btn font-card font-serif-btn" data-font="serif"
+                  data-i18n-title="notes.fontSerif">
+                  <div class="font-card-header">
+                    <span class="font-card-title" data-i18n="notes.fontSerif">نسخ</span>
+                    <span class="font-card-check">✓</span>
+                  </div>
+                  <div class="font-sample font-sample-serif">Aa أ ب 123</div>
+                  <div class="font-card-desc" data-i18n="notes.fontSerifDesc">كتاب طباعي كلاسيكي</div>
+                </button>
+                <button type="button" class="font-chip-btn font-card font-mono-btn" data-font="mono"
+                  data-i18n-title="notes.fontMono">
+                  <div class="font-card-header">
+                    <span class="font-card-title" data-i18n="notes.fontMono">هندسي</span>
+                    <span class="font-card-check">✓</span>
+                  </div>
+                  <div class="font-sample font-sample-mono">Aa 0 1 2</div>
+                  <div class="font-card-desc" data-i18n="notes.fontMonoDesc">أحرف متساوية العرض</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- note list -->
+      <section class="pane" id="listPane" hidden>
+        <div class="search-row">
+          <span class="search-icon" id="searchIcon"></span>
+          <input class="field search" id="search" data-i18n-ph="notes.search" autocomplete="off">
+          <div class="view-mode-toggle" id="viewModeToggle">
+            <button type="button" class="view-toggle-btn active" id="viewGridBtn" title="عرض مربعات بينتو (Bento Grid)" data-i18n-title="notes.viewGrid">
+              <span>⊞</span>
+            </button>
+            <button type="button" class="view-toggle-btn" id="viewListBtn" title="عرض قوائم أفقية (List View)" data-i18n-title="notes.viewList">
+              <span>☰</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Tags Bar (Idea 6) -->
+        <div class="notes-tag-bar scroll-x" id="notesTagBar"></div>
+
+        <div class="notes-scroll-container scroll" id="notesScrollContainer">
+          <!-- Pinned Notes Section (Idea 5) -->
+          <div class="list-section-header" id="pinnedHeader" hidden>
+            <div class="section-title-wrap">
+              <span class="section-pin-icon">📌</span>
+              <span class="section-title-text" data-i18n="notes.pinnedTitle">الملاحظات المثبتة</span>
+              <span class="section-count-badge" id="pinnedCountBadge">0</span>
+            </div>
+          </div>
+          <ul class="notes view-grid pinned-notes" id="pinnedNoteList" hidden></ul>
+
+          <!-- All Notes Section -->
+          <div class="list-section-header" id="allNotesHeader">
+            <div class="section-title-wrap">
+              <span class="section-icon">📑</span>
+              <span class="section-title-text" data-i18n="notes.allNotesTitle">جميع الملاحظات</span>
+              <span class="section-count-badge" id="allCountBadge">0</span>
+            </div>
+          </div>
+          <ul class="notes view-grid stagger" id="noteList"></ul>
+          <div class="empty" id="listEmpty" hidden>
+            <p data-i18n="notes.none"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- New Note Dialog (Choose from 5 Templates + 9 Colors) -->
+    <div class="modal-overlay" id="newNoteModal" hidden>
+      <div class="modal-dialog">
+        <div class="modal-head">
+          <div class="modal-title-box">
+            <span class="modal-icon">✨</span>
+            <span class="modal-title" data-i18n="notes.newNoteTitle">إنشاء ملاحظة جديدة</span>
+          </div>
+          <button type="button" class="modal-close-btn" id="modalCloseBtn" title="إغلاق" data-i18n-title="common.close">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- 1. Choose Page Style (5 distinct templates) -->
+          <div class="modal-section-title" data-i18n="notes.chooseTemplate">1. اختر نوع الصفحة:</div>
+          <div class="new-styles-grid">
+            <button type="button" class="new-style-card on" data-style="ruled">
+              <div class="style-icon-badge">📝</div>
+              <div class="style-card-text">
+                <span class="style-main-title" data-i18n="notes.styleRuled">مسطّر</span>
+                <span class="style-sub-desc" data-i18n="notes.styleRuledDesc">سطور أفقية كلاسيكية مع هامش جانبي</span>
+              </div>
+            </button>
+
+            <button type="button" class="new-style-card" data-style="grid">
+              <div class="style-icon-badge">▦</div>
+              <div class="style-card-text">
+                <span class="style-main-title" data-i18n="notes.styleGrid">مربعات</span>
+                <span class="style-sub-desc" data-i18n="notes.styleGridDesc">شبكة مربعات هندسية دقيقة</span>
+              </div>
+            </button>
+
+            <button type="button" class="new-style-card" data-style="book">
+              <div class="style-icon-badge">📖</div>
+              <div class="style-card-text">
+                <span class="style-main-title" data-i18n="notes.styleBook">صفحة كتاب</span>
+                <span class="style-sub-desc" data-i18n="notes.styleBookDesc">تصميم كتاب وهوامش قراءة مريحة</span>
+              </div>
+            </button>
+
+            <button type="button" class="new-style-card" data-style="planner">
+              <div class="style-icon-badge">📑</div>
+              <div class="style-card-text">
+                <span class="style-main-title" data-i18n="notes.stylePlanner">مفكرة مهام</span>
+                <span class="style-sub-desc" data-i18n="notes.stylePlannerDesc">مفكرة لجدولة المهام والأولويات</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- 2. Choose Paper Color -->
+          <div class="modal-section-title" data-i18n="notes.chooseColor">2. اختر لون الورق:</div>
+          <div class="new-colors-row">
+            <button type="button" class="new-color-swatch on" data-color="white"
+              style="background:#ffffff; border-color:#cbd5e1;" data-i18n-title="notes.colorWhite">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorWhite">أبيض</span>
+            </button>
+            <button type="button" class="new-color-swatch" data-color="yellow" style="background:#fef9c3;"
+              data-i18n-title="notes.colorYellow">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorYellow">أصفر</span>
+            </button>
+            <button type="button" class="new-color-swatch" data-color="blue" style="background:#e0f2fe;"
+              data-i18n-title="notes.colorBlue">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorBlue">أزرق</span>
+            </button>
+            <button type="button" class="new-color-swatch" data-color="green" style="background:#dcfce7;"
+              data-i18n-title="notes.colorGreen">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorGreen">أخضر</span>
+            </button>
+            <button type="button" class="new-color-swatch" data-color="rose" style="background:#fce7f3;"
+              data-i18n-title="notes.colorRose">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorRose">وردي</span>
+            </button>
+            <button type="button" class="new-color-swatch" data-color="purple" style="background:#ede9fe;"
+              data-i18n-title="notes.colorPurple">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorPurple">بنفسجي</span>
+            </button>
+            <button type="button" class="new-color-swatch" data-color="dark" style="background:#181b24;"
+              data-i18n-title="notes.colorDark">
+              <span class="color-check-mark">✓</span>
+              <span class="color-label" data-i18n="notes.colorDark">داكن</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn primary modal-submit-btn" id="modalSubmitBtn" data-i18n="notes.createBtn">✓
+            إنشاء الملاحظة</button>
+          <button type="button" class="btn ghost modal-cancel-btn" id="modalCancelBtn"
+            data-i18n="common.cancel">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grip" data-corner="bl"></div>
+  </div>
+
+  <script src="js/shared-icon-art.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/notes.js"></script>
+</body>
+
+</html>

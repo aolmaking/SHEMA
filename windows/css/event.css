@@ -1,0 +1,293 @@
+/* ==================================================================== *
+ * Dedicated External Event & Occasion Window Styles
+ * High contrast, spacious, modern glassmorphic feel
+ * ==================================================================== */
+
+.event-plate {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.event-plate .body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+}
+
+.group-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink, #f8fafc);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+
+/* Category Pills Grid */
+.ev-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.ev-cat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: var(--radius-md, 12px);
+  background: var(--tile);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t) var(--ease);
+  -webkit-app-region: no-drag;
+}
+
+.ev-cat-btn:hover {
+  background: var(--tile-hover, rgba(255, 255, 255, 0.12));
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.ev-cat-btn.active {
+  background: var(--cat-color, var(--accent));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--cat-color, var(--accent)) 45%, transparent);
+}
+
+.ev-cat-icon {
+  font-size: 14px;
+}
+
+/* Date and Time Row */
+.ev-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ev-field-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+/* WhatsApp Notifications Card */
+.ev-wa-card {
+  background: rgba(37, 211, 102, 0.07) !important;
+  border: 1px solid rgba(37, 211, 102, 0.28) !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  padding: 14px 16px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.ev-wa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ev-wa-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #25d366 !important;
+}
+
+.ev-wa-icon {
+  font-size: 16px;
+}
+
+.ev-switch-label {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  -webkit-app-region: no-drag;
+}
+.ev-switch-label input { opacity: 0; width: 0; height: 0; }
+.ev-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  transition: .24s;
+}
+.ev-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .24s;
+}
+.ev-switch-label input:checked + .ev-slider { background-color: #25d366; }
+.ev-switch-label input:checked + .ev-slider:before { transform: translateX(16px); }
+
+.ev-wa-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ev-wa-subgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ev-wa-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink) !important;
+}
+
+/* Multi-Timing Chips Grid */
+.ev-timing-chips-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.timing-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--tile);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  transition: all var(--t) var(--ease);
+  -webkit-app-region: no-drag;
+}
+
+.timing-chip:hover {
+  background: var(--tile-hover);
+  border-color: rgba(37, 211, 102, 0.4);
+}
+
+.timing-chip input {
+  display: none;
+}
+
+.timing-chip .chip-box {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  border: 1.5px solid var(--ink-2);
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: all var(--t) var(--ease);
+}
+
+.timing-chip input:checked + .chip-box {
+  background: #25d366;
+  border-color: #25d366;
+}
+
+.timing-chip input:checked + .chip-box::after {
+  content: '✓';
+  color: #0f172a;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.timing-chip input:checked ~ .chip-text {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.chip-text {
+  font-size: 11px;
+  color: var(--ink-2);
+  transition: color var(--t) var(--ease);
+}
+
+/* Template Builder Header & Tags */
+.ev-wa-template-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ev-template-tags {
+  display: flex;
+  gap: 4px;
+}
+
+.tag-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #93c5fd;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-family: monospace;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: background var(--t) var(--ease);
+}
+
+.tag-pill:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+/* WhatsApp Live Test */
+.ev-wa-test-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ev-test-status {
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+.ev-test-status.ok {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.ev-test-status.err {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Popup Theme Customizations (Requirement #3) */
+:root[data-popup-theme='waterglass'] .event-plate {
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+
+:root[data-popup-theme='pureblack'] .event-plate {
+  background: #020617 !important;
+}
+
+:root[data-popup-theme='acrylic'] .event-plate {
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(16px);
+}

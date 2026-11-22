@@ -1,0 +1,41 @@
+/* Hadith window: builds on the tafsir window's layout. */
+
+.hadith-text {
+  margin: 0;
+  font-family: var(--font-read);
+  font-size: calc(17px * var(--fs));
+  line-height: calc(2 * var(--lh-k, 1));
+  color: var(--ink);
+  text-align: justify;
+  user-select: text;
+  white-space: pre-wrap;
+}
+.hadith-text.fresh { animation: ayah-in var(--t-slow) var(--ease-out) both; }
+@keyframes ayah-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.badge.grade {
+  background: color-mix(in srgb, #2F9E86 16%, transparent);
+  color: #23806C;
+}
+:root[data-theme='smoke'] .badge.grade, :root[data-theme='midnight'] .badge.grade, :root[data-theme='sand'] .badge.grade, :root[data-theme='aurora'] .badge.grade, :root[data-theme='cyber'] .badge.grade, :root[data-theme='oled'] .badge.grade { color: #7FD6C1; }
+
+.tafsir-text.plain { white-space: pre-wrap; }
+
+.hints {
+  margin: 8px 0 0;
+  padding-inline-start: 20px;
+  font-family: var(--font-read);
+  font-size: calc(13.5px * var(--fs));
+  line-height: calc(1.9 * var(--lh-k, 1));
+  color: var(--ink-2);
+  user-select: text;
+}
+.hints li { margin-bottom: 4px; }
+.hints li::marker { color: var(--accent); }
+
+.words { margin: 8px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; user-select: text; }
+.words dt { font-family: var(--font-read); font-weight: 700; color: var(--ink); }
+.words dd { margin: 0; font-family: var(--font-read); color: var(--ink-2); line-height: calc(1.8 * var(--lh-k, 1)); }
+
+.en-sub { margin-top: 12px; }
+.attrib-val.refs { white-space: pre-wrap; font-size: calc(10.5px * var(--fs)); line-height: 1.7; }

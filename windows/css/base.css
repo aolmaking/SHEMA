@@ -1,0 +1,1599 @@
+@import url('../../assets/fonts.css');
+@import url('widget-icons-3d.css');
+
+/* ==========================================================================
+   Design tokens
+   The default look is the translucent one: a light frosted plate over the
+   wallpaper, generous corner radii, and no hard edges anywhere. Other themes
+   only re-point these variables, so every widget follows automatically.
+   ========================================================================== */
+
+:root {
+  /* +1 in right-to-left, -1 in left-to-right: flips sideways motion. */
+  --dir: 1;
+  --start: right;
+  --accent: #3E7CBE;
+  --accent-soft: color-mix(in srgb, var(--accent) 30%, transparent);
+  --ink-on-accent: #14171f;
+
+  --radius-window: 26px;
+  --radius-lg: 18px;
+  --radius-md: 13px;
+  --radius-sm: 9px;
+  --radius-pill: 999px;
+
+  --pad: 18px;
+  --gap: 10px;
+
+  /* Families come from the look settings (--ff-*), with safe fallbacks. */
+  --font-ui: var(--ff-ui, 'IBM Plex Sans Arabic'), -apple-system, 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --font-read: var(--ff-read, 'Noto Naskh Arabic'), 'Noto Naskh Arabic', 'IBM Plex Sans Arabic', serif;
+  --font-quran: var(--ff-quran, 'Amiri Quran'), 'Amiri Quran', 'Noto Naskh Arabic', serif;
+  --font-num: var(--ff-num, 'IBM Plex Sans Arabic'), 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
+
+  --fs: 1;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --t-fast: 140ms;
+  --t: 240ms;
+  --t-slow: 420ms;
+}
+
+/* ---------- Theme: Glass (default) ----------
+   A light frosted plate with dark ink, the way the reference widgets read
+   over a photo wallpaper. Light text on light glass was unreadable, so the
+   default keeps the translucency but flips the ink. */
+:root,
+:root[data-theme='glass'] {
+  /* Layered light rather than a flat tint: a bloom from the top corner, a
+     faint diagonal streak, and a cooler body, so the pane reads as glass
+     over any wallpaper. */
+  --plate:
+    radial-gradient(120% 85% at 10% -12%, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.16) 40%, rgba(255, 255, 255, 0) 48%),
+    linear-gradient(168deg, rgba(255, 255, 255, 0.50) 0%, rgba(246, 249, 253, 0.34) 46%, rgba(232, 239, 249, 0.40) 100%);
+  --solid: #EEF2F8;
+  --edge: rgba(255, 255, 255, 0.78);
+  --edge-inner: rgba(255, 255, 255, 0.98);
+  --shadow: 0 18px 50px rgba(20, 24, 38, 0.22), 0 2px 8px rgba(20, 24, 38, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.30),
+            inset 0 0 28px rgba(255, 255, 255, 0.16);
+
+  --ink: #131C2A;
+  --ink-2: rgba(19, 28, 42, 0.88);
+  --ink-3: rgba(19, 28, 42, 0.75);
+  --engrave: none;
+
+  --tile: rgba(255, 255, 255, 0.36);
+  --tile-hover: rgba(255, 255, 255, 0.62);
+  --tile-active: rgba(255, 255, 255, 0.84);
+  --line: rgba(19, 28, 42, 0.16);
+  --field: rgba(255, 255, 255, 0.34);
+
+  --glow: rgba(255, 255, 255, 0.85);
+  --sheen-strength: 0.6;
+  --sheen-rim: rgba(255, 255, 255, 0.95);
+  color-scheme: light;
+}
+
+/* ---------- Theme: Water Glass (macOS / VisionOS Liquid Glass) ----------
+   An advanced liquid glass theme with high-refraction caustics, specular
+   lighting bloom, crystal edges, and deep ambient translucency. */
+:root[data-theme='waterglass'] {
+  --plate:
+    radial-gradient(130% 90% at 50% -15%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.14) 38%, rgba(255, 255, 255, 0.02) 75%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(240, 248, 255, 0.12) 40%, rgba(220, 235, 255, 0.08) 100%),
+    rgba(240, 246, 255, 0.15);
+  --solid: #ffffff;
+  --solidity: 0.12;
+  --edge: rgba(255, 255, 255, 0.65);
+  --edge-inner: rgba(255, 255, 255, 0.95);
+  --shadow: inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 2px 0 rgba(255, 255, 255, 0.25), inset 0 0 20px 0 rgba(255, 255, 255, 0.1);
+
+  --ink: #0f172a;
+  --ink-2: rgba(15, 23, 42, 0.90);
+  --ink-3: rgba(15, 23, 42, 0.75);
+  --engrave: none;
+
+  --tile: rgba(255, 255, 255, 0.32);
+  --tile-hover: rgba(255, 255, 255, 0.52);
+  --tile-active: rgba(255, 255, 255, 0.72);
+  --line: rgba(15, 23, 42, 0.16);
+  --field: rgba(255, 255, 255, 0.35);
+
+  --glow: rgba(56, 189, 248, 0.4);
+  --sheen-strength: 0.8;
+  --sheen-rim: rgba(255, 255, 255, 0.98);
+  color-scheme: light;
+}
+
+/* ---------- Theme: Smoke (translucent, dark) ---------- */
+:root[data-theme='smoke'] {
+  --solid: #1E2230;
+  --plate: linear-gradient(150deg,
+            rgba(26, 30, 44, 0.62) 0%,
+            rgba(20, 23, 35, 0.56) 50%,
+            rgba(16, 18, 29, 0.58) 100%);
+  --edge: rgba(255, 255, 255, 0.24);
+  --edge-inner: rgba(255, 255, 255, 0.34);
+  --shadow: 0 20px 55px rgba(0, 0, 0, 0.40), 0 2px 10px rgba(0, 0, 0, 0.22);
+
+  --ink: #F4F7FC;
+  --ink-2: rgba(244, 247, 252, 0.88);
+  --ink-3: rgba(244, 247, 252, 0.72);
+
+  --tile: rgba(255, 255, 255, 0.10);
+  --tile-hover: rgba(255, 255, 255, 0.17);
+  --tile-active: rgba(255, 255, 255, 0.24);
+  --line: rgba(255, 255, 255, 0.18);
+  --field: rgba(255, 255, 255, 0.10);
+
+  --glow: rgba(255, 255, 255, 0.40);
+  --sheen-strength: 0.16;
+  --sheen-rim: rgba(255, 255, 255, 0.16);
+  color-scheme: dark;
+}
+
+/* ---------- Theme: Midnight (solid, dark) ---------- */
+:root[data-theme='midnight'] {
+  --solid: #181B2B;
+  --plate: linear-gradient(155deg,
+            rgba(30, 34, 52, 0.94) 0%,
+            rgba(20, 23, 37, 0.95) 55%,
+            rgba(16, 18, 30, 0.96) 100%);
+  --edge: rgba(255, 255, 255, 0.11);
+  --edge-inner: rgba(255, 255, 255, 0.17);
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.55), 0 2px 10px rgba(0, 0, 0, 0.35);
+
+  --ink: #EEF1F8;
+  --ink-2: rgba(238, 241, 248, 0.88);
+  --ink-3: rgba(238, 241, 248, 0.72);
+
+  --tile: rgba(255, 255, 255, 0.06);
+  --tile-hover: rgba(255, 255, 255, 0.11);
+  --tile-active: rgba(255, 255, 255, 0.16);
+  --line: rgba(255, 255, 255, 0.10);
+  --field: rgba(255, 255, 255, 0.065);
+
+  --glow: rgba(255, 255, 255, 0.20);
+  --sheen-strength: 0.16;
+  --sheen-rim: rgba(255, 255, 255, 0.16);
+  color-scheme: dark;
+}
+
+/* ---------- Theme: Daylight (solid, light) ---------- */
+:root[data-theme='daylight'] {
+  --solid: #FBFCFE;
+  --plate: linear-gradient(155deg,
+            rgba(255, 255, 255, 0.97) 0%,
+            rgba(248, 250, 253, 0.96) 60%,
+            rgba(242, 246, 251, 0.96) 100%);
+  --edge: rgba(16, 24, 40, 0.10);
+  --edge-inner: rgba(255, 255, 255, 0.95);
+  --shadow: 0 18px 46px rgba(16, 24, 40, 0.16), 0 2px 8px rgba(16, 24, 40, 0.07);
+
+  --ink: #1B2430;
+  --ink-2: rgba(27, 36, 48, 0.88);
+  --ink-3: rgba(27, 36, 48, 0.72);
+
+  --tile: rgba(16, 24, 40, 0.05);
+  --tile-hover: rgba(16, 24, 40, 0.09);
+  --tile-active: rgba(16, 24, 40, 0.13);
+  --line: rgba(16, 24, 40, 0.16);
+  --field: rgba(16, 24, 40, 0.045);
+
+  --glow: rgba(16, 24, 40, 0.10);
+  --sheen-color: rgba(120, 160, 220, 0.5);
+  --sheen-strength: 0.22;
+  color-scheme: light;
+}
+
+/* ---------- Theme: Sand (warm, dark) ---------- */
+:root[data-theme='sand'] {
+  --solid: #3A2F28;
+  --plate: linear-gradient(155deg,
+            rgba(62, 50, 42, 0.90) 0%,
+            rgba(50, 40, 33, 0.92) 55%,
+            rgba(40, 31, 27, 0.94) 100%);
+  --edge: rgba(255, 233, 209, 0.18);
+  --edge-inner: rgba(255, 233, 209, 0.26);
+  --shadow: 0 20px 55px rgba(28, 18, 12, 0.48), 0 2px 10px rgba(28, 18, 12, 0.3);
+
+  --ink: #F7EEE4;
+  --ink-2: rgba(247, 238, 228, 0.88);
+  --ink-3: rgba(247, 238, 228, 0.72);
+
+  --tile: rgba(255, 233, 209, 0.08);
+  --tile-hover: rgba(255, 233, 209, 0.14);
+  --tile-active: rgba(255, 233, 209, 0.20);
+  --line: rgba(255, 233, 209, 0.13);
+  --field: rgba(255, 233, 209, 0.075);
+
+  --glow: rgba(255, 220, 180, 0.26);
+  --sheen-strength: 0.16;
+  --sheen-rim: rgba(255, 255, 255, 0.16);
+  color-scheme: dark;
+}
+
+/* ---------- Theme: Aurora (Northern Lights Glass) ---------- */
+:root[data-theme='aurora'] {
+  --solid: #121927;
+  --plate:
+    radial-gradient(130% 90% at 15% -10%, rgba(56, 189, 248, 0.28) 0%, rgba(168, 85, 247, 0.16) 45%, transparent 70%),
+    linear-gradient(150deg, rgba(15, 23, 42, 0.72) 0%, rgba(30, 27, 75, 0.65) 50%, rgba(15, 23, 42, 0.75) 100%);
+  --edge: rgba(168, 85, 247, 0.38);
+  --edge-inner: rgba(56, 189, 248, 0.55);
+  --shadow: 0 22px 60px rgba(10, 15, 30, 0.55), 0 0 25px rgba(56, 189, 248, 0.18);
+  --ink: #F8FAFC;
+  --ink-2: rgba(248, 250, 252, 0.90);
+  --ink-3: rgba(248, 250, 252, 0.74);
+  --tile: rgba(255, 255, 255, 0.08);
+  --tile-hover: rgba(56, 189, 248, 0.16);
+  --tile-active: rgba(168, 85, 247, 0.24);
+  --line: rgba(255, 255, 255, 0.12);
+  --field: rgba(15, 23, 42, 0.35);
+  --glow: rgba(56, 189, 248, 0.65);
+  --sheen-rim: rgba(168, 85, 247, 0.45);
+  color-scheme: dark;
+}
+
+/* ---------- Theme: Cyber (Neon Glass) ---------- */
+:root[data-theme='cyber'] {
+  --solid: #0A0D14;
+  --plate: linear-gradient(160deg,
+            rgba(16, 20, 32, 0.88) 0%,
+            rgba(10, 13, 20, 0.90) 55%,
+            rgba(6, 8, 14, 0.94) 100%);
+  --edge: rgba(0, 242, 254, 0.45);
+  --edge-inner: rgba(79, 172, 254, 0.7);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 242, 254, 0.15);
+  --ink: #E0F7FF;
+  --ink-2: rgba(224, 247, 255, 0.90);
+  --ink-3: rgba(224, 247, 255, 0.72);
+  --tile: rgba(0, 242, 254, 0.06);
+  --tile-hover: rgba(0, 242, 254, 0.14);
+  --tile-active: rgba(0, 242, 254, 0.22);
+  --line: rgba(0, 242, 254, 0.14);
+  --field: rgba(6, 8, 14, 0.4);
+  --glow: rgba(0, 242, 254, 0.75);
+  --sheen-rim: rgba(0, 242, 254, 0.6);
+  color-scheme: dark;
+}
+
+/* ---------- Theme: OLED (Deep Black Contrast) ---------- */
+:root[data-theme='oled'] {
+  --solid: #000000;
+  --plate: linear-gradient(160deg, #050505 0%, #000000 100%);
+  --edge: rgba(255, 255, 255, 0.18);
+  --edge-inner: rgba(255, 255, 255, 0.32);
+  --shadow: 0 24px 65px rgba(0, 0, 0, 0.9);
+  --ink: #FFFFFF;
+  --ink-2: rgba(255, 255, 255, 0.90);
+  --ink-3: rgba(255, 255, 255, 0.72);
+  --tile: rgba(255, 255, 255, 0.06);
+  --tile-hover: rgba(255, 255, 255, 0.12);
+  --tile-active: rgba(255, 255, 255, 0.18);
+  --line: rgba(255, 255, 255, 0.12);
+  --field: rgba(18, 18, 18, 0.7);
+  --glow: rgba(255, 255, 255, 0.3);
+  --sheen-rim: rgba(255, 255, 255, 0.25);
+  color-scheme: dark;
+}
+
+/* ---------- Theme: Lined Notebook (كراسة مسطّرة) ---------- */
+:root[data-theme='notebook'] {
+  --solid: #fcf8f0;
+  --plate:
+    radial-gradient(ellipse at 15% 25%, rgba(255, 255, 255, 0.88) 0%, rgba(240, 232, 218, 0.5) 60%, rgba(220, 210, 195, 0.7) 100%),
+    linear-gradient(to left, transparent 36px, rgba(239, 68, 68, 0.42) 37px, rgba(239, 68, 68, 0.42) 39px, transparent 40px),
+    repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, rgba(130, 160, 205, 0.38) 28px);
+  --edge: #3c424a;
+  --edge-inner: rgba(255, 255, 255, 0.95);
+  --shadow: 4px 6px 0 rgba(40, 45, 55, 0.30), inset 0 0 40px rgba(180, 165, 140, 0.25);
+  --ink: #1a1e24;
+  --ink-2: #242932;
+  --ink-3: #525c68;
+  --tile: rgba(255, 255, 255, 0.88);
+  --tile-hover: #ffffff;
+  --tile-active: rgba(239, 246, 255, 0.95);
+  --line: rgba(60, 68, 78, 0.32);
+  --field: #ffffff;
+  --glow: rgba(30, 58, 138, 0.25);
+  --sheen-rim: rgba(255, 255, 255, 0.6);
+  --border-window: 2.5px solid #3c424a;
+  --font-ui: var(--font-base, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", "Tajawal", system-ui, sans-serif);
+  --font-read: var(--font-base, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", "Tajawal", system-ui, sans-serif);
+  --font-num: var(--font-base, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", "Tajawal", system-ui, sans-serif);
+  color-scheme: light;
+}
+
+html[dir="ltr"]:root[data-theme='notebook'] {
+  --plate:
+    radial-gradient(ellipse at 15% 25%, rgba(255, 255, 255, 0.88) 0%, rgba(240, 232, 218, 0.5) 60%, rgba(220, 210, 195, 0.7) 100%),
+    linear-gradient(to right, transparent 36px, rgba(239, 68, 68, 0.42) 37px, rgba(239, 68, 68, 0.42) 39px, transparent 40px),
+    repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, rgba(130, 160, 205, 0.38) 28px);
+}
+
+:root:not([data-app-icon='1'])[data-theme='notebook'] .plate:not([data-app-icon='1']),
+body.theme-notebook:not([data-app-icon='1']) .plate:not([data-app-icon='1']),
+.plate:not([data-app-icon='1'])[data-theme='notebook'] {
+  border: 2.5px solid #3c424a !important;
+  border-radius: var(--radius-window, 22px) !important;
+  box-shadow: 4px 6px 0 rgba(40, 45, 55, 0.32), inset 0 0 40px rgba(180, 165, 140, 0.25) !important;
+}
+
+:root[data-theme='notebook'] .head,
+body.theme-notebook .head {
+  border-bottom: 2px dashed rgba(60, 68, 78, 0.4) !important;
+}
+
+:root[data-theme='notebook'] .head-title,
+body.theme-notebook .head-title {
+  color: #1a1e24 !important;
+  font-weight: 800 !important;
+}
+
+:root[data-theme='notebook'] .head-icon,
+body.theme-notebook .head-icon {
+  background: rgba(60, 68, 78, 0.08) !important;
+  border: 1.5px solid #3c424a !important;
+  border-radius: 6px !important;
+  color: #1e3a8a !important;
+}
+
+:root[data-theme='notebook'] .icon-btn,
+body.theme-notebook .icon-btn {
+  border: 1.2px solid rgba(60, 68, 78, 0.28) !important;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.65) !important;
+  color: #24272c !important;
+}
+
+:root[data-theme='notebook'] .icon-btn:hover,
+body.theme-notebook .icon-btn:hover {
+  background: #ffffff !important;
+  border-color: #1e3a8a !important;
+  color: #1e3a8a !important;
+  box-shadow: 1px 2px 0 rgba(40, 45, 55, 0.2) !important;
+}
+
+:root[data-theme='notebook'] .field,
+:root[data-theme='notebook'] input[type="text"],
+:root[data-theme='notebook'] textarea,
+:root[data-theme='notebook'] select.picker,
+body.theme-notebook .field,
+body.theme-notebook input[type="text"],
+body.theme-notebook textarea,
+body.theme-notebook select.picker {
+  background: #ffffff !important;
+  border: 1.8px solid #3c424a !important;
+  border-radius: 7px !important;
+  color: #181b20 !important;
+}
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* The UA rule for [hidden] is display:none at the lowest specificity, so any
+   component rule that sets `display` silently defeats it. Widgets toggle
+   panels with the hidden attribute, so it has to actually win. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  color: var(--custom-font-color, var(--ink));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  cursor: default;
+  user-select: none;
+}
+
+body { font-size: calc(14px * var(--fs)); font-weight: var(--ui-weight, 400); }
+
+::selection { background: var(--accent-soft); color: var(--ink); }
+
+button, input, textarea { font: inherit; color: inherit; }
+button { border: 0; background: none; cursor: pointer; padding: 0; margin: 0; }
+
+/* Scrollbars: thin, rounded, only visible when there is something to scroll */
+.scroll { overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb {
+  background: var(--tile-hover);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background var(--t) var(--ease);
+}
+.scroll::-webkit-scrollbar-thumb:hover { background: var(--tile-active); background-clip: content-box; }
+
+/* ==========================================================================
+   The window plate
+   ========================================================================== */
+
+.plate {
+  container-type: size;
+  container-name: plate;
+  /* The glass slider in settings blends the theme's solid colour over the
+     glass: 0 keeps it see-through, 1 makes it fully opaque. Widgets and
+     full windows each have their own value. */
+  --solid-layer: color-mix(in srgb, var(--solid, #eef2f8) calc(var(--solidity, 0) * 100%), transparent);
+  position: relative;
+  height: 100%;
+  border-radius: var(--radius-window);
+  background:
+    linear-gradient(var(--tint-layer, transparent), var(--tint-layer, transparent)),
+    linear-gradient(var(--solid-layer), var(--solid-layer)),
+    var(--plate);
+  text-shadow: none;
+  border: var(--edge-w, 1px) solid var(--edge);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  opacity: var(--plate-opacity, 1);
+  transition: opacity var(--t) var(--ease), border-color var(--t-slow) var(--ease),
+              box-shadow var(--t-slow) var(--ease);
+}
+
+/* Hover: the glass catches the light. A soft glow follows the pointer and
+   a highlight slides along the rim, the way light moves across a frosted
+   pane when you tilt it. Nothing changes size, so text stays crisp. */
+.plate:hover {
+  border-color: var(--edge-inner);
+  box-shadow: inset 0 1px 0 var(--sheen-rim, rgba(255, 255, 255, 0.35)), inset 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  background: radial-gradient(var(--sheen-radius, 240px) circle at var(--mx, 50%) var(--my, 0%),
+              var(--sheen-color, rgba(255, 255, 255, 0.55)), transparent 68%);
+  transition: opacity var(--t-slow) var(--ease);
+}
+.plate:hover .sheen { opacity: calc(var(--sheen-strength, 0.42) * var(--hover-k, 1)); }
+
+/* Top highlight: soft light bloom across the glass, behind foreground content */
+.plate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.14) 0%, transparent 42%, transparent 78%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
+  opacity: calc(0.75 * var(--edge-k, 1));
+  z-index: 2;
+}
+.plate:hover::before { opacity: var(--edge-k, 1); }
+
+/* A very quiet grain so large flat areas do not band, kept strictly behind content */
+.plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(0.035 * var(--grain-k, 1));
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding: var(--pad) var(--pad) 10px;
+  flex: none;
+  position: relative;
+  z-index: 4;
+}
+
+.head-icon {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--tile);
+  color: var(--accent);
+  flex: none;
+}
+.head-icon svg { width: 15px; height: 15px; }
+
+.head-title { font-size: calc(13px * var(--fs)); font-weight: 600; letter-spacing: 0.1px; }
+.head-sub { font-size: calc(11px * var(--fs)); color: var(--ink-3); margin-top: 1px; }
+.head-text { min-width: 0; flex: 1; }
+.head-text > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.head-actions { -webkit-app-region: no-drag; display: flex; gap: 4px; flex: none; }
+
+.icon-btn {
+  width: 27px; height: 27px;
+  display: grid; place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--ink-3);
+  transition: background var(--t) var(--ease), color var(--t) var(--ease),
+              transform var(--t) var(--ease-spring);
+}
+.icon-btn svg { width: 14px; height: 14px; }
+.icon-btn:hover { background: var(--tile-hover); color: var(--ink); transform: translateY(-1px); }
+.icon-btn:active { background: var(--tile-active); transform: translateY(0) scale(0.94); }
+.icon-btn.danger:hover { color: #ff8b8b; }
+
+/* Minimize button */
+.min-btn { color: var(--ink-2); }
+.min-btn:hover { background: var(--tile-hover); color: var(--accent); }
+:root[data-mini="1"] .min-btn { background: var(--accent-soft); color: var(--accent); }
+
+/* Universal Responsive Header Rules */
+@container plate (max-width: 290px) {
+  .head {
+    padding: calc(var(--pad) * 0.65) calc(var(--pad) * 0.7) 6px;
+    gap: 4px;
+  }
+  .head-icon { width: 22px; height: 22px; }
+  .head-icon svg { width: 12px; height: 12px; }
+  .head-title { font-size: calc(11.5px * var(--fs)); }
+  .head-sub { font-size: calc(9.5px * var(--fs)); }
+  .head-actions { gap: 2px; }
+  .icon-btn { width: 23px; height: 23px; }
+  .icon-btn svg { width: 12px; height: 12px; }
+}
+
+@container plate (max-width: 220px), :root[data-compact="ultra"] .plate {
+  .head {
+    padding: 5px 8px 4px;
+    gap: 3px;
+  }
+  .head-icon { display: none; }
+  .head-title { font-size: 11px; }
+  .head-sub { display: none; }
+  .icon-btn { width: 20px; height: 20px; }
+  .icon-btn svg { width: 11px; height: 11px; }
+}
+
+/* ==========================================================================
+   Body
+   ========================================================================== */
+
+.body { flex: 1; min-height: 0; padding: 0 var(--pad) 10px; position: relative; z-index: 4; }
+
+.empty {
+  height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; color: var(--ink-3);
+  text-align: center; padding: 20px;
+}
+.empty svg { width: 30px; height: 30px; opacity: 0.5; }
+.empty p { margin: 0; font-size: calc(12px * var(--fs)); line-height: 1.6; }
+
+/* ==========================================================================
+   Controls
+   ========================================================================== */
+
+.field {
+  -webkit-app-region: no-drag;
+  width: 100%;
+  background: var(--field);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+  color: var(--ink);
+  outline: none;
+  user-select: text;
+  transition: background var(--t) var(--ease), border-color var(--t) var(--ease),
+              box-shadow var(--t) var(--ease);
+}
+.field::placeholder { color: var(--ink-3); }
+.field:hover { background: var(--tile-hover); }
+.field:focus {
+  background: var(--tile-hover);
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.btn {
+  -webkit-app-region: no-drag;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--tile);
+  color: var(--ink);
+  font-size: calc(12px * var(--fs)); font-weight: 500;
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease-spring),
+              box-shadow var(--t) var(--ease);
+}
+.btn:hover { background: var(--tile-hover); transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(0.97); background: var(--tile-active); }
+.btn.primary { background: var(--accent); color: var(--ink-on-accent); font-weight: 600; }
+.btn.primary:hover { box-shadow: 0 6px 18px var(--accent-soft); }
+.btn svg { width: 13px; height: 13px; }
+
+/* ==========================================================================
+   Window open / close choreography
+   ========================================================================== */
+
+@keyframes plate-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+body.enter .plate {
+  animation: plate-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* Secondary dialog windows (Settings, Tafsir, etc.) use smooth opacity-only fade without scaling to prevent DWM trembling & flickering */
+:root[data-kind='window'] body.enter .plate,
+body.enter .window-plate,
+body.enter .settings-plate {
+  animation: window-plate-fade-in 0.12s cubic-bezier(0, 0, 0.2, 1) both !important;
+  transform: none !important;
+  will-change: opacity;
+}
+
+@keyframes window-plate-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+body.leaving .plate {
+  opacity: 0 !important;
+  transform: scale(0.96) !important;
+  transition: opacity 0.16s ease, transform 0.16s ease !important;
+  will-change: transform, opacity;
+}
+
+:root[data-kind='window'] body.leaving .plate,
+body.leaving .window-plate,
+body.leaving .settings-plate {
+  opacity: 0 !important;
+  transform: none !important;
+  transition: opacity 0.14s ease !important;
+  will-change: opacity;
+}
+
+/* Items appearing in a list get a small staggered lift */
+@keyframes item-in {
+  from { opacity: 0; transform: translateY(8px); filter: blur(2px); }
+  to   { opacity: 1; transform: none; filter: blur(0px); }
+}
+.stagger > * { animation: item-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.stagger > *:nth-child(1) { animation-delay: 20ms; }
+.stagger > *:nth-child(2) { animation-delay: 45ms; }
+.stagger > *:nth-child(3) { animation-delay: 70ms; }
+.stagger > *:nth-child(4) { animation-delay: 95ms; }
+.stagger > *:nth-child(5) { animation-delay: 120ms; }
+.stagger > *:nth-child(6) { animation-delay: 145ms; }
+.stagger > *:nth-child(n+7) { animation-delay: 165ms; }
+
+body.dragging, body.dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+body.resizing, body.resizing * {
+  cursor: nesw-resize !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* Zero-lag performance boost: pause all transitions, animations & pointer-events during movement/resizing */
+body.dragging *,
+body.resizing * {
+  transition: none !important;
+  animation: none !important;
+}
+
+body.dragging .plate > *,
+body.resizing .plate > * {
+  pointer-events: none !important;
+}
+
+body.dragging .sheen,
+body.dragging .plate::after,
+body.resizing .sheen,
+body.resizing .plate::after {
+  display: none !important;
+}
+
+body.resizing .plate {
+  will-change: width, height;
+}
+
+body.dragging .app-icon-widget {
+  transform: scale(1.08) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45) !important;
+  transition: none !important;
+  filter: brightness(1.06) !important;
+  z-index: 1000 !important;
+}
+
+body.dragging .plate {
+  transform: scale(1.015) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35) !important;
+  transition: none !important;
+}
+
+html[dir='ltr'] { --dir: -1; --start: left; }
+
+/* Resize grip, in the bottom corner at the inline end (bottom-left in Arabic) */
+.grip {
+  -webkit-app-region: no-drag;
+  position: absolute;
+  inset-inline-end: 0; bottom: 0;
+  width: 22px; height: 22px;
+  cursor: nesw-resize;
+  touch-action: none;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity var(--t) var(--ease);
+}
+.plate:hover .grip { opacity: 0.45; }
+body.resizing .grip { opacity: 0.9; }
+.grip:hover { opacity: 0.8 !important; }
+.grip::after {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Text on an accent fill or inside small chips keeps a clean edge. */
+.btn.primary, .pill.on, .add-btn, .badge, .switch, .cell.today > i, .mode.on { text-shadow: none; }
+
+/* Higher text contrast: secondary text moves closer to the main ink colour. */
+:root[data-theme][data-contrast='high'] {
+  --ink-2: color-mix(in srgb, var(--ink) 92%, transparent);
+  --ink-3: color-mix(in srgb, var(--ink) 76%, transparent);
+}
+
+/* Motion switched off in settings. */
+html[data-motion='off'] *, html[data-motion='off'] *::before, html[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Resize from any edge or corner: thin invisible strips around the plate. */
+.rz { position: absolute; z-index: 7; touch-action: none; }
+.rz-n, .rz-s { left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.rz-n { top: 0; }
+.rz-s { bottom: 0; }
+.rz-e, .rz-w { top: 12px; bottom: 12px; width: 5px; cursor: ew-resize; }
+.rz-e { right: 0; }
+.rz-w { left: 0; }
+.rz-ne, .rz-nw, .rz-se, .rz-sw { width: 12px; height: 12px; }
+.rz-ne { top: 0; right: 0; cursor: nesw-resize; }
+.rz-sw { bottom: 0; left: 0; cursor: nesw-resize; }
+.rz-nw { top: 0; left: 0; cursor: nwse-resize; }
+.rz-se { bottom: 0; right: 0; cursor: nwse-resize; }
+body[data-resize-edge='n'], body[data-resize-edge='s'], body[data-resize-edge='n'] *, body[data-resize-edge='s'] * { cursor: ns-resize !important; }
+body[data-resize-edge='e'], body[data-resize-edge='w'], body[data-resize-edge='e'] *, body[data-resize-edge='w'] * { cursor: ew-resize !important; }
+body[data-resize-edge='nw'] *, body[data-resize-edge='se'] * { cursor: nwse-resize !important; }
+
+/* A locked widget shows no handles and cannot be moved. */
+html[data-locked='1'] .rz, html[data-locked='1'] .grip, html[data-locked='1'] .handle { display: none !important; }
+
+/* ==========================================================================
+   Close Buttons:
+   Desktop widgets (calendar, clock, email, notes, photo, pomodoro, quran, todo)
+   pinned on the desktop wallpaper must NEVER show the close button.
+   Secondary dialog windows (settings, email-view, tafsir, hadith, task) MUST ALWAYS
+   show the close button prominently so the user can easily close them.
+   ========================================================================== */
+:root[data-kind='widget'] #closeBtn,
+:root[data-page='calendar'] #closeBtn,
+:root[data-page='clock'] #closeBtn,
+:root[data-page='email'] #closeBtn,
+:root[data-page='notes'] #closeBtn,
+:root[data-page='photo'] #closeBtn,
+:root[data-page='pomodoro'] #closeBtn,
+:root[data-page='quran'] #closeBtn,
+:root[data-page='todo'] #closeBtn,
+body[data-page='calendar'] #closeBtn,
+body[data-page='clock'] #closeBtn,
+body[data-page='email'] #closeBtn,
+body[data-page='notes'] #closeBtn,
+body[data-page='photo'] #closeBtn,
+body[data-page='pomodoro'] #closeBtn,
+body[data-page='quran'] #closeBtn,
+body[data-page='todo'] #closeBtn {
+  display: none !important;
+}
+
+/* Secondary dialog windows MUST ALWAYS display the close button */
+:root[data-kind='window'] #closeBtn,
+:root[data-page='settings'] #closeBtn,
+:root[data-page='email-view'] #closeBtn,
+:root[data-page='tafsir'] #closeBtn,
+:root[data-page='hadith'] #closeBtn,
+:root[data-page='task'] #closeBtn,
+body[data-page='settings'] #closeBtn,
+body[data-page='email-view'] #closeBtn,
+body[data-page='tafsir'] #closeBtn,
+body[data-page='hadith'] #closeBtn,
+body[data-page='task'] #closeBtn,
+.plate.window-plate #closeBtn,
+.settings-plate #closeBtn,
+.email-view-plate #closeBtn,
+.tafsir-plate #closeBtn,
+.hadith-plate #closeBtn,
+.task-plate #closeBtn {
+  display: grid !important;
+}
+
+/* ==========================================================================
+   Desktop App Icon Mode (72x72) - Rich, distinctive mini app icons
+   ========================================================================== */
+
+:root[data-app-icon="1"] {
+  overflow: hidden !important;
+}
+
+:root[data-app-icon="1"] body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+:root[data-app-icon="1"] .plate,
+.plate[data-app-icon="1"],
+html[data-app-icon="1"] .plate,
+html[data-app-icon="1"] body .plate,
+:root[data-app-icon="1"] body .plate,
+:root[data-app-icon="1"] body[class*="theme-"] .plate,
+:root[data-app-icon="1"] body[class*="theme-"] .plate.tile-plate,
+body[data-app-icon="1"] .plate,
+body[data-app-icon="1"] .plate.tile-plate,
+body[data-app-icon="1"][class*="theme-"] .plate,
+body.theme-notebook .plate[data-app-icon="1"],
+body.theme-notebook .plate.tile-plate[data-app-icon="1"],
+body.theme-sketch .plate[data-app-icon="1"],
+body.theme-sketch .plate.tile-plate[data-app-icon="1"],
+body.theme-dotgrid .plate[data-app-icon="1"],
+body.theme-dotgrid .plate.tile-plate[data-app-icon="1"],
+body.theme-graphpaper .plate[data-app-icon="1"],
+body.theme-graphpaper .plate.tile-plate[data-app-icon="1"],
+body.theme-craft .plate[data-app-icon="1"],
+body.theme-craft .plate.tile-plate[data-app-icon="1"],
+body.theme-oled .plate[data-app-icon="1"],
+body.theme-oled .plate.tile-plate[data-app-icon="1"],
+body.theme-emerald .plate[data-app-icon="1"],
+body.theme-emerald .plate.tile-plate[data-app-icon="1"],
+body.theme-ocean .plate[data-app-icon="1"],
+body.theme-ocean .plate.tile-plate[data-app-icon="1"],
+body.theme-amber .plate[data-app-icon="1"],
+body.theme-amber .plate.tile-plate[data-app-icon="1"],
+body.theme-minimal-light .plate[data-app-icon="1"],
+body.theme-minimal-light .plate.tile-plate[data-app-icon="1"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  border: none !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: visible !important;
+  outline: none !important;
+}
+
+:root[data-app-icon="1"] .plate > :not(.app-icon-widget),
+.plate[data-app-icon="1"] > :not(.app-icon-widget),
+body[data-app-icon="1"] .plate > :not(.app-icon-widget) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+:root[data-app-icon="1"] .plate::before,
+:root[data-app-icon="1"] .plate::after,
+.plate[data-app-icon="1"]::before,
+.plate[data-app-icon="1"]::after,
+body[data-app-icon="1"] .plate::before,
+body[data-app-icon="1"] .plate::after {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+:root[data-app-icon="1"] .rz,
+.plate[data-app-icon="1"] .rz,
+body[data-app-icon="1"] .rz,
+:root[data-compact="ultra"] .rz,
+.app-icon-widget ~ .rz {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.app-icon-widget,
+#appIconWidget {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  overflow: hidden !important;
+  user-select: none;
+  -webkit-user-select: none;
+  box-sizing: border-box;
+}
+
+:root:not([data-app-icon="1"]) .app-icon-widget,
+.plate:not([data-app-icon="1"]) .app-icon-widget,
+body:not([data-app-icon="1"]) .app-icon-widget,
+:root:not([data-app-icon="1"]) #appIconWidget,
+.plate:not([data-app-icon="1"]) #appIconWidget,
+body:not([data-app-icon="1"]) #appIconWidget,
+div:not([data-app-icon="1"]) > .app-icon-widget,
+div:not([data-app-icon="1"]) > #appIconWidget {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+}
+
+:root[data-app-icon="1"] .app-icon-widget,
+:root[data-app-icon="1"] #appIconWidget,
+.plate[data-app-icon="1"] .app-icon-widget,
+.plate[data-app-icon="1"] #appIconWidget,
+body[data-app-icon="1"] .app-icon-widget,
+body[data-app-icon="1"] #appIconWidget {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  width: 52px !important;
+  height: 52px !important;
+  margin: 2px !important;
+  border-radius: 13px !important;
+  position: relative !important;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.18s ease;
+  overflow: visible !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  animation: appIconPop 0.22s cubic-bezier(0.34, 1.35, 0.64, 1);
+}
+
+@keyframes appIconPop {
+  0%   { transform: scale(0.84); opacity: 0; }
+  70%  { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.app-icon-widget:hover {
+  transform: scale(1.04);
+  filter: brightness(1.06);
+  /* Crisp elevation on hover without any halo box or glowing aura */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35),
+              inset 0 1px 1.5px rgba(255, 255, 255, 0.55);
+}
+
+.app-icon-widget:active {
+  transform: scale(0.95);
+  filter: brightness(0.96);
+}
+
+/* Selected State for Multi-Selected Group Widgets */
+.app-icon-widget.selected,
+body.widget-selected .app-icon-widget {
+  outline: 2.5px solid var(--accent, #0099ff) !important;
+  outline-offset: 2.5px !important;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent, #0099ff) 75%, transparent),
+              0 6px 16px rgba(0, 0, 0, 0.45) !important;
+  transform: scale(1.04) !important;
+  filter: brightness(1.08) !important;
+}
+
+.app-icon-widget.selected::after,
+body.widget-selected .app-icon-widget::after {
+  content: '✓';
+  position: absolute;
+  top: 2.5px;
+  right: 2.5px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent, #0099ff);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+  pointer-events: none;
+  animation: checkPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Glass shine overlay for squircle app icon - disabled for unified 3D icons to eliminate haze */
+.app-icon-widget::before {
+  display: none !important;
+}
+
+.app-icon-art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* Notification Badge */
+.app-icon-badge {
+  position: absolute;
+  top: 3.5px;
+  inset-inline-end: 3.5px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 8.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  border: 1.5px solid #ffffff;
+  z-index: 8;
+  line-height: 1;
+}
+.app-icon-badge.danger {
+  background: #ef4444;
+}
+
+/* 1. CLOCK APP ICON */
+.app-icon-clock {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.app-icon-clock .clock-face {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-icon-clock .clock-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  border-radius: 2px;
+}
+.app-icon-clock .hand-h {
+  width: 2px;
+  height: 8.5px;
+  background: #ffffff;
+  margin-left: -1px;
+}
+.app-icon-clock .hand-m {
+  width: 1.5px;
+  height: 12px;
+  background: #f43f5e;
+  margin-left: -0.75px;
+}
+.app-icon-clock .clock-pin {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  z-index: 5;
+}
+
+/* 2. POMODORO APP ICON */
+.app-icon-pomodoro {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #ffffff;
+}
+.app-icon-pomodoro .pomo-inner {
+  font-size: 19px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+/* 3. CALENDAR APP ICON */
+.app-icon-calendar {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+:root[data-app-icon="1"] .app-icon-calendar,
+.plate[data-app-icon="1"] .app-icon-calendar,
+body[data-app-icon="1"] .app-icon-calendar {
+  display: flex !important;
+  flex-direction: column !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.app-icon-calendar .cal-top {
+  width: 100%;
+  height: 13px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 7px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.app-icon-calendar .cal-body {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1f2937;
+  line-height: 1;
+}
+
+/* 4. TODO APP ICON */
+.app-icon-todo {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 19px !important;
+}
+
+/* 5. NOTES APP ICON (Rich outside design with fold, lines, and SVG pencil) */
+.app-icon-notes {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+.app-icon-note-fold {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  width: 9.5px;
+  height: 9.5px;
+  background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.2) 50%),
+              linear-gradient(135deg, #fde68a 50%, #fef3c7 50%);
+  border-bottom-left-radius: 3px;
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.25);
+  z-index: 6;
+}
+.app-icon-note-lines {
+  width: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-inline-start: -3px;
+}
+.app-icon-note-lines span {
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.85);
+}
+.app-icon-note-lines span:nth-child(2) { width: 75%; }
+.app-icon-note-lines span:nth-child(3) { width: 55%; }
+.app-icon-note-pencil {
+  position: absolute;
+  bottom: 5px;
+  inset-inline-end: 5px;
+  width: 14px;
+  height: 14px;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+  transform: rotate(-15deg);
+}
+
+/* 6. QURAN APP ICON */
+.app-icon-quran {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 19px !important;
+}
+
+/* 7. EMAIL APP ICON */
+.app-icon-email {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 19px !important;
+}
+
+/* 8. HABITS APP ICON */
+.app-icon-habits {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 19px !important;
+}
+
+/* 9. PHOTO APP ICON */
+.app-icon-photo {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 19px !important;
+}
+
+.icon-glyph {
+  font-size: 19px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Dormancy & Low-Power / Battery Conservation
+   ========================================================================== */
+
+/* Dormant state: widget is minimized or background occluded.
+   Zero animation, zero transitions, zero rendering overhead. */
+:root[data-dormant="1"] *,
+:root[data-dormant="1"] *::before,
+:root[data-dormant="1"] *::after {
+  animation: none !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+:root[data-dormant="1"] .plate::before,
+:root[data-dormant="1"] .plate::after,
+:root[data-dormant="1"] .sheen {
+  display: none !important;
+}
+
+/* Eco Mode (on-battery or forced):
+   Bypasses heavy backdrop-filter blur convolution, SVG fractalNoise, and sheen.
+   Drops compositor GPU load to near 0%. */
+:root[data-eco="1"] .plate::after {
+  display: none !important; /* disable fractal noise SVG filter */
+}
+
+:root[data-eco="1"] .sheen {
+  display: none !important; /* disable heavy dynamic sheen */
+}
+
+:root[data-eco="1"] *,
+:root[data-eco="1"] *::before,
+:root[data-eco="1"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Screen Locked / Suspended: complete visual freeze */
+:root[data-screen-locked="1"] *,
+:root[data-screen-locked="1"] *::before,
+:root[data-screen-locked="1"] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Spring-loaded folder gathering hover effect on target widget */
+body.folder-gather-target .plate,
+body.folder-gather-target .app-icon-plate,
+body.folder-gather-target .app-icon {
+  transform: scale(1.12) !important;
+  box-shadow:
+    0 0 0 4px var(--accent, #3E7CBE),
+    0 0 28px rgba(62, 124, 190, 0.75),
+    0 16px 36px rgba(0, 0, 0, 0.35) !important;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease !important;
+  animation: folderGatherPulse 1s infinite alternate ease-in-out !important;
+}
+
+@keyframes folderGatherPulse {
+  0% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px var(--accent, #3E7CBE), 0 0 16px rgba(62, 124, 190, 0.5);
+  }
+  100% {
+    transform: scale(1.16);
+    box-shadow: 0 0 0 6px var(--accent, #3E7CBE), 0 0 36px rgba(62, 124, 190, 0.85);
+  }
+}
+
+/* ==========================================================================
+   Universal Delete Confirmation Dialog (.confirm-overlay, .confirm-dialog)
+   Appears whenever any delete action is triggered across widgets.
+   ========================================================================== */
+.confirm-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: confirmFadeIn 0.16s ease-out;
+  -webkit-app-region: no-drag;
+}
+.confirm-overlay.closing {
+  animation: confirmFadeOut 0.12s ease-in forwards;
+}
+@keyframes confirmFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes confirmFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.confirm-dialog {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  padding: 20px 22px 18px;
+  width: 100%;
+  max-width: 260px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: confirmPopIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+.confirm-overlay.closing .confirm-dialog {
+  animation: confirmPopOut 0.12s ease-in forwards;
+}
+@keyframes confirmPopIn {
+  from { opacity: 0; transform: scale(0.88) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes confirmPopOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.92) translateY(6px); }
+}
+
+.confirm-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  display: grid;
+  place-items: center;
+  margin-bottom: 2px;
+  flex: none;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.confirm-icon-box svg {
+  width: 22px;
+  height: 22px;
+  stroke: #ef4444;
+}
+
+.confirm-title {
+  font-size: calc(13px * var(--fs, 1));
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.confirm-desc {
+  font-size: calc(11px * var(--fs, 1));
+  color: #475569;
+  line-height: 1.4;
+  margin: 0;
+  word-break: break-word;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.confirm-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.confirm-btn-delete {
+  flex: 1;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: calc(11.5px * var(--fs, 1));
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35);
+  font-family: inherit;
+}
+.confirm-btn-delete:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(239, 68, 68, 0.5);
+}
+
+.confirm-btn-cancel {
+  flex: 1;
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: calc(11.5px * var(--fs, 1));
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+}
+.confirm-btn-cancel:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+:root[data-theme='smoke'] .confirm-dialog,
+:root[data-theme='midnight'] .confirm-dialog,
+:root[data-theme='cyber'] .confirm-dialog,
+:root[data-theme='oled'] .confirm-dialog,
+:root[data-theme='sand'] .confirm-dialog,
+:root[data-theme='aurora'] .confirm-dialog,
+body.theme-dark .confirm-dialog,
+body.theme-smoke .confirm-dialog,
+body.theme-midnight .confirm-dialog,
+body.theme-cyber .confirm-dialog,
+body.theme-oled .confirm-dialog,
+body.theme-sand .confirm-dialog,
+body.theme-aurora .confirm-dialog {
+  background: #181b2b !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+:root[data-theme='smoke'] .confirm-title,
+:root[data-theme='midnight'] .confirm-title,
+:root[data-theme='cyber'] .confirm-title,
+:root[data-theme='oled'] .confirm-title,
+:root[data-theme='sand'] .confirm-title,
+:root[data-theme='aurora'] .confirm-title,
+body.theme-dark .confirm-title,
+body.theme-smoke .confirm-title,
+body.theme-midnight .confirm-title,
+body.theme-cyber .confirm-title,
+body.theme-oled .confirm-title,
+body.theme-sand .confirm-title,
+body.theme-aurora .confirm-title {
+  color: #f8fafc !important;
+}
+
+:root[data-theme='smoke'] .confirm-desc,
+:root[data-theme='midnight'] .confirm-desc,
+:root[data-theme='cyber'] .confirm-desc,
+:root[data-theme='oled'] .confirm-desc,
+:root[data-theme='sand'] .confirm-desc,
+:root[data-theme='aurora'] .confirm-desc,
+body.theme-dark .confirm-desc,
+body.theme-smoke .confirm-desc,
+body.theme-midnight .confirm-desc,
+body.theme-cyber .confirm-desc,
+body.theme-oled .confirm-desc,
+body.theme-sand .confirm-desc,
+body.theme-aurora .confirm-desc {
+  color: #cbd5e1 !important;
+}
+
+:root[data-theme='smoke'] .confirm-btn-cancel,
+:root[data-theme='midnight'] .confirm-btn-cancel,
+:root[data-theme='cyber'] .confirm-btn-cancel,
+:root[data-theme='oled'] .confirm-btn-cancel,
+:root[data-theme='sand'] .confirm-btn-cancel,
+:root[data-theme='aurora'] .confirm-btn-cancel,
+body.theme-dark .confirm-btn-cancel,
+body.theme-smoke .confirm-btn-cancel,
+body.theme-midnight .confirm-btn-cancel,
+body.theme-cyber .confirm-btn-cancel,
+body.theme-oled .confirm-btn-cancel,
+body.theme-sand .confirm-btn-cancel,
+body.theme-aurora .confirm-btn-cancel {
+  background: #282f44 !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+

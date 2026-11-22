@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="hd.title" data-kind="window" data-page="hadith">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>حديث</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/tafsir.css">
+  <link rel="stylesheet" href="css/hadith.css">
+</head>
+<body>
+  <div class="plate window-plate hadith-plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" id="place">—</div>
+        <div class="head-sub" id="sub">—</div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn" id="copyBtn" data-i18n-title="hd.copy"></button>
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.close"></button>
+      </div>
+    </header>
+
+    <div class="body scroll" id="scroll">
+      <div class="loading" id="loading"><div class="spinner"></div><span data-i18n="hd.loading"></span></div>
+      <div class="failed" id="failed" hidden><p id="failedText"></p><button class="btn" id="retryBtn" data-i18n="hd.retry"></button></div>
+
+      <div id="content" hidden>
+        <!-- the hadith, exactly as published -->
+        <section class="ayah-block">
+          <p class="hadith-text" id="text" dir="rtl" lang="ar"></p>
+          <div class="ayah-meta">
+            <span class="badge grade" id="grade"></span>
+            <span class="badge" id="verified" hidden><span id="verifiedIcon"></span><span id="verifiedText"></span></span>
+          </div>
+        </section>
+
+        <!-- why this hadith now: the app's own description -->
+        <section class="why" id="whyBlock" hidden>
+          <div class="why-head"><span id="whyIcon"></span><span data-i18n="hd.why"></span></div>
+          <ul class="why-list" id="whyList"></ul>
+          <p class="why-note" data-i18n="hd.whyNote"></p>
+        </section>
+
+        <!-- explanation, from HadeethEnc -->
+        <section class="tafsir-block">
+          <div class="tafsir-head">
+            <div>
+              <div class="tafsir-name" data-i18n="hd.sharh"></div>
+              <div class="tafsir-author" data-i18n="hd.sharhBy"></div>
+            </div>
+          </div>
+          <div class="tafsir-text plain" id="explanation" dir="rtl" lang="ar"></div>
+        </section>
+
+        <section class="tafsir-block" id="hintsBlock" hidden>
+          <div class="tafsir-name" data-i18n="hd.hints"></div>
+          <ul class="hints" id="hints" dir="rtl" lang="ar"></ul>
+        </section>
+
+        <section class="tafsir-block" id="wordsBlock" hidden>
+          <div class="tafsir-name" data-i18n="hd.words"></div>
+          <dl class="words" id="words" dir="rtl" lang="ar"></dl>
+        </section>
+
+        <!-- English, as published by HadeethEnc, in the English interface only -->
+        <section class="tr-block" id="enBlock" hidden>
+          <div class="tr-head" data-i18n="hd.enHead"></div>
+          <div class="tr-text" id="enText" dir="ltr" lang="en"></div>
+          <div class="tr-head en-sub" data-i18n="hd.enExplanation"></div>
+          <div class="tr-text" id="enExplanation" dir="ltr" lang="en"></div>
+        </section>
+
+        <footer class="attrib">
+          <div class="attrib-row"><span class="attrib-key" data-i18n="hd.kSource"></span><span class="attrib-val" id="srcText">—</span></div>
+          <div class="attrib-row"><span class="attrib-key" data-i18n="hd.kVerify"></span><span class="attrib-val" id="srcVerify">—</span></div>
+          <div class="attrib-row"><span class="attrib-key" data-i18n="hd.kRefs"></span><span class="attrib-val refs" id="srcRefs" dir="rtl" lang="ar">—</span></div>
+          <div class="attrib-links" id="links"></div>
+          <p class="attrib-note" data-i18n="hd.note"></p>
+        </footer>
+      </div>
+    </div>
+
+    <div class="grip"></div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/hadith.js"></script>
+</body>
+</html>

@@ -1,0 +1,2451 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-title-key="s.title" data-kind="window" data-page="settings">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>الإعدادات</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/settings.css">
+</head>
+
+<body>
+  <div class="plate window-plate settings-plate">
+    <header class="head">
+      <div class="head-icon" id="headIcon"></div>
+      <div class="head-text">
+        <div class="head-title" data-i18n="s.title"></div>
+        <div class="head-sub" data-i18n="s.sub"></div>
+      </div>
+      <div class="head-actions">
+        <button class="icon-btn danger" id="closeBtn" data-i18n-title="common.close"></button>
+      </div>
+    </header>
+
+    <!-- ── Instant Quick Search & Top Navigation ── -->
+    <div class="settings-top-control-strip">
+      <div class="settings-search-bar" id="settingsSearchBar">
+        <div class="settings-search-inner">
+          <span class="search-glass-icon">🔍</span>
+          <input type="search" id="settingsSearchInput" class="settings-search-input" placeholder="ابحث في الإعدادات... (مثال: ثيم، خط، واتساب، كلاسرووم، إيميل)" autocomplete="off">
+          <button type="button" class="search-clear-btn" id="searchClearBtn" title="مسح البحث" style="display: none;">✕</button>
+        </div>
+        <div class="search-results-summary" id="searchResultsSummary" style="display: none;"></div>
+      </div>
+
+      <!-- ── Sleek Category Segmented Tabs (Level 1) ── -->
+      <nav class="settings-nav" id="settingsNav">
+        <div class="nav-categories-bar">
+          <button type="button" class="nav-cat-btn active" data-cat="appearance" data-tab="appearance">
+            <span class="nav-cat-icon">🎨</span>
+            <span data-i18n="s.catAppearance">المظهر والتخصيص</span>
+          </button>
+          <button type="button" class="nav-cat-btn" data-cat="widgets" data-cat-trigger="widgets">
+            <span class="nav-cat-icon">🧩</span>
+            <span data-i18n="s.catWidgets">أدوات الودجات</span>
+          </button>
+          <button type="button" class="nav-cat-btn nav-cat-setup" data-cat="setup" data-tab="setup">
+            <span class="nav-cat-icon">⚙️</span>
+            <span data-i18n="s.catSetup">الحسابات والربط</span>
+          </button>
+        </div>
+
+        <!-- ── Sub-Nav Pill Strip (Level 2: shown when 'widgets' category is active) ── -->
+        <div class="nav-sub-pills" id="widgetsSubNav" style="display: none;">
+          <button type="button" class="nav-tab active" data-tab="todo">📋 <span data-i18n="s.tabTodo">المهام</span></button>
+          <button type="button" class="nav-tab" data-tab="habits">🌱 <span data-i18n="s.tabHabits">العادات</span></button>
+          <button type="button" class="nav-tab" data-tab="calendar">🗓️ <span data-i18n="s.tabCalendar">التقويم</span></button>
+          <button type="button" class="nav-tab" data-tab="time">⏰ <span data-i18n="s.tabTime">الوقت والتركيز</span></button>
+          <button type="button" class="nav-tab" data-tab="inspiration">📖 <span data-i18n="s.tabInspiration">القرآن والحديث</span></button>
+          <button type="button" class="nav-tab" data-tab="media">📬 <span data-i18n="s.tabMedia">البريد والصور</span></button>
+          <button type="button" class="nav-tab" data-tab="folder">📁 <span data-i18n="s.tabFolder">المجلدات</span></button>
+          <button type="button" class="nav-tab" data-tab="widgets">🎛️ <span data-i18n="s.tabWidgets">إدارة الودجات</span></button>
+        </div>
+      </nav>
+    </div>
+
+    <div class="body scroll">
+
+      <!-- ================================================================== TAB PANE 1: APPEARANCE (المظهر العام) ================================================================== -->
+      <div class="tab-pane active" data-pane="appearance">
+
+        <!-- ── appearance ── -->
+        <section class="group" id="sec-appearance">
+          <h2 data-i18n="s.appearance"></h2>
+
+          <!-- Scope Selector Compact Card -->
+          <div class="scope-compact-card" id="scopeControlBox">
+            <div class="scope-compact-main">
+              <div class="scope-compact-title">
+                <span class="scope-icon-mini">🎨</span>
+                <label for="appearanceScopeSelect" data-i18n="s.chooseTarget">تخصيص مظهر:</label>
+              </div>
+              <select class="picker scope-picker-compact" id="appearanceScopeSelect">
+                <option value="global" data-i18n="s.scopeGlobal">🌐 التطبيق ككل (الافتراضي العام)</option>
+                <option value="settings" data-i18n="s.scopeSettings">⚙️ نافذة الإعدادات (Settings Window)</option>
+                <optgroup label="الودجات على سطح المكتب (Widgets)" data-i18n-label="s.groupWidgets">
+                  <option value="clock" data-i18n="s.wClock">⏰ الساعة ومواقيت الصلاة (Clock)</option>
+                  <option value="pomodoro" data-i18n="s.wPomodoro">⏳ مؤقت بومودورو (Pomodoro)</option>
+                  <option value="calendar" data-i18n="s.wCalendar">📅 التقويم والمهام (Calendar)</option>
+                  <option value="todo" data-i18n="s.wTodo">📋 قائمة المهام (To-Do List)</option>
+                  <option value="habits" data-i18n="s.wHabits">🌱 متتبع العادات والعافية (Habits)</option>
+                  <option value="quran" data-i18n="s.wQuran">📖 المصحف الشريف والورد (Quran)</option>
+                  <option value="tafsir" data-i18n="s.wTafsir">📜 نافذة التفسير والتدبر (Tafsir)</option>
+                  <option value="hadith" data-i18n="s.wHadith">📚 نافذة الحديث الشريف (Hadith)</option>
+                  <option value="notes" data-i18n="s.wNotes">📝 الملاحظات السريعة (Notes)</option>
+                  <option value="email" data-i18n="s.wEmail">📬 البريد الإلكتروني (Email)</option>
+                  <option value="photo" data-i18n="s.wPhoto">🖼️ إطار الصور (Photo Frame)</option>
+                  <option value="event" data-i18n="s.wEvent">📌 تفاصيل الأحداث (Event)</option>
+                  <option value="task" data-i18n="s.wTask">📋 نافذة تفاصيل المهمة (Task Details)</option>
+                  <option value="email-view" data-i18n="s.wEmailView">📬 نافذة قراءة البريد (Email Reader)</option>
+                  <option value="habits-dashboard" data-i18n="s.wHabitsDashboard">📊 لوحة تحكم العادات (Habits
+                    Dashboard)</option>
+                  <option value="folder" data-i18n="s.wFolder">📁 مجلد وصندوق الودجات (Folder)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="scope-compact-actions">
+              <span class="scope-pill" id="scopeStatusPill">🌐 الافتراضي العام</span>
+              <button type="button" class="btn tiny scope-reset-btn" id="scopeResetBtn" style="display: none;" data-i18n="s.resetToGlobal">استعادة الافتراضي ↺</button>
+            </div>
+          </div>
+          <div class="scope-hint-row" id="scopeHintRow" style="display: none;">
+            <span class="scope-hint-text" id="scopeHintText"></span>
+          </div>
+
+          <div class="row col">
+            <label data-i18n="s.theme"></label>
+            <div class="themes" id="themes"></div>
+          </div>
+
+          <div class="row col">
+            <label data-i18n="s.accent"></label>
+            <div class="swatches" id="swatches"></div>
+            <div class="custom-color">
+              <input type="color" id="accentPick" data-i18n-title="s.customColor">
+              <span id="accentHex">—</span>
+            </div>
+          </div>
+
+          <div class="row" id="glassWidgetsRow">
+            <label for="glassWidgets" data-i18n="s.glassWidgets"></label>
+            <input type="range" id="glassWidgets" min="0" max="100" step="5">
+            <output id="glassWidgetsOut">—</output>
+          </div>
+          <div class="row" id="glassWindowsRow">
+            <label for="glassWindows" data-i18n="s.glassWindows"></label>
+            <input type="range" id="glassWindows" min="0" max="100" step="5">
+            <output id="glassWindowsOut">—</output>
+          </div>
+          <div class="row" id="scopeGlassRow" style="display: none;">
+            <label for="scopeGlass" data-i18n="s.glassThisWidget">تعتيم وزجاج هذا العنصر</label>
+            <input type="range" id="scopeGlass" min="0" max="100" step="5">
+            <output id="scopeGlassOut">—</output>
+          </div>
+          <div class="row switch-row" id="scopeClockPureTransparentRow" style="display: none;">
+            <label for="scopeClockPureTransparent" data-i18n="s.clockPureTransparent"></label>
+            <button class="switch" id="scopeClockPureTransparent" role="switch"></button>
+          </div>
+          <p class="hint" id="scopeClockPureTransparentHint" style="display: none;" data-i18n="s.clockPureTransparentHint"></p>
+          <div class="row switch-row" id="scopePomodoroPureTransparentRow" style="display: none;">
+            <label for="scopePomodoroPureTransparent" data-i18n="s.pomodoroPureTransparent"></label>
+            <button class="switch" id="scopePomodoroPureTransparent" role="switch"></button>
+          </div>
+          <p class="hint" id="scopePomodoroPureTransparentHint" style="display: none;" data-i18n="s.pomodoroPureTransparentHint"></p>
+          <p class="hint" data-i18n="s.glassHint"></p>
+
+          <div class="row">
+            <label for="radius" data-i18n="s.radius"></label>
+            <input type="range" id="radius" min="10" max="40" step="1">
+            <output id="radiusOut">—</output>
+          </div>
+
+          <div class="row" id="scopeFontScaleRow" style="display: none;">
+            <label for="scopeFontScale" data-i18n="s.wStyleFontScale">حجم خط هذا الودجت</label>
+            <input type="range" id="scopeFontScale" min="70" max="180" step="5">
+            <output id="scopeFontScaleOut">100%</output>
+          </div>
+
+          <div class="row">
+            <label for="language" data-i18n="s.language"></label>
+            <select class="picker" id="language">
+              <option value="auto" data-i18n="s.langAuto">تلقائي (حسب لغة النظام)</option>
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <p class="hint" data-i18n="s.languageHint"></p>
+
+          <div class="row" id="numeralsRow">
+            <label for="numerals" data-i18n="s.numerals"></label>
+            <select class="picker" id="numerals">
+              <option value="latn">0123</option>
+              <option value="arab">٠١٢٣</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ── fonts ── -->
+        <section class="group" id="sec-fonts-family">
+          <h2 data-i18n="s.fontsFamily"></h2>
+          <div class="row col">
+            <label data-i18n="s.fontUi"></label>
+            <div class="font-cards" id="fontUi"></div>
+          </div>
+          <div class="row col">
+            <label data-i18n="s.fontRead"></label>
+            <div class="font-cards" id="fontRead"></div>
+          </div>
+          <div class="row col">
+            <label data-i18n="s.fontQuran"></label>
+            <div class="font-cards quran" id="fontQuran"></div>
+          </div>
+          <div class="row col">
+            <label data-i18n="s.fontNum"></label>
+            <div class="font-cards nums" id="fontNum"></div>
+          </div>
+
+          <!-- ── Font Color Options (Global & Per-Widget Scoped) ── -->
+          <div class="row col" id="fontColorRow">
+            <div class="font-color-header-row">
+              <label for="fontColorPick" data-i18n="s.fontColor">لون الخط</label>
+              <button type="button" class="font-color-reset-chip" id="fontColorResetBtn" data-i18n="s.fontColorDefault">تلقائي (حسب الثيم)</button>
+            </div>
+            <div class="swatches font-color-swatches" id="fontColorSwatches"></div>
+            <div class="custom-color">
+              <input type="color" id="fontColorPick" data-i18n-title="s.customColor">
+              <span id="fontColorHex">—</span>
+            </div>
+          </div>
+
+          <details class="advanced-optics-details" id="advancedFontsDetails">
+            <summary class="advanced-optics-summary">
+              <span class="summary-label">🔤 تخصيص أوزان وتباعد الخطوط والأرقام</span>
+              <span class="summary-chevron">▾</span>
+            </summary>
+            <div class="advanced-optics-body">
+              <div class="row">
+                <label for="uiWeight" data-i18n="s.uiWeight"></label>
+                <select class="picker" id="uiWeight"></select>
+              </div>
+              <div class="row">
+                <label for="numWeight" data-i18n="s.numWeight"></label>
+                <input type="range" id="numWeight" min="100" max="700" step="100">
+                <output id="numWeightOut">—</output>
+              </div>
+              <div class="row">
+                <label for="numSpacing" data-i18n="s.numSpacing"></label>
+                <input type="range" id="numSpacing" min="-8" max="12" step="1">
+                <output id="numSpacingOut">—</output>
+              </div>
+              <div class="row">
+                <label for="lineHeight" data-i18n="s.lineHeight"></label>
+                <input type="range" id="lineHeight" min="80" max="140" step="5">
+                <output id="lineHeightOut">—</output>
+              </div>
+              <p class="hint" data-i18n="s.fontsHint2"></p>
+            </div>
+          </details>
+        </section>
+
+        <!-- ── glass and motion ── -->
+        <section class="group" id="sec-look">
+          <h2 data-i18n="s.look"></h2>
+          <details class="advanced-optics-details" id="advancedOpticsDetails">
+            <summary class="advanced-optics-summary">
+              <span class="summary-label">✨ خيارات وتأثيرات بصرية متقدمة (انعكاسات الحواف، لمعان الضوء، الحبيبات،
+                والتباين)</span>
+              <span class="summary-chevron">▾</span>
+            </summary>
+            <div class="advanced-optics-body">
+              <div class="row col">
+                <label data-i18n="s.tint"></label>
+                <div class="swatches" id="tintSwatches"></div>
+              </div>
+              <div class="row">
+                <label for="tintStrength" data-i18n="s.tintStrength"></label>
+                <input type="range" id="tintStrength" min="5" max="70" step="5">
+                <output id="tintStrengthOut">—</output>
+              </div>
+              <div class="row">
+                <label for="edge" data-i18n="s.edge"></label>
+                <input type="range" id="edge" min="0" max="150" step="10">
+                <output id="edgeOut">—</output>
+              </div>
+              <div class="row">
+                <label for="borderWidth" data-i18n="s.borderWidth"></label>
+                <select class="picker" id="borderWidth">
+                  <option value="0" data-i18n="s.bw0"></option>
+                  <option value="1" data-i18n="s.bw1"></option>
+                  <option value="2" data-i18n="s.bw2"></option>
+                </select>
+              </div>
+              <div class="row">
+                <label for="hover" data-i18n="s.hover"></label>
+                <input type="range" id="hover" min="0" max="150" step="10">
+                <output id="hoverOut">—</output>
+              </div>
+              <div class="row">
+                <label for="sheenRadius" data-i18n="s.sheenRadius"></label>
+                <input type="range" id="sheenRadius" min="0" max="500" step="10">
+                <output id="sheenRadiusOut">—</output>
+              </div>
+              <div class="row">
+                <label for="motion" data-i18n="s.motion"></label>
+                <select class="picker" id="motion">
+                  <option value="0" data-i18n="s.motionOff"></option>
+                  <option value="0.6" data-i18n="s.motionSlow"></option>
+                  <option value="1" data-i18n="s.motionNormal"></option>
+                  <option value="1.6" data-i18n="s.motionFast"></option>
+                </select>
+              </div>
+              <div class="row">
+                <label for="density" data-i18n="s.density"></label>
+                <select class="picker" id="density">
+                  <option value="compact" data-i18n="s.dCompact"></option>
+                  <option value="normal" data-i18n="s.dNormal"></option>
+                  <option value="roomy" data-i18n="s.dRoomy"></option>
+                </select>
+              </div>
+              <div class="row">
+                <label for="contrast" data-i18n="s.contrast"></label>
+                <select class="picker" id="contrast">
+                  <option value="normal" data-i18n="s.cNormal"></option>
+                  <option value="high" data-i18n="s.cHigh"></option>
+                </select>
+              </div>
+              <div class="row switch-row">
+                <label for="grain" data-i18n="s.grain"></label>
+                <button class="switch" id="grain" role="switch"></button>
+              </div>
+            </div>
+          </details>
+        </section>
+
+
+        <!-- ── reset default button ── -->
+        <section class="group">
+          <div class="row buttons">
+            <button class="btn" id="resetAll" data-i18n="s.resetAll"></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE 2: WIDGETS & PER-WIDGET STYLING (الودجات وتخصيص الخط) ================================================================== -->
+      <div class="tab-pane" data-pane="widgets">
+
+        <!-- ── widgets ── -->
+        <section class="group" id="sec-widgets">
+          <h2 data-i18n="s.widgets"></h2>
+          <div id="widgetRows"></div>
+
+          <div class="row switch-row">
+            <label for="onTop" data-i18n="s.onTop"></label>
+            <button class="switch" id="onTop" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="autoStart" data-i18n="s.autoStart"></label>
+            <button class="switch" id="autoStart" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="preventOpenWidgetsOverlap" data-i18n="s.preventOpenWidgetsOverlap">منع تداخل الودجات المفتوحة
+              فوق بعضها:</label>
+            <button class="switch" id="preventOpenWidgetsOverlap" role="switch" aria-checked="false"></button>
+          </div>
+          <p class="hint" data-i18n="s.preventOpenWidgetsOverlapHint">الوضع الافتراضي يسمح للودجات المفتوحة بالاستقرار
+            فوق بعضها بحرية على سطح المكتب. عند تفعيل هذا الخيار، سيتم منع التداخل وإزاحة الودجات تلقائياً عند اقترابها.
+          </p>
+
+          <div class="row buttons">
+            <button class="btn" id="resetLayout" data-i18n="s.resetLayout"></button>
+          </div>
+          <p class="hint" data-i18n="s.moveHint"></p>
+          <p class="hint" data-i18n="s.shortcuts"></p>
+        </section>
+
+        <!-- ── text size, one per widget ── -->
+        <section class="group" id="sec-fonts">
+          <h2 data-i18n="s.fonts"></h2>
+          <div id="fontRows"></div>
+          <p class="hint" data-i18n="s.fontsHint"></p>
+        </section>
+
+        <!-- ── Per-Widget Styling Customization ── -->
+        <section class="group" id="sec-widget-styles">
+          <div class="section-head-with-badge">
+            <h2 data-i18n="s.perWidgetStyleTitle"></h2>
+            <span class="badge-pill" data-i18n="s.perWidgetStyleBadge"></span>
+          </div>
+          <p class="hint" data-i18n="s.perWidgetStyleHint"></p>
+
+          <div class="row" style="margin-top: 12px;">
+            <label for="wStyleSelect" data-i18n="s.chooseWidget"></label>
+            <select class="picker wide" id="wStyleSelect">
+              <option value="clock" data-i18n="s.wClock"></option>
+              <option value="pomodoro" data-i18n="s.wPomodoro"></option>
+              <option value="calendar" data-i18n="s.wCalendar"></option>
+              <option value="habits" data-i18n="s.wHabits"></option>
+              <option value="quran" data-i18n="s.wQuran"></option>
+              <option value="todo" data-i18n="s.wTodo"></option>
+              <option value="notes" data-i18n="s.wNotes"></option>
+              <option value="email" data-i18n="s.wEmail"></option>
+              <option value="photo" data-i18n="s.wPhoto"></option>
+              <option value="tafsir" data-i18n="s.wTafsir"></option>
+              <option value="hadith" data-i18n="s.wHadith"></option>
+              <option value="event" data-i18n="s.wEvent"></option>
+              <option value="task" data-i18n="s.wTask"></option>
+              <option value="email-view" data-i18n="s.wEmailView"></option>
+              <option value="habits-dashboard" data-i18n="s.wHabitsDashboard"></option>
+              <option value="folder" data-i18n="s.wFolder"></option>
+            </select>
+          </div>
+
+          <details class="advanced-optics-details" id="wStyleDetails" open>
+            <summary class="advanced-optics-summary">
+              <span class="summary-label">🎨 خيارات المظهر والخطوط الخاصة بهذا الودجت</span>
+              <span class="summary-chevron">▾</span>
+            </summary>
+            <div class="advanced-optics-body">
+              <div class="wstyle-box" id="wStyleBox">
+                <div class="row">
+                  <label for="wStyleTheme" data-i18n="s.wStyleTheme"></label>
+                  <select class="picker wide" id="wStyleTheme">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="glass" data-i18n="s.th.glass"></option>
+                    <option value="waterglass" data-i18n="s.th.waterglass"></option>
+                    <option value="smoke" data-i18n="s.th.smoke"></option>
+                    <option value="midnight" data-i18n="s.th.midnight"></option>
+                    <option value="daylight" data-i18n="s.th.daylight"></option>
+                    <option value="sand" data-i18n="s.th.sand"></option>
+                    <option value="aurora" data-i18n="s.th.aurora"></option>
+                    <option value="cyber" data-i18n="s.th.cyber"></option>
+                    <option value="oled" data-i18n="s.th.oled"></option>
+                    <option value="notebook" data-i18n="s.th.notebook"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleAccent" data-i18n="s.wStyleAccent"></label>
+                  <select class="picker wide" id="wStyleAccent">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="#3E7CBE">🔵 Oceanic Blue (#3E7CBE)</option>
+                    <option value="#10B981">🟢 Emerald Green (#10B981)</option>
+                    <option value="#EF4444">🔴 Crimson Red (#EF4444)</option>
+                    <option value="#8B5CF6">🟣 Royal Violet (#8B5CF6)</option>
+                    <option value="#F59E0B">🟡 Warm Amber (#F59E0B)</option>
+                    <option value="#06B6D4">🌊 Cyan Turquoise (#06B6D4)</option>
+                    <option value="#EC4899">🌸 Rose Pink (#EC4899)</option>
+                    <option value="#F97316">🟠 Sunset Orange (#F97316)</option>
+                    <option value="#14B8A6">🌿 Mint Teal (#14B8A6)</option>
+                    <option value="#4B5563">⚫ Slate Charcoal (#4B5563)</option>
+                  </select>
+                </div>
+
+                <div class="row" id="wStyleFontColorRow">
+                  <label for="wStyleFontColor" data-i18n="s.fontColor"></label>
+                  <select class="picker wide" id="wStyleFontColor">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="#000000">⚫ أسود حالك (#000000)</option>
+                    <option value="#111827">🌑 داكن عميق (#111827)</option>
+                    <option value="#374151">🔘 رمادي داكن (#374151)</option>
+                    <option value="#64748B">🌫️ رمادي أردوازي (#64748B)</option>
+                    <option value="#FFFFFF">⚪ أبيض ناصع (#FFFFFF)</option>
+                    <option value="#F1F5F9">🕊️ أبيض ناعم (#F1F5F9)</option>
+                    <option value="#FEF3C7">📜 عاجي دافئ (#FEF3C7)</option>
+                    <option value="#F59E0B">🟡 عنبري دافئ (#F59E0B)</option>
+                    <option value="#10B981">🟢 زمردي (#10B981)</option>
+                    <option value="#38BDF8">🔵 سماوي (#38BDF8)</option>
+                    <option value="#3B82F6">🔷 أزرق ملكي (#3B82F6)</option>
+                    <option value="#8B5CF6">🟣 بنفسجي (#8B5CF6)</option>
+                    <option value="#EC4899">🌸 وردي (#EC4899)</option>
+                    <option value="#EF4444">🔴 أحمر ساطع (#EF4444)</option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleFontUi" data-i18n="s.fontUi"></label>
+                  <select class="picker wide" id="wStyleFontUi">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="plex">IBM Plex Sans Arabic</option>
+                    <option value="cairo">Cairo</option>
+                    <option value="tajawal">Tajawal</option>
+                    <option value="almarai">Almarai</option>
+                    <option value="readex">Readex Pro</option>
+                    <option value="kufi">Noto Kufi Arabic</option>
+                    <option value="messiri">El Messiri</option>
+                    <option value="naskh">Noto Naskh Arabic</option>
+                    <option value="system">System (Segoe UI)</option>
+                  </select>
+                </div>
+
+                <div class="row" id="wStyleFontNumRow">
+                  <label for="wStyleFontNum" data-i18n="s.fontNum"></label>
+                  <select class="picker wide" id="wStyleFontNum">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="plex">IBM Plex Sans</option>
+                    <option value="outfit">Outfit</option>
+                    <option value="readex">Readex Pro</option>
+                    <option value="cairo">Cairo</option>
+                    <option value="kufi">Noto Kufi</option>
+                    <option value="tajawal">Tajawal</option>
+                    <option value="system">System Numbers</option>
+                  </select>
+                </div>
+
+                <div class="row" id="wStyleFontReadRow">
+                  <label for="wStyleFontRead" data-i18n="s.fontRead"></label>
+                  <select class="picker wide" id="wStyleFontRead">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="naskh">Noto Naskh Arabic</option>
+                    <option value="amiri">Amiri</option>
+                    <option value="scheherazade">Scheherazade New</option>
+                    <option value="plex">IBM Plex Arabic</option>
+                    <option value="cairo">Cairo</option>
+                    <option value="tajawal">Tajawal</option>
+                    <option value="readex">Readex Pro</option>
+                    <option value="kufi">Noto Kufi Arabic</option>
+                  </select>
+                </div>
+
+                <div class="row" id="wStyleFontQuranRow" style="display: none;">
+                  <label for="wStyleFontQuran" data-i18n="s.fontQuran"></label>
+                  <select class="picker wide" id="wStyleFontQuran">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="amiri-quran">Amiri Quran</option>
+                    <option value="scheherazade">Scheherazade New</option>
+                    <option value="amiri">Amiri</option>
+                    <option value="naskh">Noto Naskh Arabic</option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleUiWeight" data-i18n="s.uiWeight"></label>
+                  <select class="picker" id="wStyleUiWeight">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="300" data-i18n="s.w300"></option>
+                    <option value="400" data-i18n="s.w400"></option>
+                    <option value="500" data-i18n="s.w500"></option>
+                    <option value="600" data-i18n="s.w600"></option>
+                    <option value="700" data-i18n="s.w700"></option>
+                  </select>
+                </div>
+
+                <div class="row" id="wStyleNumWeightRow">
+                  <label for="wStyleNumWeight" data-i18n="s.numWeight"></label>
+                  <select class="picker" id="wStyleNumWeight">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="200" data-i18n="s.weight200"></option>
+                    <option value="300" data-i18n="s.weight300"></option>
+                    <option value="400" data-i18n="s.weight400"></option>
+                    <option value="500" data-i18n="s.weight500"></option>
+                    <option value="600" data-i18n="s.weight600"></option>
+                    <option value="700" data-i18n="s.weight700"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleFontScale" data-i18n="s.wStyleFontScale"></label>
+                  <select class="picker" id="wStyleFontScale">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="0.85" data-i18n="s.wStyleScale85"></option>
+                    <option value="0.92" data-i18n="s.wStyleScale92"></option>
+                    <option value="1" data-i18n="s.wStyleScale100"></option>
+                    <option value="1.12" data-i18n="s.wStyleScale112"></option>
+                    <option value="1.25" data-i18n="s.wStyleScale125"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleGlass" data-i18n="s.wStyleGlass"></label>
+                  <select class="picker" id="wStyleGlass">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="0" data-i18n="s.glass0"></option>
+                    <option value="0.15" data-i18n="s.glass15"></option>
+                    <option value="0.35" data-i18n="s.glass35"></option>
+                    <option value="0.6" data-i18n="s.glass60"></option>
+                    <option value="0.85" data-i18n="s.glass85"></option>
+                    <option value="1" data-i18n="s.glass100"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleRadius" data-i18n="s.wStyleRadius"></label>
+                  <select class="picker" id="wStyleRadius">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="10" data-i18n="s.wStyleRadiusSharp"></option>
+                    <option value="16" data-i18n="s.wStyleRadiusSmooth"></option>
+                    <option value="22" data-i18n="s.wStyleRadiusBalanced"></option>
+                    <option value="30" data-i18n="s.wStyleRadiusSoft"></option>
+                    <option value="999" data-i18n="s.wStyleRadiusPill"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleCardSurface" data-i18n="s.wStyleCardSurface"></label>
+                  <select class="picker" id="wStyleCardSurface">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="glass" data-i18n="s.wStyleSurfaceGlass"></option>
+                    <option value="solid" data-i18n="s.wStyleSurfaceSolid"></option>
+                    <option value="deep" data-i18n="s.wStyleSurfaceDeep"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleBorderGlow" data-i18n="s.wStyleBorderGlow"></label>
+                  <select class="picker" id="wStyleBorderGlow">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="none" data-i18n="s.wStyleGlowNone"></option>
+                    <option value="subtle" data-i18n="s.wStyleGlowSubtle"></option>
+                    <option value="crystal" data-i18n="s.wStyleGlowCrystal"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleDensity" data-i18n="s.wStyleDensity"></label>
+                  <select class="picker" id="wStyleDensity">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="compact" data-i18n="s.dCompact"></option>
+                    <option value="normal" data-i18n="s.dNormal"></option>
+                    <option value="roomy" data-i18n="s.dRoomy"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleEdge" data-i18n="s.wStyleEdge"></label>
+                  <select class="picker" id="wStyleEdge">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="0" data-i18n="s.wStyleEdge0"></option>
+                    <option value="0.5" data-i18n="s.wStyleEdge50"></option>
+                    <option value="1" data-i18n="s.wStyleEdge100"></option>
+                    <option value="1.5" data-i18n="s.wStyleEdge150"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleBorderWidth" data-i18n="s.wStyleBorderWidth"></label>
+                  <select class="picker" id="wStyleBorderWidth">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="0" data-i18n="s.bw0"></option>
+                    <option value="1" data-i18n="s.bw1"></option>
+                    <option value="2" data-i18n="s.bw2"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleMotion" data-i18n="s.wStyleMotion"></label>
+                  <select class="picker" id="wStyleMotion">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="0" data-i18n="s.motionOff"></option>
+                    <option value="0.6" data-i18n="s.motionSlow"></option>
+                    <option value="1" data-i18n="s.motionNormal"></option>
+                    <option value="1.6" data-i18n="s.motionFast"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleContrast" data-i18n="s.wStyleContrast"></label>
+                  <select class="picker" id="wStyleContrast">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="normal" data-i18n="s.cNormal"></option>
+                    <option value="high" data-i18n="s.cHigh"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleGrain" data-i18n="s.wStyleGrain"></label>
+                  <select class="picker" id="wStyleGrain">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="true" data-i18n="s.wStyleGrainOn"></option>
+                    <option value="false" data-i18n="s.wStyleGrainOff"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleTint" data-i18n="s.wStyleTint"></label>
+                  <select class="picker" id="wStyleTint">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="#000000" data-i18n="s.wStyleTintDark"></option>
+                    <option value="#3E7CBE" data-i18n="s.wStyleTintBlue"></option>
+                    <option value="#10B981" data-i18n="s.wStyleTintEmerald"></option>
+                    <option value="#8B5CF6" data-i18n="s.wStyleTintViolet"></option>
+                    <option value="#F59E0B" data-i18n="s.wStyleTintAmber"></option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label for="wStyleTintStrength" data-i18n="s.wStyleTintStrength"></label>
+                  <select class="picker" id="wStyleTintStrength">
+                    <option value="inherit" data-i18n="s.inheritGlobal"></option>
+                    <option value="0.15" data-i18n="s.wStyleTintStr15"></option>
+                    <option value="0.25" data-i18n="s.wStyleTintStr25"></option>
+                    <option value="0.45" data-i18n="s.wStyleTintStr45"></option>
+                    <option value="0.70" data-i18n="s.wStyleTintStr70"></option>
+                  </select>
+                </div>
+
+                <div class="row buttons" style="margin-top: 10px;">
+                  <button type="button" class="btn small" id="wStyleResetBtn" data-i18n="s.wStyleReset"></button>
+                  <span class="hint inline" id="wStyleStatus"></span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE: FOLDERS & BOXES (المجلدات وصناديق الودجات) ================================================================== -->
+      <div class="tab-pane" data-pane="folder">
+
+        <section class="group" id="sec-folder">
+          <div class="group-header-with-badge">
+            <h2 data-i18n="s.folderSettingsTitle">📁 إعدادات مجلدات وصناديق الودجات</h2>
+            <span class="group-badge">Squircle Engine</span>
+          </div>
+          <p class="group-sub" data-i18n="s.folderSettingsSub">تخصيص شكل، انحناء الحواف (Border Radius)، ومستوى شفافية
+            الزجاج المصنفر للصناديق المدمجة على سطح المكتب.</p>
+
+          <!-- Interactive Live Preview Card -->
+          <div class="folder-settings-preview-wrap">
+            <div class="folder-settings-preview-label">معاينة حية لشكل الصندوق (Live Preview)</div>
+            <div class="folder-settings-preview-card" id="folderSettingsPreviewCard">
+              <div class="folder-preview-squircle" id="folderPreviewSquircle">
+                <div class="folder-preview-grid">
+                  <div class="folder-preview-icon icon-habits"><span>🌱</span></div>
+                  <div class="folder-preview-icon icon-quran"><span>📖</span></div>
+                  <div class="folder-preview-icon icon-todo"><span>📋</span></div>
+                  <div class="folder-preview-icon icon-clock"><span>⏰</span></div>
+                </div>
+              </div>
+              <div class="folder-preview-title">مجلد الودجات</div>
+            </div>
+          </div>
+
+          <!-- Section 1: Border Radius (انحناء الحواف) -->
+          <div class="settings-subgroup">
+            <h3 class="subgroup-title">📐 انحناء الحواف وشكل الصندوق (Border Radius)</h3>
+
+            <div class="row slider-row">
+              <div class="slider-label-wrap">
+                <label for="folderRadiusSlider">درجة استدارة الحواف (Radius):</label>
+                <span class="slider-val-badge" id="folderRadiusBadge">24px</span>
+              </div>
+              <input type="range" class="range" id="folderRadiusSlider" min="8" max="44" step="1" value="24">
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="folder-presets-row">
+              <button type="button" class="btn small preset-btn" data-radius="14">مربّع ناعم (14px)</button>
+              <button type="button" class="btn small preset-btn active" data-radius="24">إسكيركل متناسق (24px -
+                الافتراضي)</button>
+              <button type="button" class="btn small preset-btn" data-radius="32">دائري عميق (32px)</button>
+              <button type="button" class="btn small preset-btn" data-radius="42">كبسولة دائرية (42px)</button>
+            </div>
+            <p class="hint">يتحكم هذا الخيار مباشرة في انحناء واستدارة زوايا الصندوق على سطح المكتب لمنع أي تشوه في
+              الحواف وتنسيقها مع ذوقك.</p>
+          </div>
+
+          <!-- Section 2: Frosted Glass & Border (الزجاج المصنفر والإطار) -->
+          <div class="settings-subgroup">
+            <h3 class="subgroup-title">✨ خامة الزجاج المصنفر والإطار (Glass & Border)</h3>
+
+            <div class="row slider-row">
+              <div class="slider-label-wrap">
+                <label for="folderBlurSlider">قوة الضبابية والتمويه (Blur):</label>
+                <span class="slider-val-badge" id="folderBlurBadge">34px</span>
+              </div>
+              <input type="range" class="range" id="folderBlurSlider" min="10" max="60" step="2" value="34">
+            </div>
+
+            <div class="row slider-row">
+              <div class="slider-label-wrap">
+                <label for="folderOpacitySlider">كثافة ولون الزجاج (Glass Opacity):</label>
+                <span class="slider-val-badge" id="folderOpacityBadge">24%</span>
+              </div>
+              <input type="range" class="range" id="folderOpacitySlider" min="8" max="60" step="2" value="24">
+            </div>
+
+            <div class="row slider-row">
+              <div class="slider-label-wrap">
+                <label for="folderBorderWidthSlider">سُمك خط الإطار (Border Stroke):</label>
+                <span class="slider-val-badge" id="folderBorderWidthBadge">1px</span>
+              </div>
+              <input type="range" class="range" id="folderBorderWidthSlider" min="0" max="3" step="0.5" value="1">
+            </div>
+
+            <div class="row slider-row">
+              <div class="slider-label-wrap">
+                <label for="folderBorderOpacitySlider">شفافية وتوهج الإطار (Rim Highlight):</label>
+                <span class="slider-val-badge" id="folderBorderOpacityBadge">38%</span>
+              </div>
+              <input type="range" class="range" id="folderBorderOpacitySlider" min="0" max="90" step="5" value="38">
+            </div>
+          </div>
+
+          <!-- Section 3: Behavior & Dynamics (السلوك والأيقونات والشبكة) -->
+          <div class="settings-subgroup">
+            <h3 class="subgroup-title">⚡ التفاعل وحماية الصناديق وشبكة الشاشة (Dynamics & Desktop Grid)</h3>
+
+            <div class="row switch-row">
+              <label for="snapToDesktopGrid" data-i18n="s.snapToDesktopGrid">اتباع تقسيمة شاشة الجهاز (Snap to Desktop
+                Grid):</label>
+              <button class="switch on" id="snapToDesktopGrid" role="switch" aria-checked="true"></button>
+            </div>
+            <p class="hint" data-i18n="s.snapToDesktopGridSub">عند التشغيل، تلتزم الأيقونات والصناديق بتقسيمة شبكة سطح
+              مكتب الجهاز لتتناسق مع أيقونات النظام. وعند الإيقاف، تصبح الأيقونات حرة تماماً لتضعها في أي مكان في
+              الشاشة.</p>
+
+            <div class="row switch-row">
+              <label for="folderCollisionAvoidance">حماية الصناديق من التصادم والتداخل (Collision Avoidance):</label>
+              <button class="switch on" id="folderCollisionAvoidance" role="switch" aria-checked="true"></button>
+            </div>
+            <p class="hint">يمنع الصناديق من الاصطدام أو الاستقرار فوق بعضها عند السحب والإفلات مع ترك مسافة أمان فاصلة
+              16 بكسل.</p>
+
+            <div class="row switch-row">
+              <label for="folderShowCompactTitles">إظهار تسميات الودجات النصية داخل الصندوق المدمج:</label>
+              <button class="switch" id="folderShowCompactTitles" role="switch" aria-checked="false"></button>
+            </div>
+            <p class="hint">افتراضياً معطل للحفاظ على شكل إسكيركل مدمج ومربّع أنيق، ويمكنك تفعيله إذا أردت إظهار أسماء
+              الودجات تحت الأيقونات داخل الصندوق.</p>
+
+            <div class="row switch-row">
+              <label for="folderDragGlow">تأثير التوهج النبضي وامتصاص الودجت عند السحب:</label>
+              <button class="switch on" id="folderDragGlow" role="switch" aria-checked="true"></button>
+            </div>
+          </div>
+
+          <div class="row buttons" style="margin-top: 14px;">
+            <button type="button" class="btn" id="btnResetFolderSettings">استعادة الإعدادات الافتراضية للصندوق
+              ↺</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE: CALENDAR & OCCASIONS (التقويم والمناسبات) ================================================================== -->
+      <div class="tab-pane" data-pane="calendar">
+
+        <!-- ── calendar views ── -->
+        <section class="group" id="sec-calendar-views">
+          <h2 data-i18n="s.calViewsTitle"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="enableCalendarWidget" data-i18n="s.enableCalendarWidget">تفعيل برنامج ودجة التقويم
+              والمناسبات</label>
+            <button class="switch" id="enableCalendarWidget" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="calViewMode" data-i18n="s.calViewMode"></label>
+            <select class="picker" id="calViewMode">
+              <option value="month" data-i18n="s.calViewMonth" selected></option>
+              <option value="week" data-i18n="s.calViewWeek"></option>
+              <option value="agenda" data-i18n="s.calViewAgenda"></option>
+            </select>
+          </div>
+          <p class="hint" data-i18n="s.calViewModeHint"></p>
+
+          <div class="row">
+            <label for="calWeekStart" data-i18n="s.calWeekStart"></label>
+            <select class="picker" id="calWeekStart">
+              <option value="6" data-i18n="s.calSat" selected></option>
+              <option value="0" data-i18n="s.calSun"></option>
+              <option value="1" data-i18n="s.calMon"></option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="calHijri" data-i18n="s.calHijri"></label>
+            <button class="switch" id="calHijri" role="switch"></button>
+          </div>
+
+          <div class="row" id="calHijriAdjustRow">
+            <label for="calHijriAdjust" data-i18n="s.calHijriAdjust"></label>
+            <select class="picker" id="calHijriAdjust">
+              <option value="-2">-2</option>
+              <option value="-1">-1</option>
+              <option value="0" selected>0</option>
+              <option value="1">+1</option>
+              <option value="2">+2</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ── calendar appearance ── -->
+        <section class="group" id="sec-calendar-style">
+          <h2 data-i18n="s.calStyleTitle"></h2>
+
+          <div class="row">
+            <label for="calVisualStyle" data-i18n="s.calVisualStyle"></label>
+            <select class="picker" id="calVisualStyle">
+              <option value="modern" data-i18n="s.calStyleModern" selected></option>
+              <option value="glass" data-i18n="s.calStyleGlass"></option>
+              <option value="classic" data-i18n="s.calStyleClassic"></option>
+            </select>
+          </div>
+          <p class="hint" data-i18n="s.calVisualStyleHint"></p>
+
+          <div class="row switch-row">
+            <label for="calHighlightWeekend" data-i18n="s.calHighlightWeekend"></label>
+            <button class="switch" id="calHighlightWeekend" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="calShowRedDot" data-i18n="s.calShowRedDot"></label>
+            <button class="switch" id="calShowRedDot" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.calShowRedDotHint"></p>
+
+          <div class="row switch-row">
+            <label for="calShowDayActions" data-i18n="s.calShowDayActions"></label>
+            <button class="switch" id="calShowDayActions" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.calShowDayActionsHint"></p>
+
+          <div class="row">
+            <label for="calPopupTheme" data-i18n="s.calPopupTheme"></label>
+            <select class="picker" id="calPopupTheme">
+              <option value="dark" data-i18n="s.calPopupThemeDark" selected></option>
+              <option value="waterglass" data-i18n="s.calPopupThemeWaterglass"></option>
+              <option value="acrylic" data-i18n="s.calPopupThemeAcrylic"></option>
+              <option value="pureblack" data-i18n="s.calPopupThemePureBlack"></option>
+              <option value="match" data-i18n="s.calPopupThemeMatch"></option>
+            </select>
+          </div>
+          <p class="hint" data-i18n="s.calPopupThemeHint"></p>
+
+          <div class="row">
+            <label for="calPopupRadius" data-i18n="s.calPopupRadius"></label>
+            <select class="picker" id="calPopupRadius">
+              <option value="rounded" data-i18n="s.calPopupRadiusRounded" selected></option>
+              <option value="pill" data-i18n="s.calPopupRadiusPill"></option>
+              <option value="compact" data-i18n="s.calPopupRadiusCompact"></option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="calPopupGlow" data-i18n="s.calPopupGlow"></label>
+            <select class="picker" id="calPopupGlow">
+              <option value="radiant" data-i18n="s.calPopupGlowRadiant" selected></option>
+              <option value="subtle" data-i18n="s.calPopupGlowSubtle"></option>
+              <option value="flat" data-i18n="s.calPopupGlowFlat"></option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ── calendar smart integration ── -->
+        <section class="group" id="sec-calendar-smart">
+          <h2 data-i18n="s.calSmartTitle"></h2>
+
+          <div class="row switch-row">
+            <label for="calShowTasksOnCalendar" data-i18n="s.calShowTasksOnCalendar"></label>
+            <button class="switch" id="calShowTasksOnCalendar" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.calShowTasksHint"></p>
+
+          <div class="row switch-row">
+            <label for="calShowHabitsOnCalendar" data-i18n="s.calShowHabitsOnCalendar"></label>
+            <button class="switch" id="calShowHabitsOnCalendar" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.calShowHabitsHint"></p>
+
+          <div class="wa-identity-tip" style="margin-top: 12px; cursor: pointer;" id="goToCalWaSetupBtn">
+            <span class="wa-tip-icon">💬</span>
+            <div class="wa-tip-body">
+              <strong data-i18n="s.calWaSetupBannerTitle"></strong>
+              <p data-i18n="s.calWaSetupBannerDesc"></p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE: HABITS & WELLNESS (العادات والعافية) ================================================================== -->
+      <div class="tab-pane" data-pane="habits">
+
+        <!-- ── habits style & view ── -->
+        <section class="group" id="sec-habits-style">
+          <h2 data-i18n="s.habitsStyleTitle">المظهر وعرض البوليت جورنال</h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="habitsEnabled" data-i18n="s.habitsEnabled">تفعيل ودجت العادات والعافية</label>
+            <button class="switch" id="habitsEnabled" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="habitsTheme" data-i18n="s.habitsTheme">سمة المظهر (Theme)</label>
+            <select class="picker" id="habitsTheme">
+              <option value="match" data-i18n="s.habitsThemeMatch">✨ مطابق لمظهر البرنامج العام (Match App Theme)
+              </option>
+              <optgroup label="✏️ استايلات القلم الرصاص والكراسات (Sketch & Journal)">
+                <option value="dotgrid">🎯 كراسة بوليت جورنال منقطة بألوان خشبية (Dot Grid Journal)</option>
+                <option value="graphpaper">📐 ورق مربعات هندسي تخطيطي (Graph Paper Blueprint)</option>
+                <option value="sketch">✏️ كروكي رسم حر وسكتش معماري (Pencil Sketch)</option>
+                <option value="notebook">📝 كراسة وقلم رصاص مسطرة (Lined Notebook)</option>
+                <option value="craft">📜 ورق كرافت عتيق وطباشير (Vintage Craft Paper)</option>
+              </optgroup>
+              <optgroup label="🌟 الاستايلات العادية والحديثة (Modern & Standard)">
+                <option value="dark-modern">🌙 داكن عصري زجاجي (Modern Dark Slate)</option>
+                <option value="oled">⚫ شاشة سوداء عميقة (Pure OLED Black)</option>
+                <option value="minimal-light">💡 أبيض ناصع عصري (Clean Minimal White)</option>
+                <option value="emerald">🌿 الغابة الزمردية الملكية (Royal Emerald)</option>
+                <option value="ocean">🌊 أزرق محيطي كريستالي (Ocean Cyan)</option>
+                <option value="amber">🍂 كهرمان دافئ وغروب (Warm Sunset Amber)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="habitsDefaultView" data-i18n="s.habitsDefaultView">العرض الافتراضي للودجت</label>
+            <select class="picker" id="habitsDefaultView">
+              <option value="today">شريط اليوم السريع (Today's Quick Strip)</option>
+              <option value="week">مصفوفة الأسبوع المصغرة (7-Day Strip)</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="habitsWeekStart" data-i18n="s.habitsWeekStart">بداية الأسبوع</label>
+            <select class="picker" id="habitsWeekStart">
+              <option value="sat">السبت (Saturday)</option>
+              <option value="sun">الأحد (Sunday)</option>
+              <option value="mon">الاثنين (Monday)</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="habitsGridDotStyle" data-i18n="s.habitsGridDotStyle">شكل نقاط الإنجاز</label>
+            <select class="picker" id="habitsGridDotStyle">
+              <option value="glow_dot">دائرة مضيئة ملونة (Luminous Dot)</option>
+              <option value="check">علامة صح صريحة (Checkmark ✓)</option>
+              <option value="square">مربع ممتلئ هندسي (Filled Square)</option>
+              <option value="ring">حلقة نيون دائرية (Neon Ring)</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsShowDailyTotals" data-i18n="s.habitsShowDailyTotals">إظهار صف إجمالي العادات المنجزة أسفل
+              المصفوفة</label>
+            <button class="switch" id="habitsShowDailyTotals" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsShowDailyTotalsHint">يعرض مجموع العادات المكتملة في كل يوم من أيام الشهر
+            أسفل الجدول كما في دفاتر التخطيط.</p>
+
+          <div class="row switch-row">
+            <label for="habitsShowStreak" data-i18n="s.habitsShowStreak"></label>
+            <button class="switch" id="habitsShowStreak" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsShowStrength" data-i18n="s.habitsShowStrength"></label>
+            <button class="switch" id="habitsShowStrength" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsShowProgressBar" data-i18n="s.habitsShowProgressBar"></label>
+            <button class="switch" id="habitsShowProgressBar" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsShowMiniStrip" data-i18n="s.habitsShowMiniStrip"></label>
+            <button class="switch" id="habitsShowMiniStrip" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsShowRoutineFilters" data-i18n="s.habitsShowRoutineFilters"></label>
+            <button class="switch" id="habitsShowRoutineFilters" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsShowFooterCheckin" data-i18n="s.habitsShowFooterCheckin"></label>
+            <button class="switch" id="habitsShowFooterCheckin" role="switch"></button>
+          </div>
+        </section>
+
+        <!-- ── behavioral psychology & micro-interactions ── -->
+        <section class="group" id="sec-habits-psychology">
+          <h2 data-i18n="s.habitsPsychologyTitle">سيكلوجية التحفيز والتفاعل الدقيق (Micro-Interactions)</h2>
+
+          <div class="row switch-row">
+            <label for="habitsSoundEffects" data-i18n="s.habitsSoundEffects">نغمة الإنجاز الصوتية الفورية (Audio
+              Chime)</label>
+            <button class="switch" id="habitsSoundEffects" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsSoundEffectsHint">نغمة صوتية مريحة ومهدئة عند إتمام العادة لتعزيز هرمون
+            الإنجاز والتحفيز الذاتي.</p>
+
+          <div class="row switch-row">
+            <label for="habitsConfettiCelebration" data-i18n="s.habitsConfettiCelebration">مؤثرات الاحتفال والشرر
+              (Celebration Confetti)</label>
+            <button class="switch" id="habitsConfettiCelebration" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsConfettiCelebrationHint">إطلاق شرر واحتفال بصري ملهم عند إتمام العادة أو
+            الوصول لـ 100% يومياً.</p>
+
+          <div class="row">
+            <label for="habitsProgressRingStyle" data-i18n="s.habitsProgressRingStyle">شكل مؤشر التقدم اليومي</label>
+            <select class="picker" id="habitsProgressRingStyle">
+              <option value="gradient_bar" data-i18n="s.habitsProgressGradient">شريط نيون متدرج ناعم (Gradient Bar)
+              </option>
+              <option value="circular_ring" data-i18n="s.habitsProgressCircular">حلقة طاقة دائرية متوهجة (Bento Circular
+                Ring)</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsSmartRoutineAnchor" data-i18n="s.habitsSmartRoutineAnchor">التبديل التلقائي الذكي للفترات
+              حسب الساعة (Smart Time Anchoring)</label>
+            <button class="switch" id="habitsSmartRoutineAnchor" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsSmartRoutineAnchorHint">يعرض روتين الصباح في الصباح، والمساء في المساء
+            تلقائياً لتقليل التشتت ومساعدتك على التركيز.</p>
+
+          <div class="row switch-row">
+            <label for="habitsDailyMotivationalQuote" data-i18n="s.habitsDailyMotivationalQuote">شرارة التحفيز والتأمل
+              اليومي (Daily Mindset Spark)</label>
+            <button class="switch" id="habitsDailyMotivationalQuote" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsDailyMotivationalQuoteHint">جملة ملهمة يومية من علم النفس وبناء العادات
+            تدفعك للاستمرارية دون انقطاع.</p>
+        </section>
+
+        <!-- ── gamification & hero leveling switch ── -->
+        <section class="group" id="sec-habits-gamification">
+          <h2 data-i18n="s.habitsGamificationTitle">نظام النقاط ومستويات الأبطال (Gamification)</h2>
+
+          <div class="row switch-row">
+            <label for="habitsGamificationEnabled" data-i18n="s.habitsGamificationEnabled">تفعيل نظام النقاط ومستويات
+              الأبطال (Gamification)</label>
+            <button class="switch" id="habitsGamificationEnabled" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsGamificationHint">عند التعطيل، يتم إخفاء نقاط الخبرة (XP) وشريط الصحة (HP)
+            والمستويات والتركيز فقط على التتبع النقي والمجرد للعادات.</p>
+
+          <div class="row switch-row">
+            <label for="habitsShowPomodoroShortcut" data-i18n="s.habitsShowPomodoroShortcut">إظهار زر مؤقت بومودورو
+              للتركيز على بطاقات العادات</label>
+            <button class="switch" id="habitsShowPomodoroShortcut" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsShowPomodoroHint">يظهر زر التركيز السريع (⏱️) على العادات المفعّل لها مؤقت
+            بومودورو في إعداداتها الفردية.</p>
+        </section>
+
+        <!-- ── flexible streaks & skip logic ── -->
+        <section class="group" id="sec-habits-streaks">
+          <h2 data-i18n="s.habitsStreaksTitle">السلاسل الذكية ومرونة الأيام (Skip Logic)</h2>
+
+          <div class="row switch-row">
+            <label for="habitsForgivingStreak" data-i18n="s.habitsForgivingStreak">نظام القوة التراكمية الذكي (Forgiving
+              Streak)</label>
+            <button class="switch" id="habitsForgivingStreak" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsForgivingStreakHint">يقيس قوة العادة بمعادلة Loop Tracker التراكمية، ولا
+            يصفر رصيدك بالكامل عند تفويت يوم واحد بعد استمرار طويل.</p>
+
+          <div class="row">
+            <label for="habitsGraceDays" data-i18n="s.habitsGraceDays">سماحية أيام الراحة الأسبوعية (Grace Days)</label>
+            <select class="picker" id="habitsGraceDays">
+              <option value="0">بدون أيام راحة (صارم)</option>
+              <option value="1">يوم راحة واحد أسبوعياً دون كسر السلسلة</option>
+              <option value="2">يومان راحة أسبوعياً</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ── sleep & mood lab preferences ── -->
+        <section class="group" id="sec-habits-sleep-mood">
+          <h2 data-i18n="s.habitsSleepMoodTitle">مختبر النوم والمزاج والمؤشرات الحيوية</h2>
+
+          <div class="row">
+            <label for="habitsSleepTargetHours" data-i18n="s.habitsSleepTargetHours">ساعات النوم الصحية
+              المستهدفة</label>
+            <select class="picker" id="habitsSleepTargetHours">
+              <option value="6.5">6.5 ساعة</option>
+              <option value="7.0">7.0 ساعات</option>
+              <option value="7.5">7.5 ساعة</option>
+              <option value="8.0" selected>8.0 ساعات (مثالي)</option>
+              <option value="8.5">8.5 ساعة</option>
+              <option value="9.0">9.0 ساعات</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="habitsSleepWarningMin" data-i18n="s.habitsSleepWarningMin">حد التنبيه الخطر لنقص النوم</label>
+            <select class="picker" id="habitsSleepWarningMin">
+              <option value="5.0">أقل من 5 ساعات</option>
+              <option value="5.5">أقل من 5.5 ساعة</option>
+              <option value="6.0" selected>أقل من 6 ساعات (تمييز أحمر)</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="habitsTargetBedtime" data-i18n="s.habitsTargetBedtime">الموعد المستهدف للنوم (Bedtime
+              Target)</label>
+            <input type="time" class="picker" id="habitsTargetBedtime" value="23:30">
+          </div>
+
+          <div class="row">
+            <label for="habitsTargetWakeTime" data-i18n="s.habitsTargetWakeTime">الموعد المستهدف للاستيقاظ (Wake
+              Target)</label>
+            <input type="time" class="picker" id="habitsTargetWakeTime" value="07:30">
+          </div>
+
+          <div class="row">
+            <label for="habitsMoodScaleType" data-i18n="s.habitsMoodScaleType">نوع مقياس المزاج</label>
+            <select class="picker" id="habitsMoodScaleType">
+              <option value="5_smileys">5 وجوه تعبيرية ملونة (😁 🙂 😐 😣 😡)</option>
+              <option value="10_points">مقياس عددي من 1 إلى 10 نقاط</option>
+              <option value="3_levels">مبسط من 3 مستويات (مرتفع، معتدل، منخفض)</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsTrackStress" data-i18n="s.habitsTrackStress">تتبع منحنى التوتر والأعراض الجسدية</label>
+            <button class="switch" id="habitsTrackStress" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsTrackScreenTime" data-i18n="s.habitsTrackScreenTime">تتبع ساعات الشاشة ومقارنتها بنقاء
+              النوم</label>
+            <button class="switch" id="habitsTrackScreenTime" role="switch"></button>
+          </div>
+        </section>
+
+        <!-- ── smart integrations (todo & calendar) ── -->
+        <section class="group" id="sec-habits-integration">
+          <h2 data-i18n="s.habitsIntegrationTitle">الربط الذكي مع المهام والتقويم</h2>
+
+          <div class="row switch-row">
+            <label for="habitsSyncToTodo" data-i18n="s.habitsSyncToTodo">إظهار عادات اليوم كمهام في ودجت الـ To-Do
+              ومزامنتها</label>
+            <button class="switch" id="habitsSyncToTodo" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.habitsSyncToTodoHint">عند شطب العادة من قائمة المهام تُسجل كمكتملة في ودجت
+            العادات فوراً والعكس صحيح.</p>
+
+          <div class="row switch-row">
+            <label for="habitsSyncToCalendar" data-i18n="s.habitsSyncToCalendar">إظهار نقاط العادات والمزاج على أيام
+              التقويم</label>
+            <button class="switch" id="habitsSyncToCalendar" role="switch"></button>
+          </div>
+        </section>
+
+        <!-- ── whatsapp intelligence reports ── -->
+        <section class="group" id="sec-habits-whatsapp">
+          <h2 data-i18n="s.habitsWaTitle">تقارير وتنبيهات الواتساب الذكية</h2>
+
+          <div class="row switch-row">
+            <label for="habitsWaEveningPrompt" data-i18n="s.habitsWaEveningPrompt">إرسال تذكير مسائي يومي للتوثيق عبر
+              الواتساب</label>
+            <button class="switch" id="habitsWaEveningPrompt" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="habitsWaEveningTime" data-i18n="s.habitsWaEveningTime">موعد التذكير المسائي اليومي</label>
+            <input type="time" class="picker" id="habitsWaEveningTime" value="21:30">
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsWaWeeklyDigest" data-i18n="s.habitsWaWeeklyDigest">إرسال ملخص إنجاز أسبوعي كل نهاية
+              أسبوع</label>
+            <button class="switch" id="habitsWaWeeklyDigest" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="habitsWaMonthlyReport" data-i18n="s.habitsWaMonthlyReport">إرسال التقرير الشهري التنفيذي الشامل
+              نهاية كل شهر</label>
+            <button class="switch" id="habitsWaMonthlyReport" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="habitsWaRecipientOverride" data-i18n="s.habitsWaRecipientOverride">رقم واتساب خاص للتقارير
+              (اختياري)</label>
+            <input type="text" class="picker" id="habitsWaRecipientOverride" placeholder="مثال: 2010xxxxxxxx أو اتركه فارغاً للرقم الأساسي">
+          </div>
+
+          <div class="row">
+            <label for="habitsWaReportLang" data-i18n="s.habitsWaReportLang">لغة تقارير الواتساب الذكية</label>
+            <select class="picker" id="habitsWaReportLang">
+              <option value="ar">العربية (Arabic)</option>
+              <option value="en">English (الإنجليزية)</option>
+            </select>
+          </div>
+
+          <!-- Individual Habit WhatsApp Reminders Hub in Habits Section -->
+          <div class="habit-reminders-overview-box" style="margin-top: 14px; padding: 12px 14px; background: color-mix(in srgb, var(--tile) 90%, transparent); border: 1px solid var(--line); border-radius: var(--radius-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-weight: 700; font-size: 12.5px; color: var(--ink);">⏰ تذكيرات العادات الفردية عبر
+                WhatsApp</span>
+              <span class="badge-mini" id="habitsActiveRemindersCount" style="font-size: 11px; background: rgba(37, 211, 102, 0.15); color: #128c7e; padding: 2px 8px; border-radius: 6px; font-weight: 600;">تنبيهات
+                مخصصة</span>
+            </div>
+            <p class="hint" style="margin-bottom: 8px;">يمكنك تفعيل موعد تذكير دقيق ومستقل عبر WhatsApp لكل عادة على
+              حدة، مع إمكانية توجيه التذكير لرقم أو مجموعة معينة.</p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button type="button" class="btn small primary" id="habitsOpenManagerForRemindersBtn">
+                <span>📋</span> <span>فتح إدارة العادات وضبط التذكيرات</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE: TASKS & CLASSROOM (المهام والكلاسرووم) ================================================================== -->
+      <div class="tab-pane" data-pane="todo">
+
+        <!-- ── tasks preferences ── -->
+        <section class="group" id="sec-todo">
+          <h2 data-i18n="s.todo"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="enableTodoWidget" data-i18n="s.enableTodoWidget">تفعيل برنامج ودجة المهام وقائمة المهام</label>
+            <button class="switch" id="enableTodoWidget" role="switch"></button>
+          </div>
+          <div class="row">
+            <label for="todoSortBy" data-i18n="s.todoSortBy"></label>
+            <select class="picker" id="todoSortBy">
+              <option value="free" data-i18n="s.todoSortFree" selected></option>
+              <option value="deadline" data-i18n="s.todoSortDeadline"></option>
+              <option value="priority" data-i18n="s.todoSortPriority"></option>
+              <option value="title" data-i18n="s.todoSortTitle"></option>
+              <option value="created" data-i18n="s.todoSortCreated"></option>
+            </select>
+          </div>
+          <div class="row switch-row">
+            <label for="todoMoveDoneToBottom" data-i18n="s.todoMoveDoneToBottom"></label>
+            <button class="switch" id="todoMoveDoneToBottom" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.todoMoveDoneToBottomHint"></p>
+          <div class="row">
+            <label for="hideDone" data-i18n="s.hideDone"></label>
+            <select class="picker" id="hideDone"></select>
+          </div>
+          <p class="hint" data-i18n="s.todoHint"></p>
+        </section>
+
+        <!-- ── Super Urgent Mode ── -->
+        <section class="group" id="sec-superurgent">
+          <h2 data-i18n="s.suTitle"></h2>
+          <div class="row switch-row">
+            <label for="suEnabled" data-i18n="s.suEnabled"></label>
+            <button class="switch" id="suEnabled" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="suHours" data-i18n="s.suHours"></label>
+            <select class="picker" id="suHours">
+              <option value="1" data-i18n="s.suHour1"></option>
+              <option value="2" data-i18n="s.suHours2"></option>
+              <option value="3" data-i18n="s.suHours3" selected></option>
+              <option value="4" data-i18n="s.suHours4"></option>
+              <option value="6" data-i18n="s.suHours6"></option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="suDesktopInterval" data-i18n="s.suInterval"></label>
+            <select class="picker" id="suDesktopInterval">
+              <option value="10" data-i18n="s.suMins10"></option>
+              <option value="15" data-i18n="s.suMins15" selected></option>
+              <option value="30" data-i18n="s.suMins30"></option>
+            </select>
+          </div>
+          <p class="hint" data-i18n="s.suHint"></p>
+        </section>
+
+        <!-- ── Google Classroom Display Preferences ── -->
+        <section class="group" id="sec-classroom">
+          <h2 data-i18n="s.crTitle"></h2>
+
+          <div class="row switch-row">
+            <label for="crPreventDone" data-i18n="s.crPreventDone"></label>
+            <button class="switch" id="crPreventDone" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.crPreventDoneHint"></p>
+
+          <!-- Classroom display options -->
+          <div class="row switch-row">
+            <label for="crShowSubmissionBadge" data-i18n="s.crShowSubmissionBadge"></label>
+            <button class="switch" id="crShowSubmissionBadge" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.crShowSubmissionBadgeHint"></p>
+
+          <div class="row switch-row">
+            <label for="crShowCourseBadge" data-i18n="s.crShowCourseBadge"></label>
+            <button class="switch" id="crShowCourseBadge" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="crShowLinkBtn" data-i18n="s.crShowLinkBtn"></label>
+            <button class="switch" id="crShowLinkBtn" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="crCourseInTitle" data-i18n="s.crCourseInTitle"></label>
+            <button class="switch" id="crCourseInTitle" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.crCourseInTitleHint"></p>
+
+          <!-- Classroom notifications button in widget -->
+          <div class="row switch-row">
+            <label for="crShowNotificationsBtn" data-i18n="s.crShowNotificationsBtn"></label>
+            <button class="switch" id="crShowNotificationsBtn" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.crShowNotificationsBtnHint"></p>
+
+          <!-- Automatic Hidden Courses Switch & List -->
+          <div class="row switch-row">
+            <label for="crFilterHiddenCourses" data-i18n="s.crFilterHiddenCourses"></label>
+            <button class="switch" id="crFilterHiddenCourses" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.crFilterHiddenCoursesHint"></p>
+
+          <div id="crAutoCoursesBox" class="cr-auto-courses-card">
+            <div class="cr-auto-courses-header">
+              <div class="cr-auto-courses-title-group">
+                <span class="cr-auto-courses-title" data-i18n="s.crAutoCoursesTitle"></span>
+                <span class="cr-auto-courses-status" id="crAutoCoursesStatus"></span>
+              </div>
+              <button type="button" class="cr-auto-courses-collapse-btn" id="crToggleCoursesViewBtn" title="عرض / طي قائمة المواد">
+                <span id="crToggleCoursesIcon">▲</span>
+              </button>
+            </div>
+            <p class="hint" style="margin-top: 2px; margin-bottom: 8px;" data-i18n="s.crAutoCoursesHint"></p>
+            <div id="crAutoCoursesList" class="cr-auto-courses-list scroll"></div>
+          </div>
+        </section>
+
+        <!-- ── notes preferences ── -->
+        <section class="group" id="sec-notes">
+          <h2 data-i18n="s.wNotes">📝 الملاحظات السريعة (Notes)</h2>
+          <div class="row switch-row widget-enable-row">
+            <label for="enableNotesWidget" data-i18n="s.enableNotesWidget">تفعيل برنامج ودجة الملاحظات السريعة</label>
+            <button class="switch" id="enableNotesWidget" role="switch"></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE 4: TIME & PRODUCTIVITY (الوقت والتركيز) ================================================================== -->
+      <div class="tab-pane" data-pane="time">
+
+        <!-- ── clock ── -->
+        <section class="group" id="sec-clock">
+          <h2 data-i18n="s.clock"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="enableClockWidget" data-i18n="s.enableClockWidget">تفعيل برنامج ودجة الساعة ومواقيت
+              الصلاة</label>
+            <button class="switch" id="enableClockWidget" role="switch"></button>
+          </div>
+          <div class="row">
+            <label for="clockStyle" data-i18n="s.clockStyle"></label>
+            <select class="picker" id="clockStyle">
+              <option value="ring" data-i18n="s.ring"></option>
+              <option value="analog" data-i18n="s.analog"></option>
+              <option value="digital" data-i18n="s.digital"></option>
+            </select>
+          </div>
+          <div class="row switch-row">
+            <label for="hour12" data-i18n="s.hour12"></label>
+            <button class="switch" id="hour12" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="seconds" data-i18n="s.seconds"></label>
+            <button class="switch" id="seconds" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="clockUltraTransparent" data-i18n="s.clockPureTransparent"></label>
+            <button class="switch" id="clockUltraTransparent" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.clockPureTransparentHint"></p>
+
+          <div class="row">
+            <label for="clockDefaultTab" data-i18n="s.clockDefaultTab"></label>
+            <select class="picker" id="clockDefaultTab">
+              <option value="clock" data-i18n="s.tabClock"></option>
+              <option value="alarm" data-i18n="s.tabAlarm"></option>
+              <option value="timer" data-i18n="s.tabTimer"></option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="clockAlarmSound" data-i18n="s.clockAlarmSound"></label>
+            <button class="switch" id="clockAlarmSound" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="clockSnoozeDuration" data-i18n="s.clockSnoozeDuration"></label>
+            <select class="picker" id="clockSnoozeDuration">
+              <option value="3">3 د (3 min)</option>
+              <option value="5" selected>5 د (5 min)</option>
+              <option value="10">10 د (10 min)</option>
+              <option value="15">15 د (15 min)</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="clockTimerSound" data-i18n="s.clockTimerSound"></label>
+            <button class="switch" id="clockTimerSound" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="clockTimerDefaultSec" data-i18n="s.clockTimerDefaultSec"></label>
+            <select class="picker" id="clockTimerDefaultSec">
+              <option value="60">1 د (1 min)</option>
+              <option value="300" selected>5 د (5 min)</option>
+              <option value="600">10 د (10 min)</option>
+              <option value="900">15 د (15 min)</option>
+              <option value="1500">25 د (تركيز Focus)</option>
+              <option value="1800">30 د (30 min)</option>
+              <option value="3600">1 س (1 hour)</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="clockDesktopNotify" data-i18n="s.clockDesktopNotify"></label>
+            <button class="switch" id="clockDesktopNotify" role="switch"></button>
+          </div>
+          <div class="row col">
+            <label><span data-i18n="s.zones"></span> <span class="hint inline" data-i18n="s.zonesHint"></span></label>
+            <div class="zones-pick">
+              <select class="picker wide" id="zone0"></select>
+              <select class="picker wide" id="zone1"></select>
+              <select class="picker wide" id="zone2"></select>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── focus timer ── -->
+        <section class="group" id="sec-pomodoro">
+          <h2 data-i18n="s.pomodoro"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="enablePomodoroWidget" data-i18n="s.enablePomodoroWidget">تفعيل برنامج مؤقت التركيز
+              وبومودورو</label>
+            <button class="switch" id="enablePomodoroWidget" role="switch"></button>
+          </div>
+          <div class="row">
+            <label for="pLabel" data-i18n="s.pLabel"></label>
+            <input class="field compact" id="pLabel" maxlength="24" autocomplete="off">
+          </div>
+          <div class="row">
+            <label for="pFocus" data-i18n="s.pFocus"></label>
+            <input class="field num" type="number" id="pFocus" min="1" max="180"><span class="unit" data-i18n="s.minutes"></span>
+          </div>
+          <div class="row">
+            <label for="pShort" data-i18n="s.pShort"></label>
+            <input class="field num" type="number" id="pShort" min="1" max="60"><span class="unit" data-i18n="s.minutes"></span>
+          </div>
+          <div class="row">
+            <label for="pLong" data-i18n="s.pLong"></label>
+            <input class="field num" type="number" id="pLong" min="1" max="90"><span class="unit" data-i18n="s.minutes"></span>
+          </div>
+          <div class="row">
+            <label for="pEvery" data-i18n="s.pEvery"></label>
+            <input class="field num" type="number" id="pEvery" min="2" max="12"><span class="unit" data-i18n="s.sessions"></span>
+          </div>
+          <div class="row switch-row">
+            <label for="pAutoBreaks" data-i18n="s.pAutoBreaks"></label>
+            <button class="switch" id="pAutoBreaks" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="pAutoFocus" data-i18n="s.pAutoFocus"></label>
+            <button class="switch" id="pAutoFocus" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="pSound" data-i18n="s.pSound"></label>
+            <button class="switch" id="pSound" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="pNotify" data-i18n="s.pNotify"></label>
+            <button class="switch" id="pNotify" role="switch"></button>
+          </div>
+          <div class="row switch-row">
+            <label for="pUltraTransparent" data-i18n="s.pomodoroPureTransparent"></label>
+            <button class="switch" id="pUltraTransparent" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.pomodoroPureTransparentHint"></p>
+          <div class="row">
+            <label for="pVolume" data-i18n="s.pVolume"></label>
+            <input type="range" id="pVolume" min="0" max="100" step="5">
+            <output id="pVolumeOut">—</output>
+          </div>
+          <p class="hint" data-i18n="s.pHint"></p>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE 5: INSPIRATION (الآية والحديث) ================================================================== -->
+      <div class="tab-pane" data-pane="inspiration">
+        <section class="group" id="sec-quran">
+          <h2 data-i18n="s.quran"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="enableQuranWidget" data-i18n="s.enableQuranWidget">تفعيل برنامج ودجة الآية والحديث</label>
+            <button class="switch" id="enableQuranWidget" role="switch"></button>
+          </div>
+
+          <div class="row col">
+            <label data-i18n="s.inspiration"></label>
+            <div class="segmented wide-seg" id="inspiration">
+              <button data-mode="quran" data-i18n="s.insQuran"></button>
+              <button data-mode="hadith" data-i18n="s.insHadith"></button>
+              <button data-mode="alternate" data-i18n="s.insAlternate"></button>
+            </div>
+          </div>
+          <p class="hint" data-i18n="s.hadithHint"></p>
+
+          <div class="row">
+            <label for="interval" data-i18n="s.interval"></label>
+            <select class="picker" id="interval"></select>
+          </div>
+
+          <div class="row">
+            <label for="tafsir" data-i18n="s.tafsir"></label>
+            <select class="picker wide" id="tafsir"></select>
+          </div>
+          <p class="hint" id="tafsirNote">—</p>
+
+          <div class="row switch-row">
+            <label for="showTr" data-i18n="s.showTr"></label>
+            <button class="switch" id="showTr" role="switch"></button>
+          </div>
+          <div class="row" id="trRow" hidden>
+            <label for="translation" data-i18n="s.translation"></label>
+            <select class="picker wide" id="translation"></select>
+          </div>
+          <p class="hint" data-i18n="s.quranArabic"></p>
+
+          <div class="sources" id="sources"></div>
+
+          <div class="row buttons">
+            <button class="btn" id="prefetch" data-i18n="s.prefetch"></button>
+            <span class="hint inline" id="prefetchOut"></span>
+          </div>
+          <div class="row buttons">
+            <button class="btn" id="prefetchHadith" data-i18n="s.prefetchHadith"></button>
+            <span class="hint inline" id="prefetchHadithOut"></span>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE 6: MEDIA - EMAIL & PHOTO (البريد والصور) ================================================================== -->
+      <div class="tab-pane" data-pane="media">
+
+        <!-- ── email preferences & Setting Up Launcher ── -->
+        <section class="group" id="sec-email">
+          <h2 data-i18n="s.email"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="emailEnabled" data-i18n="s.enableEmailWidget">تفعيل برنامج ودجة البريد الإلكتروني</label>
+            <button class="switch" id="emailEnabled" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="emailInterval" data-i18n="s.emailInterval"></label>
+            <select class="picker" id="emailInterval">
+              <option value="1">1 min</option>
+              <option value="3">3 min</option>
+              <option value="5">5 min</option>
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="emailNotify" data-i18n="s.emailNotify"></label>
+            <button class="switch" id="emailNotify" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="emailSound" data-i18n="s.emailSound"></label>
+            <button class="switch" id="emailSound" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="emailReadAction" data-i18n="s.emailReadAction"></label>
+            <select class="picker" id="emailReadAction">
+              <option value="keep" data-i18n="s.emailReadKeep"></option>
+              <option value="dim" data-i18n="s.emailReadDim"></option>
+              <option value="hide" data-i18n="s.emailReadHide"></option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="emailOpenInWindow" data-i18n="s.emailOpenInWindow"></label>
+            <button class="switch" id="emailOpenInWindow" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.emailOpenInWindowHint"></p>
+
+          <div class="row" style="margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--line, rgba(255,255,255,0.08));">
+            <span class="hint" style="font-size: 11.5px; display: flex; align-items: center; gap: 6px;">
+              <span>🌐</span> <span data-i18n="s.emailBrowserHint">يتم فتح روابط البريد الإلكتروني بحساب كروم المعتمد
+                في</span>
+              <button type="button" class="btn small" id="emailGoToBrowserSetupBtn" style="padding: 2px 8px; font-size: 11px;" data-i18n="s.emailGoToBrowserSetup">Setting Up ←</button>
+            </span>
+          </div>
+        </section>
+
+        <!-- ── photo ── -->
+        <section class="group" id="sec-photo">
+          <h2 data-i18n="s.photo"></h2>
+
+          <div class="row switch-row widget-enable-row">
+            <label for="enablePhotoWidget" data-i18n="s.enablePhotoWidget">تفعيل برنامج ودجة إطار الصور</label>
+            <button class="switch" id="enablePhotoWidget" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="photoMode" data-i18n="s.photoMode"></label>
+            <select class="picker" id="photoMode">
+              <option value="single" data-i18n="s.photoSingle"></option>
+              <option value="folder" data-i18n="s.photoFolderMode"></option>
+            </select>
+          </div>
+
+          <div class="row" id="photoFileRow">
+            <label for="photoPath" data-i18n="s.photoFile"></label>
+            <input class="field wide" id="photoPath" placeholder="C:\..." readonly>
+            <button type="button" class="btn small" id="photoFilePick" data-i18n="s.photoPickFile"></button>
+          </div>
+
+          <div class="row" id="photoFolderRow">
+            <label for="photoFolder" data-i18n="s.photoFolder"></label>
+            <input class="field wide" id="photoFolder" placeholder="C:\Photos" readonly>
+            <button type="button" class="btn small" id="photoFolderPick" data-i18n="s.photoPickFolder"></button>
+          </div>
+
+          <div class="row" id="photoIntervalRow">
+            <label for="photoInterval" data-i18n="s.photoInterval"></label>
+            <select class="picker" id="photoInterval">
+              <option value="10">10 sec</option>
+              <option value="30">30 sec</option>
+              <option value="60">1 min</option>
+              <option value="300">5 min</option>
+              <option value="900">15 min</option>
+              <option value="1800">30 min</option>
+              <option value="3600">1 hour</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="photoFit" data-i18n="s.photoFit"></label>
+            <select class="picker" id="photoFit">
+              <option value="cover" data-i18n="s.photoFitCover"></option>
+              <option value="contain" data-i18n="s.photoFitContain"></option>
+              <option value="center" data-i18n="s.photoFitCenter"></option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="photoShowCaption" data-i18n="s.photoShowCaption"></label>
+            <button class="switch" id="photoShowCaption" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="photoZoom" data-i18n="s.photoZoom"></label>
+            <input type="range" id="photoZoom" min="100" max="300" step="5">
+            <output id="photoZoomOut">—</output>
+          </div>
+
+          <div class="row">
+            <label for="photoPosX" data-i18n="s.photoPosX"></label>
+            <input type="range" id="photoPosX" min="0" max="100" step="1">
+            <output id="photoPosXOut">—</output>
+          </div>
+
+          <div class="row">
+            <label for="photoPosY" data-i18n="s.photoPosY"></label>
+            <input type="range" id="photoPosY" min="0" max="100" step="1">
+            <output id="photoPosYOut">—</output>
+          </div>
+
+          <div class="row">
+            <label for="photoRotate" data-i18n="s.photoRotate"></label>
+            <select class="picker" id="photoRotate">
+              <option value="0">0°</option>
+              <option value="90">90°</option>
+              <option value="180">180°</option>
+              <option value="270">270°</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="photoBrightness" data-i18n="s.photoBrightness"></label>
+            <input type="range" id="photoBrightness" min="30" max="200" step="5">
+            <output id="photoBrightnessOut">—</output>
+          </div>
+
+          <div class="row">
+            <label for="photoContrast" data-i18n="s.photoContrast"></label>
+            <input type="range" id="photoContrast" min="30" max="200" step="5">
+            <output id="photoContrastOut">—</output>
+          </div>
+
+          <div class="row switch-row">
+            <label for="photoGrayscale" data-i18n="s.photoGrayscale"></label>
+            <button class="switch" id="photoGrayscale" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="photoShape" data-i18n="s.photoShape"></label>
+            <select class="picker" id="photoShape">
+              <option value="rounded" data-i18n="s.photoShapeRounded"></option>
+              <option value="soft" data-i18n="s.photoShapeSoft"></option>
+              <option value="circle" data-i18n="s.photoShapeCircle"></option>
+              <option value="square" data-i18n="s.photoShapeSquare"></option>
+            </select>
+          </div>
+
+          <div class="row buttons" style="margin-top: 10px;">
+            <button type="button" class="btn small" id="photoResetAdjust" data-i18n="s.photoResetAdjust"></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================== TAB PANE 7: SETTING UP DEDICATED WORKSPACE (الإعداد الأولي والربط) ================================================================== -->
+      <div class="tab-pane" data-pane="setup">
+        <div class="setup-pane-header">
+          <button type="button" class="btn small" id="setupBackBtn">
+            <span>←</span> <span data-i18n="s.backToSettings">العودة إلى الإعدادات العامة</span>
+          </button>
+          <div class="setup-pane-title" data-i18n="s.setupWorkspaceTitle">الإعداد الأولي والربط (Setting Up)</div>
+        </div>
+        <p class="hint" style="margin-bottom: 14px;" data-i18n="s.setupWorkspaceDesc">بيانات الحسابات والاتصال والربط
+          السحابي التي تُجرى لمرة واحدة غالباً عند بدء التثبيت.</p>
+
+        <!-- 1. Google Classroom Setup Card -->
+        <section class="group" id="sec-setup-classroom">
+          <div class="setup-group-head">
+            <h2 data-i18n="s.crSetupTitle">🎓 إعداد Google Classroom</h2>
+            <button type="button" class="setup-help-btn" id="crHelpBtn" data-guide="classroom" title="شرح خطوات الإعداد بالتفصيل">!</button>
+          </div>
+          <div class="row switch-row">
+            <label for="crEnabled" data-i18n="s.crEnabled"></label>
+            <button class="switch" id="crEnabled" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="crClientId" data-i18n="s.crClientId"></label>
+            <input class="field ltr wide" id="crClientId" placeholder="apps.googleusercontent.com" autocomplete="off" spellcheck="false">
+          </div>
+
+          <div class="row">
+            <label for="crClientSecret" data-i18n="s.crClientSecret"></label>
+            <input class="field ltr wide" type="password" id="crClientSecret" placeholder="••••••••••••" autocomplete="off">
+          </div>
+
+          <div class="row buttons">
+            <button class="btn primary" id="crLoginBtn" data-i18n="s.crLogin"></button>
+            <button class="btn" id="crSyncBtn" data-i18n="s.crSync"></button>
+            <span class="hint inline" id="crStatusHint">—</span>
+          </div>
+
+          <div class="row">
+            <label for="crUserEmail" data-i18n="s.crUserEmail"></label>
+            <input class="field ltr wide" id="crUserEmail" placeholder="student@gmail.com" autocomplete="off">
+          </div>
+          <p class="hint" data-i18n="s.crUserEmailHint"></p>
+
+          <div class="row">
+            <label for="crIcalUrl" data-i18n="s.crIcal"></label>
+            <input class="field ltr wide" id="crIcalUrl" placeholder="https://calendar.google.com/calendar/ical/.../basic.ics" autocomplete="off">
+          </div>
+          <p class="hint" data-i18n="s.crIcalHint"></p>
+        </section>
+
+        <!-- 2. WhatsApp & OpenWA Server Setup Card -->
+        <section class="group" id="sec-setup-whatsapp">
+          <div class="setup-group-head">
+            <h2 data-i18n="s.waSetupTitle"></h2>
+            <button type="button" class="setup-help-btn" id="waHelpBtn" data-guide="whatsapp" data-i18n-title="s.waGuideTitle">!</button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="waEnabled" data-i18n="s.waEnabled"></label>
+            <button class="switch" id="waEnabled" role="switch"></button>
+          </div>
+
+          <div class="row">
+            <label for="waProvider" data-i18n="s.waProvider"></label>
+            <select class="picker wide" id="waProvider">
+              <option value="openwa" data-i18n="s.waProvOpenWa" selected></option>
+              <option value="callmebot" data-i18n="s.waProvCallMeBot"></option>
+            </select>
+          </div>
+
+          <!-- OpenWA Local Server Control Box -->
+          <div id="waOpenWaFields">
+            <div class="wa-box">
+              <div class="wa-box-header">
+                <span class="wa-box-title" data-i18n="s.waServerTitle"></span>
+                <span class="wa-status-pill" id="waServerBadge" data-i18n="s.waStatusChecking"></span>
+              </div>
+              <p class="hint" data-i18n="s.waServerDesc"></p>
+
+              <div class="row buttons" style="margin-top: 10px; margin-bottom: 4px;">
+                <button type="button" class="btn primary small" id="waStartServerBtn" data-i18n="s.waStartServer"></button>
+                <button type="button" class="btn small" id="waStopServerBtn" data-i18n="s.waStopServer"></button>
+                <button type="button" class="btn small" id="waOpenQrBrowserBtn" data-i18n="s.waScanBrowser"></button>
+                <button type="button" class="btn small" id="waRefreshStatusBtn" data-i18n="s.waRefreshStatus"></button>
+              </div>
+
+              <div id="waQrBox" class="wa-qr-box" style="display: none;">
+                <p class="wa-qr-prompt" data-i18n="s.waScanPrompt"></p>
+                <img id="waQrImg" alt="WhatsApp QR" class="wa-qr-image">
+                <p class="hint" data-i18n="s.waScanHelp"></p>
+              </div>
+            </div>
+
+            <div class="row switch-row" style="margin-top: 10px;">
+              <label for="waAutoStartServer" data-i18n="s.waAutoStart"></label>
+              <button class="switch" id="waAutoStartServer" role="switch"></button>
+            </div>
+
+            <div class="row">
+              <label for="waGatewayUrl" data-i18n="s.waGatewayUrl"></label>
+              <input class="field ltr wide" id="waGatewayUrl" value="http://localhost:2785" autocomplete="off">
+            </div>
+
+            <div class="row">
+              <label for="waSessionId" data-i18n="s.waSessionId"></label>
+              <input class="field ltr" id="waSessionId" value="default" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- CallMeBot Cloud Fields -->
+          <div id="waCallMeBotFields" style="display: none;">
+            <div class="row">
+              <label for="waApiKey" data-i18n="s.waApiKey"></label>
+              <input class="field ltr wide" id="waApiKey" placeholder="API Key" autocomplete="off">
+            </div>
+
+            <div class="wa-box">
+              <p class="hint" data-i18n="s.waCallMeBotDesc"></p>
+              <div class="row buttons" style="margin-top: 8px; margin-bottom: 0;">
+                <button type="button" class="btn small" id="waOpenBotBtn" data-i18n="s.waBotChat1"></button>
+                <button type="button" class="btn small" id="waOpenBot2Btn" data-i18n="s.waBotChat2"></button>
+                <button type="button" class="btn small" id="waOpenHelpLink" data-i18n="s.waOfficialHelp"></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Multi-Number Input List -->
+          <div class="row col wa-numbers-section">
+            <div class="wa-numbers-header">
+              <label data-i18n="s.waPhoneNumbers"></label>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn small" id="waBrowseGroupsBtn" data-i18n-title="s.waBrowseGroupsTitle">
+                  <span>👥</span> <span data-i18n="s.waBrowseGroups"></span>
+                </button>
+                <button type="button" class="btn small" id="waAddPhoneBtn">
+                  <span>+</span> <span data-i18n="s.waAddPhone"></span>
+                </button>
+              </div>
+            </div>
+            <div class="wa-numbers-list" id="waNumbersList"></div>
+            <p class="hint" data-i18n="s.waNumbersHint"></p>
+
+            <!-- Collapsible Groups Picker Drawer -->
+            <div class="wa-groups-drawer" id="waGroupsDrawer" style="display: none; margin-top: 10px; padding: 12px; background: var(--tile); border: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius: var(--radius-md);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 700; font-size: 13px;" data-i18n="s.waGroupsTitle"></span>
+                <button type="button" class="btn small" id="waGroupsRefreshBtn" data-i18n="s.waRefreshGroups"></button>
+              </div>
+              <div class="wa-groups-list scroll" id="waGroupsList" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                <p class="hint" id="waGroupsPrompt" style="margin: 6px 0;" data-i18n="s.waGroupsPrompt"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sender / Contact Identity Section -->
+          <div class="row">
+            <label for="waSenderName" data-i18n="s.waSenderName"></label>
+            <input class="field wide" id="waSenderName" data-i18n-ph="s.waSenderNamePh" autocomplete="off">
+          </div>
+
+          <div class="wa-identity-tip">
+            <span class="wa-tip-icon">💡</span>
+            <div class="wa-tip-body">
+              <strong data-i18n="s.waIdentityTitle"></strong>
+              <p data-i18n="s.waIdentityDesc"></p>
+            </div>
+          </div>
+
+          <div class="row switch-row">
+            <label for="waSendToGroup" data-i18n="s.waSendToGroup"></label>
+            <button class="switch" id="waSendToGroup" role="switch"></button>
+          </div>
+          <div class="row" id="waGroupRow" style="display: none;">
+            <label for="waGroupId" data-i18n="s.waGroupId"></label>
+            <input class="field ltr wide" id="waGroupId" placeholder="120363xxxxxx@g.us" autocomplete="off">
+          </div>
+
+          <!-- ── WhatsApp Smart Multi-Channel Routing Hub (فصل وتوجيه قنوات الواتساب) ── -->
+          <div class="wa-routing-hub" id="waRoutingHub">
+            <div class="wa-routing-header">
+              <div class="wa-routing-title-wrap">
+                <span class="wa-routing-icon">🔀</span>
+                <div>
+                  <div class="wa-routing-title" data-i18n="s.waRoutingTitle">توجيه وفصل قنوات WhatsApp (Multi-Channel
+                    Routing)</div>
+                  <div class="wa-routing-desc" data-i18n="s.waRoutingDesc">يمكنك تخصيص رقم أو مجموعة واتساب مستقلة لكل
+                    ميزة، أو تركها لتصل إلى الرقم الافتراضي العام أعلاه.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wa-channels-grid">
+              <!-- Channel 1: Super Urgent Tasks -->
+              <div class="wa-channel-card" id="waChanSuperUrgent">
+                <div class="wa-chan-top">
+                  <span class="wa-chan-badge urgent" data-i18n="s.waChanSuperUrgent">🚨 مهام الطوارئ (Super
+                    Urgent)</span>
+                  <select class="picker small wa-chan-mode" id="waChanSuperUrgentMode">
+                    <option value="default" data-i18n="s.waChanDefault">🌐 الرقم الافتراضي</option>
+                    <option value="custom" data-i18n="s.waChanCustom">✏️ رقم أو مجموعة مخصصة</option>
+                  </select>
+                </div>
+                <div class="wa-chan-input-wrap" id="waChanSuperUrgentInputWrap" style="display: none;">
+                  <input type="text" class="field ltr small" id="waChanSuperUrgentRecipient" placeholder="رقم هاتف (2010xxxx) أو معرف مجموعة (120363@g.us)" data-i18n-ph="s.waChanSuperUrgentPh">
+                </div>
+              </div>
+
+              <!-- Channel 2: Habits Reports & Digests -->
+              <div class="wa-channel-card" id="waChanHabitsReports">
+                <div class="wa-chan-top">
+                  <span class="wa-chan-badge habits" data-i18n="s.waChanHabitsReports">📊 تقارير العادات اليومية
+                    والأسبوعية</span>
+                  <select class="picker small wa-chan-mode" id="waChanHabitsReportsMode">
+                    <option value="default" data-i18n="s.waChanDefault">🌐 الرقم الافتراضي</option>
+                    <option value="custom" data-i18n="s.waChanCustom">✏️ رقم أو مجموعة مخصصة</option>
+                  </select>
+                </div>
+                <div class="wa-chan-input-wrap" id="waChanHabitsReportsInputWrap" style="display: none;">
+                  <input type="text" class="field ltr small" id="waChanHabitsReportsRecipient" placeholder="رقم هاتف أو معرف مجموعة لتقارير العادات" data-i18n-ph="s.waChanHabitsReportsPh">
+                </div>
+              </div>
+
+              <!-- Channel 3: Individual Habit Reminders -->
+              <div class="wa-channel-card" id="waChanHabitReminders">
+                <div class="segmented-control" id="waHabitReminderScopeSegmented" style="margin: 4px 0 8px 0;">
+                  <button type="button" class="segmented-btn on" id="waHabitScopeAllBtn" data-i18n="s.waHabitScopeAll">🌐 جميع العادات (All Habits)</button>
+                  <button type="button" class="segmented-btn" id="waHabitScopeSpecificBtn" data-i18n="s.waHabitScopeSpecific">🎯 عادة محددة (Custom Habit)</button>
+                </div>
+
+                <div id="waHabitAllWrap">
+                  <div class="wa-chan-top">
+                    <span class="wa-chan-badge habit-reminders" data-i18n="s.waChanHabitReminders">⏰ تذكيرات العادات الفردية (Per-Habit)</span>
+                    <select class="picker small wa-chan-mode" id="waChanHabitRemindersMode">
+                      <option value="default" data-i18n="s.waChanDefault">🌐 الرقم الافتراضي</option>
+                      <option value="custom" data-i18n="s.waChanCustom">✏️ رقم أو مجموعة مخصصة</option>
+                    </select>
+                  </div>
+                  <div class="wa-chan-input-wrap" id="waChanHabitRemindersInputWrap" style="display: none;">
+                    <input type="text" class="field ltr small" id="waChanHabitRemindersRecipient" placeholder="رقم هاتف أو معرف مجموعة لتنبيهات العادات الفردية" data-i18n-ph="s.waChanHabitRemindersPh">
+                  </div>
+                  <p class="hint" style="font-size: 10.5px; margin: 4px 0 0 0;" data-i18n="s.waChanHabitRemindersHint">يمكنك أيضاً تحديد رقم مخصص لكل عادة بشكل مستقل من داخل إعدادات تلك العادة.</p>
+                </div>
+
+                <div id="waHabitSpecificWrap" style="display: none; margin-top: 8px;">
+                  <div class="wa-habits-specific-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 600;" data-i18n="s.waHabitsSpecificLabel">اختر العادة لتخصيص رقمها:</span>
+                    <span class="badge-mini" id="waHabitsListCount">(0)</span>
+                  </div>
+                  <select class="picker wide" id="waHabitPickerSelect" style="margin-bottom: 8px; width: 100%;"></select>
+                  <div class="wa-habits-scroll-list scroll" id="waHabitsScrollList" style="max-height: 130px; overflow-y: auto; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 4px;"></div>
+                  <div class="wa-habit-selected-card" id="waHabitSelectedCard" style="display: none; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: rgba(0,0,0,0.02);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <span id="waHabitSelectedIcon" style="font-size: 15px;">⭐</span>
+                        <strong id="waHabitSelectedTitle" style="font-size: 12px;"></strong>
+                      </div>
+                      <span class="badge-mini" id="waHabitSelectedTimeBadge"></span>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+                      <label style="font-size: 11px; min-width: 65px;" data-i18n="s.waHabitItemRoutingLabel">توجيه التنبيه:</label>
+                      <select class="picker small" id="waHabitSelectedItemMode" style="flex: 1;">
+                        <option value="default" data-i18n="s.waChanDefault">🌐 الرقم الافتراضي</option>
+                        <option value="custom" data-i18n="s.waChanCustom">✏️ رقم أو مجموعة مخصصة</option>
+                      </select>
+                    </div>
+                    <div id="waHabitSelectedItemCustomWrap" style="display: none; margin-bottom: 6px;">
+                      <input type="text" class="field ltr small wide" id="waHabitSelectedItemCustomRecipient" placeholder="رقم هاتف (مثال: 201012345678) أو معرف مجموعة" data-i18n-ph="s.waHabitItemCustomRecipientPh">
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <button type="button" class="btn small" id="waHabitItemTestBtn" data-i18n="s.waHabitItemTestBtn">🔔 اختبار الإرسال</button>
+                        <span id="waHabitItemTestStatus" style="font-size: 10.5px;"></span>
+                      </div>
+                      <span id="waHabitItemSaveIndicator" style="font-size: 11px; color: #10b981; opacity: 0; transition: opacity 0.2s;"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Channel 4: Calendar Events -->
+              <div class="wa-channel-card" id="waChanCalendar">
+                <div class="wa-chan-top">
+                  <span class="wa-chan-badge cal" data-i18n="s.waChanCalendar">📅 تنبيهات التقويم والمناسبات</span>
+                  <select class="picker small wa-chan-mode" id="waChanCalendarMode">
+                    <option value="default" data-i18n="s.waChanDefault">🌐 الرقم الافتراضي</option>
+                    <option value="custom" data-i18n="s.waChanCustom">✏️ رقم أو مجموعة مخصصة</option>
+                  </select>
+                </div>
+                <div class="wa-chan-input-wrap" id="waChanCalendarInputWrap" style="display: none;">
+                  <input type="text" class="field ltr small" id="waChanCalendarRecipient" placeholder="رقم هاتف أو معرف مجموعة للتقويم" data-i18n-ph="s.waChanCalendarPh">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="waFrequency" data-i18n="s.waFrequency"></label>
+            <select class="picker" id="waFrequency">
+              <option value="0" data-i18n="s.waFreqOnce"></option>
+              <option value="15" data-i18n="s.waFreq15" selected></option>
+              <option value="30" data-i18n="s.waFreq30"></option>
+              <option value="60" data-i18n="s.waFreq60"></option>
+            </select>
+          </div>
+
+          <!-- Interactive Template Builder & Live WhatsApp Bubble Preview -->
+          <div class="row col wa-template-builder">
+            <label for="waTemplate" data-i18n="s.waTemplate"></label>
+
+            <div class="wa-presets-bar">
+              <span class="wa-presets-label" data-i18n="s.waPresets"></span>
+              <button type="button" class="wa-preset-btn" id="waPresetQuick" data-i18n="s.waPresetQuick"></button>
+              <button type="button" class="wa-preset-btn" id="waPresetDetailed" data-i18n="s.waPresetDetailed"></button>
+              <button type="button" class="wa-preset-btn" id="waPresetFormal" data-i18n="s.waPresetFormal"></button>
+            </div>
+
+            <div class="wa-tags-container">
+              <span class="wa-tags-label" data-i18n="s.waInsertTag"></span>
+              <div class="wa-tags-list" id="waTagsList">
+                <button type="button" class="wa-tag-chip" data-tag="{taskTitle}" data-i18n-title="s.waTagTaskTitleTitle"><span class="wa-tag-code">{taskTitle}</span> <span data-i18n="s.waTagTaskTitle"></span></button>
+                <button type="button" class="wa-tag-chip" data-tag="{courseName}" data-i18n-title="s.waTagCourseNameTitle"><span class="wa-tag-code">{courseName}</span> <span data-i18n="s.waTagCourseName"></span></button>
+                <button type="button" class="wa-tag-chip" data-tag="{deadline}" data-i18n-title="s.waTagDeadlineTitle"><span class="wa-tag-code">{deadline}</span> <span data-i18n="s.waTagDeadline"></span></button>
+                <button type="button" class="wa-tag-chip" data-tag="{timeLeft}" data-i18n-title="s.waTagTimeLeftTitle"><span class="wa-tag-code">{timeLeft}</span> <span data-i18n="s.waTagTimeLeft"></span></button>
+                <button type="button" class="wa-tag-chip" data-tag="{priority}" data-i18n-title="s.waTagPriorityTitle"><span class="wa-tag-code">{priority}</span> <span data-i18n="s.waTagPriority"></span></button>
+                <button type="button" class="wa-tag-chip" data-tag="{link}" data-i18n-title="s.waTagLinkTitle"><span class="wa-tag-code">{link}</span> <span data-i18n="s.waTagLink"></span></button>
+                <button type="button" class="wa-tag-chip" data-tag="{senderName}" data-i18n-title="s.waTagSenderNameTitle"><span class="wa-tag-code">{senderName}</span> <span data-i18n="s.waTagSenderName"></span></button>
+              </div>
+            </div>
+
+            <textarea class="field wide wa-template-editor" id="waTemplate" rows="4" data-i18n-ph="s.waTemplatePlaceholder" dir="auto"></textarea>
+
+            <div class="wa-live-preview-box">
+              <div class="wa-preview-header">
+                <span class="wa-preview-badge" data-i18n="s.waPreviewBadge"></span>
+                <span class="wa-preview-contact" id="waPreviewSenderName">Assignment</span>
+              </div>
+              <div class="wa-chat-canvas">
+                <div class="wa-chat-bubble" id="waPreviewBubble">
+                  <div class="wa-bubble-text" id="waPreviewText">...</div>
+                  <div class="wa-bubble-time" id="waPreviewTime">11:59 PM ✓✓</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row buttons">
+            <button class="btn primary" id="waTestBtn" data-i18n="s.waTestBtn"></button>
+            <span class="hint inline" id="waTestStatus"></span>
+          </div>
+          <p class="hint" data-i18n="s.waFooterHint"></p>
+        </section>
+
+        <!-- 3. Calendar & Occasions WhatsApp Setup Card -->
+        <section class="group" id="sec-setup-calendar-wa">
+          <div class="setup-group-head">
+            <h2 data-i18n="s.calWaSetupTitle"></h2>
+            <button type="button" class="setup-help-btn" id="calWaHelpBtn" data-guide="calendar-wa" title="شرح إرسال تبريكات ومواعيد التقويم عبر واتساب">!</button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="calWaEnabled" data-i18n="s.calWaEnabled"></label>
+            <button class="switch" id="calWaEnabled" role="switch"></button>
+          </div>
+          <p class="hint" data-i18n="s.calWaEnabledHint"></p>
+
+          <div class="row">
+            <label for="calWaDefaultTiming" data-i18n="s.calWaDefaultTiming"></label>
+            <select class="picker wide" id="calWaDefaultTiming">
+              <option value="morning_of" data-i18n="s.calWaTimingMorningOf" selected></option>
+              <option value="1d_before" data-i18n="s.calWaTiming1dBefore"></option>
+              <option value="1h_before" data-i18n="s.calWaTiming1hBefore"></option>
+              <option value="at_event" data-i18n="s.calWaTimingAtEvent"></option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="calWaOverrideRecipient" data-i18n="s.calWaOverrideRecipient"></label>
+            <input class="field ltr wide" id="calWaOverrideRecipient" data-i18n-ph="s.calWaOverrideRecipientPh" autocomplete="off">
+          </div>
+          <p class="hint" data-i18n="s.calWaOverrideRecipientHint"></p>
+
+          <!-- Interactive Calendar Template Builder -->
+          <div class="row col wa-template-builder">
+            <label for="calWaTemplate" data-i18n="s.calWaTemplate"></label>
+
+            <div class="wa-presets-bar">
+              <span class="wa-presets-label" data-i18n="s.waPresets"></span>
+              <button type="button" class="wa-preset-btn" id="calWaPresetGreeting" data-i18n="s.calWaPresetGreeting"></button>
+              <button type="button" class="wa-preset-btn" id="calWaPresetFormal" data-i18n="s.calWaPresetFormal"></button>
+              <button type="button" class="wa-preset-btn" id="calWaPresetBrief" data-i18n="s.calWaPresetBrief"></button>
+            </div>
+
+            <div class="wa-tags-container">
+              <span class="wa-tags-label" data-i18n="s.waInsertTag"></span>
+              <div class="wa-tags-list" id="calWaTagsList">
+                <button type="button" class="wa-tag-chip" data-cal-tag="{title}"><span class="wa-tag-code">{title}</span> <span data-i18n="s.calTagTitle"></span></button>
+                <button type="button" class="wa-tag-chip" data-cal-tag="{date}"><span class="wa-tag-code">{date}</span>
+                  <span data-i18n="s.calTagDate"></span></button>
+                <button type="button" class="wa-tag-chip" data-cal-tag="{time}"><span class="wa-tag-code">{time}</span>
+                  <span data-i18n="s.calTagTime"></span></button>
+                <button type="button" class="wa-tag-chip" data-cal-tag="{category}"><span class="wa-tag-code">{category}</span> <span data-i18n="s.calTagCategory"></span></button>
+                <button type="button" class="wa-tag-chip" data-cal-tag="{notes}"><span class="wa-tag-code">{notes}</span> <span data-i18n="s.calTagNotes"></span></button>
+                <button type="button" class="wa-tag-chip" data-cal-tag="{countdown}"><span class="wa-tag-code">{countdown}</span> <span data-i18n="s.calTagCountdown"></span></button>
+              </div>
+            </div>
+
+            <textarea class="field ltr-text" id="calWaTemplate" rows="4" data-i18n-ph="s.calWaTemplatePh"></textarea>
+          </div>
+
+          <!-- Live WhatsApp Bubble Preview -->
+          <div class="wa-preview-card">
+            <div class="wa-preview-header">
+              <span class="wa-preview-badge" data-i18n="s.waPreviewBadge"></span>
+              <span class="wa-preview-title" data-i18n="s.calWaPreviewTitle"></span>
+            </div>
+            <div class="wa-chat-bubble-container">
+              <div class="wa-chat-bubble" id="calWaBubblePreview"></div>
+            </div>
+          </div>
+
+          <!-- Test Calendar WhatsApp Message -->
+          <div class="row buttons" style="margin-top: 10px;">
+            <button type="button" class="btn primary" id="calWaTestBtn">
+              <span>🚀</span> <span data-i18n="s.calWaSendTest"></span>
+            </button>
+            <span class="hint inline" id="calWaTestStatus"></span>
+          </div>
+          <p class="hint" data-i18n="s.calWaDispatcherHint"></p>
+        </section>
+
+        <!-- 4. Email IMAP Account Setup Card -->
+        <section class="group" id="sec-setup-email">
+          <div class="setup-group-head">
+            <h2 data-i18n="s.emailSetupTitle"></h2>
+            <button type="button" class="setup-help-btn" id="emailHelpBtn" data-guide="email" data-i18n-title="s.emailGuideTitle">!</button>
+          </div>
+
+          <div class="row">
+            <label for="emailProvider" data-i18n="s.emailProvider"></label>
+            <select class="picker wide" id="emailProvider">
+              <option value="gmail">Gmail</option>
+              <option value="outlook">Outlook / Hotmail</option>
+              <option value="yahoo">Yahoo Mail</option>
+              <option value="icloud">iCloud</option>
+              <option value="custom" data-i18n="s.emailCustom"></option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="emailUser" data-i18n="s.emailUser"></label>
+            <input class="field wide" id="emailUser" type="email" placeholder="name@example.com" autocomplete="off">
+          </div>
+
+          <div class="row">
+            <label for="emailPass" data-i18n="s.emailPass"></label>
+            <input class="field wide" id="emailPass" type="password" placeholder="••••••••••••" autocomplete="off">
+          </div>
+
+          <div class="row" style="margin-top: -6px; margin-bottom: 6px;">
+            <a href="#" id="emailAppPassLink" style="font-size: 11.5px; color: var(--accent); text-decoration: underline; cursor: pointer;" data-i18n="s.emailAppPassHelp"></a>
+          </div>
+
+          <div id="emailCustomRows" hidden>
+            <div class="row">
+              <label for="emailHost" data-i18n="s.emailHost"></label>
+              <input class="field wide" id="emailHost" type="text" placeholder="imap.example.com" autocomplete="off">
+            </div>
+            <div class="row">
+              <label for="emailPort" data-i18n="s.emailPort"></label>
+              <input class="field" id="emailPort" type="number" value="993" style="width: 80px;">
+            </div>
+            <div class="row switch-row">
+              <label for="emailSecure" data-i18n="s.emailSecure"></label>
+              <button class="switch" id="emailSecure" role="switch"></button>
+            </div>
+          </div>
+
+          <div class="row buttons" style="margin-top: 10px;">
+            <button class="btn primary" id="emailTestBtn" data-i18n="s.emailTest"></button>
+            <span class="hint inline" id="emailTestStatus"></span>
+          </div>
+
+          <p class="hint" data-i18n="s.emailHint"></p>
+        </section>
+
+        <!-- 5. Default Browser & Google Chrome Account Setup Card -->
+        <section class="group" id="sec-setup-browser">
+          <div class="setup-group-head">
+            <h2 data-i18n="s.browserSetupTitle">🌐 متصفح فتح الروابط والحساب المعتمد</h2>
+            <button type="button" class="setup-help-btn" id="browserHelpBtn" data-guide="browser" title="شرح فتح الروابط بحساب كروم المعتمد">!</button>
+          </div>
+          <p class="hint" data-i18n="s.browserSetupDesc">حدد حساب Google Chrome الذي تود فتح الروابط الخارجية ورسائل
+            البريد به دائماً بدلاً من الفتح العشوائي في أي حساب نشط حالياً.</p>
+
+          <div class="row">
+            <label for="browserMode" data-i18n="s.browserMode">طريقة فتح الروابط:</label>
+            <select class="picker wide" id="browserMode">
+              <option value="chrome_profile" data-i18n="s.browserModeChrome">Google Chrome (مع حساب محدد)</option>
+              <option value="system" data-i18n="s.browserModeSystem">متصفح النظام الافتراضي (System Default)</option>
+            </select>
+          </div>
+
+          <div id="browserChromeProfileRows">
+            <div class="row">
+              <label for="browserChromeProfile" data-i18n="s.browserChromeProfile">حساب Google Chrome المعتمد:</label>
+              <select class="picker wide" id="browserChromeProfile">
+                <option value="">جاري الكشف عن حسابات كروم...</option>
+              </select>
+            </div>
+
+            <div class="row" id="browserCustomEmailRow" style="display: none;">
+              <label for="browserCustomEmail" data-i18n="s.browserCustomEmail">البريد الإلكتروني للحساب يدوياً:</label>
+              <input class="field ltr wide" id="browserCustomEmail" placeholder="e.g. ahmed.120230011@ejust.edu.eg" autocomplete="off">
+            </div>
+
+            <div class="row buttons" style="margin-top: 10px;">
+              <button type="button" class="btn primary small" id="browserTestBtn">
+                <span>🚀</span> <span data-i18n="s.browserTestBtn">تجربة فتح رابط بهذا الحساب</span>
+              </button>
+              <span class="hint inline" id="browserTestStatus"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Laptop Battery & Power Saver (Per-Widget Controlled) -->
+        <section class="group" id="sec-eco">
+          <div class="setup-group-head">
+            <div class="group-header-with-badge">
+              <h2 data-i18n="s.ecoTitle">🔋 توفير الطاقة والبطارية للابتوب</h2>
+              <span class="eco-live-badge" id="ecoLiveBadge">⚡ فحص الطاقة...</span>
+            </div>
+            <button type="button" class="setup-help-btn" id="ecoHelpBtn" data-guide="eco" title="شرح وضع توفير الطاقة للابتوب">!</button>
+          </div>
+          <p class="hint" data-i18n="s.ecoDesc">تحسين استهلاك المعالج، تجميد الودجات المصغرة، وإلغاء الشيدرز والبلور
+            الثقيل تلقائياً عند العمل على البطارية لإطالة عمر اللابتوب مع إمكانية تخصيص كل ودجت على حدة.</p>
+
+          <!-- Per-Widget Scope Selector -->
+          <div class="scope-box" id="ecoScopeBox">
+            <div class="scope-top-row">
+              <div class="scope-icon-box">⚡</div>
+              <div class="scope-title-wrap">
+                <div class="scope-title" data-i18n="s.ecoScopeTitle">تخصيص توفير الطاقة لكل ودجت</div>
+                <div class="scope-desc" data-i18n="s.ecoScopeDesc">يمكنك تحديد سلوك توفير الطاقة والتجميد وتخفيف الشيدرز
+                  لكل ودجت بشكل منفصل ومستقل، أو تطبيق الإعداد العام.</div>
+              </div>
+              <div class="scope-badge-action">
+                <span class="scope-pill" id="ecoScopeStatusPill">🌐 الافتراضي العام</span>
+                <button type="button" class="btn small scope-reset-btn" id="ecoScopeResetBtn" style="display: none;" data-i18n="s.resetToGlobal">استعادة الافتراضي ↺</button>
+              </div>
+            </div>
+
+            <div class="row scope-select-row">
+              <label for="ecoScopeSelect" data-i18n="s.chooseTarget">العنصر المراد ضبطه:</label>
+              <select class="picker wide scope-picker" id="ecoScopeSelect">
+                <option value="global" data-i18n="s.scopeGlobal">🌐 التطبيق ككل (الافتراضي لكافة الودجات)</option>
+                <optgroup label="الودجات المستقلة (Widgets)" data-i18n-label="s.groupWidgets">
+                  <option value="clock" data-i18n="s.wClock">⏰ الساعة ومواقيت الصلاة (Clock)</option>
+                  <option value="pomodoro" data-i18n="s.wPomodoro">⏳ مؤقت بومودورو (Pomodoro)</option>
+                  <option value="calendar" data-i18n="s.wCalendar">📅 التقويم والمناسبات (Calendar)</option>
+                  <option value="todo" data-i18n="s.wTodo">📋 قائمة المهام (To-Do List)</option>
+                  <option value="habits" data-i18n="s.wHabits">🌱 متتبع العادات والعافية (Habits)</option>
+                  <option value="quran" data-i18n="s.wQuran">📖 المصحف الشريف والورد (Quran)</option>
+                  <option value="notes" data-i18n="s.wNotes">📝 الملاحظات السريعة (Notes)</option>
+                  <option value="email" data-i18n="s.wEmail">📬 البريد الإلكتروني (Email)</option>
+                  <option value="photo" data-i18n="s.wPhoto">🖼️ إطار الصور (Photo Frame)</option>
+                  <option value="folder" data-i18n="s.wFolder">📁 مجلد وصندوق الودجات (Folder)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="scope-hint-row" id="ecoScopeHintRow">
+              <span class="scope-hint-text" id="ecoScopeHintText">يتم الآن تعديل وضع توفير الطاقة الافتراضي للتطبيق
+                ككل.</span>
+            </div>
+          </div>
+
+          <!-- Controls for Active Scope -->
+          <div class="row">
+            <label for="ecoMode" data-i18n="s.ecoMode">وضع توفير الطاقة:</label>
+            <select class="picker wide" id="ecoMode">
+              <option value="inherit" id="ecoModeInheritOpt" style="display: none;" data-i18n="s.ecoInheritGlobal">🔗
+                يتبع الإعداد الافتراضي العام</option>
+              <option value="auto" data-i18n="s.ecoModeAuto">تلقائي (عند العمل على البطارية)</option>
+              <option value="always" data-i18n="s.ecoModeAlways">مفعّل دائماً (أقصى توفير للطاقة)</option>
+              <option value="off" data-i18n="s.ecoModeOff">معطّل (أقصى مؤثرات بصرية دائماً)</option>
+            </select>
+          </div>
+
+          <div class="row switch-row">
+            <label for="ecoSleepMini" data-i18n="s.ecoSleepMini">تجميد الودجات المصغرة بالكامل (صفر استهلاك أثناء
+              التصغير)</label>
+            <button class="switch" id="ecoSleepMini" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="ecoPauseOnLock" data-i18n="s.ecoPauseOnLock">تجميد الودجات والعمليات الخلفية عند قفل شاشة
+              اللابتوب</label>
+            <button class="switch" id="ecoPauseOnLock" role="switch"></button>
+          </div>
+
+          <div class="row switch-row">
+            <label for="ecoLightShaders" data-i18n="s.ecoLightShaders">إلغاء فلاتر التمويه العالي (Blur) وضوضاء SVG
+              لتخفيف كرت الشاشة GPU</label>
+            <button class="switch" id="ecoLightShaders" role="switch"></button>
+          </div>
+
+          <!-- Per-Widget Quick Matrix Summary (نظرة سريعة على كافة الودجات) -->
+          <div class="eco-matrix-box" id="ecoMatrixBox" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line, rgba(255,255,255,0.08));">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 12px; font-weight: 700; color: var(--ink);" data-i18n="s.ecoMatrixTitle">جدول حالة
+                توفير الطاقة لجميع الودجات:</span>
+              <span class="hint" style="font-size: 11px;" data-i18n="s.ecoMatrixHint">اضغط على أي ودجة لضبطها
+                فوراً</span>
+            </div>
+            <div class="eco-matrix-grid" id="ecoMatrixGrid"></div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- Dedicated Step-by-Step Setup Guide Modal -->
+    <div class="setup-guide-modal-overlay" id="setupGuideModal" hidden>
+      <div class="setup-guide-modal-card">
+        <div class="setup-guide-modal-header">
+          <div class="setup-guide-header-text">
+            <div class="setup-guide-modal-title" id="setupGuideTitle" data-i18n="s.setupGuideTitle"></div>
+            <div class="setup-guide-modal-sub" id="setupGuideSub" data-i18n="s.setupGuideSub"></div>
+          </div>
+          <button type="button" class="icon-btn" id="setupGuideCloseBtn">✕</button>
+        </div>
+        <div class="setup-guide-modal-body scroll" id="setupGuideBody">
+          <!-- Dynamic Step Cards -->
+        </div>
+        <div class="setup-guide-modal-footer">
+          <button type="button" class="btn primary small" id="setupGuideGotItBtn" data-i18n="s.setupGuideGotIt"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grip"></div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/cities.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+
+</html>

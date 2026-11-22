@@ -1,0 +1,22 @@
+{
+  "resizeFrom": {
+    "totalMs": 5.894199999999998,
+    "perOpUs": 0.5894199999999998,
+    "iterations": 10000
+  },
+  "avoidCollisions": {
+    "totalMs": 80.608,
+    "perOpUs": 40.304,
+    "iterations": 2000
+  },
+  "layoutEngine": {
+    "totalMs": 9.97120000000001,
+    "perOpMs": 0.00997120000000001,
+    "iterations": 1000
+  },
+  "stressLayoutEngine": {
+    "totalMs": 10.07480000000001,
+    "perOpMs": 0.02014960000000002,
+    "iterations": 500
+  }
+}
