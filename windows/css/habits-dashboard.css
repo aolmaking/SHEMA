@@ -8514,6 +8514,12 @@ body.theme-notebook .preview-tile {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(167, 243, 208, 0.08) 50%, rgba(254, 240, 138, 0.08) 100%);
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.25));
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   gap: 24px;
   padding: 22px 26px;
   background: 
@@ -8538,12 +8544,15 @@ body.theme-notebook .preview-tile {
 .atlas-miro-hub {
   display: flex;
   align-items: center;
+  gap: 14px;
   gap: 16px;
   flex: 1;
   z-index: 1;
 }
 
 .atlas-miro-avatar-box {
+  width: 58px;
+  height: 58px;
   width: 68px;
   height: 68px;
   position: relative;
@@ -8552,8 +8561,11 @@ body.theme-notebook .preview-tile {
   justify-content: center;
   flex-shrink: 0;
   cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.atlas-miro-avatar-box:hover {
+  transform: scale(1.08) translateY(-2px);
 .atlas-miro-spirit-img {
   width: 62px;
   height: 62px;
@@ -8587,12 +8599,21 @@ body.theme-notebook .preview-tile {
 .atlas-miro-bubble-wrap {
   display: flex;
   flex-direction: column;
+  gap: 6px;
   gap: 8px;
 }
 
 .atlas-miro-speech {
+  font-size: 13px;
   font-size: 13.5px;
   font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-main, #1e293b);
+  background: var(--bg-card, rgba(255, 255, 255, 0.9));
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.25));
+  border-radius: 10px;
+  padding: 8px 12px;
+  max-width: 420px;
   line-height: 1.6;
   color: #f1f5f9;
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 69, 0.92));
@@ -9038,6 +9059,8 @@ body.theme-notebook .preview-tile {
   padding: 7px 14px;
   border-radius: 8px;
   background: transparent;
+  border: 1px dashed var(--accent, #0284c7);
+  color: var(--accent, #0284c7);
   border: 1px solid transparent;
   color: #94a3b8;
   font-size: 12px;

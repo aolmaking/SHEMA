@@ -5332,8 +5332,11 @@
     const serEl = $('#atlasSerScore'); if (serEl) serEl.textContent = String(aff.SER || 0);
     const disEl = $('#atlasDisScore'); if (disEl) disEl.textContent = String(aff.DIS || 0);
 
+    // 3. Miro Avatar & Speech
     // 3. Miro Avatar & Speech (Brand Artwork + Starlight Sparkle)
     const miroBox = $('#atlasMiroAvatarBox');
+    if (miroBox && miro.svgSprite) {
+      miroBox.innerHTML = miro.svgSprite;
     if (miroBox) {
       miroBox.innerHTML = `
         <div class="atlas-miro-spirit-img"></div>
@@ -5364,6 +5367,7 @@
           if (window.widgets?.atlas?.getMiroDialogue) {
             const nextDiag = await window.widgets.atlas.getMiroDialogue({
               state: 'CURIOUS_REFLECTIVE',
+              context: { lang: state.language || 'ar' },
               context: { lang: state.language || 'ar', wayfinderName: wf.name },
             });
             if (speechEl && nextDiag) speechEl.textContent = `"${nextDiag}"`;
