@@ -6643,11 +6643,13 @@ body.theme-minimal-light .plate.tile-plate[data-app-icon="1"],
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-image: url('../assets/brand/living-atlas/13_miro_starlight_spirit_official.jpg');
+  background-color: #0c1527;
+  background-image: url('../../assets/brand/living-atlas/13_miro_starlight_spirit_official.jpg');
   background-size: cover;
-  background-position: center;
-  border: 1.5px solid rgba(56, 189, 248, 0.7);
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+  background-position: center 36%;
+  background-repeat: no-repeat;
+  border: 1.5px solid rgba(56, 189, 248, 0.85);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55), inset 0 0 4px rgba(255, 255, 255, 0.35);
   animation: miroAmbientGlow 4s ease-in-out infinite alternate;
 }
 
