@@ -331,40 +331,47 @@
 
 .empty {
   flex: 1;
+  height: auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
   text-align: center;
-  padding: 24px 14px;
-  gap: 8px;
+  padding: 14px 14px;
+  gap: 6px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 .empty-icon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-pill);
   background: var(--tile);
   color: var(--ink-3);
   display: grid;
   place-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
 }
-.empty-icon svg { width: 22px; height: 22px; }
+.empty-icon svg { width: 20px; height: 20px; }
 .empty-title {
   margin: 0;
-  font-size: calc(13px * var(--fs));
+  font-size: calc(12.5px * var(--fs));
   font-weight: 600;
   color: var(--ink);
+  line-height: 1.3;
 }
 .empty-sub {
   margin: 0;
-  font-size: calc(11px * var(--fs));
+  font-size: calc(10.5px * var(--fs));
   color: var(--ink-3);
-  line-height: 1.4;
+  line-height: 1.35;
   max-width: 240px;
 }
 .empty .btn {
-  margin-top: 8px;
+  margin-top: 6px;
   -webkit-app-region: no-drag;
 }
 
@@ -777,6 +784,19 @@
   .email-date {
     font-size: 8.5px;
   }
+  .empty {
+    padding: 8px 10px;
+    gap: 4px;
+  }
+  .empty-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 1px;
+  }
+  .empty-icon svg { width: 16px; height: 16px; }
+  .empty-title { font-size: 11px; }
+  .empty-sub { font-size: 9.5px; }
+  .empty .btn { margin-top: 4px; padding: 4px 10px; font-size: 10px; }
 }
 
 /* Ultra-Compact / Nano Inbox Glance Mode */
@@ -810,6 +830,19 @@
   .email-date {
     font-size: 7.5px;
   }
+  .empty {
+    padding: 4px 6px;
+    gap: 2px;
+  }
+  .empty-icon {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 0;
+  }
+  .empty-icon svg { width: 12px; height: 12px; }
+  .empty-title { font-size: 9px; font-weight: 700; }
+  .empty-sub { display: none; }
+  .empty .btn { margin-top: 2px; padding: 2px 6px; font-size: 8px; }
 }
 
 :root[data-compact="ultra"] .plate {
@@ -851,4 +884,18 @@
 :root[data-compact="ultra"] .email-date {
   font-size: 8px;
 }
+:root[data-compact="ultra"] .empty {
+  padding: 4px 6px;
+  gap: 2px;
+}
+:root[data-compact="ultra"] .empty-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 0;
+}
+:root[data-compact="ultra"] .empty-icon svg { width: 13px; height: 13px; }
+:root[data-compact="ultra"] .empty-title { font-size: 9.5px; }
+:root[data-compact="ultra"] .empty-sub { display: none; }
+:root[data-compact="ultra"] .empty .btn { margin-top: 2px; padding: 2px 6px; font-size: 8.5px; }
+
 

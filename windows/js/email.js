@@ -403,6 +403,8 @@ function renderEmails(items = []) {
 
   const isConfigured = Boolean(currentConfig.email && currentConfig.email.enabled && currentConfig.email.user);
   $('#setupPrompt').hidden = isConfigured;
+  if ($('#filterBar')) $('#filterBar').hidden = !isConfigured;
+  if ($('#emailList')) $('#emailList').hidden = !isConfigured;
 
   if (!isConfigured) {
     $('#emptyInbox').hidden = true;
@@ -428,6 +430,7 @@ function renderEmails(items = []) {
 
   if (filtered.length === 0) {
     $('#emptyInbox').hidden = false;
+    if ($('#emailList')) $('#emailList').hidden = true;
     const titleEl = $('#emptyInboxTitle') || $('#emptyInbox .empty-title');
     const subEl = $('#emptyInboxSub') || $('#emptyInbox .empty-sub');
     if (currentFilter === 'unread' && items.length > 0) {
@@ -440,6 +443,7 @@ function renderEmails(items = []) {
     return;
   }
   $('#emptyInbox').hidden = true;
+  if ($('#emailList')) $('#emailList').hidden = false;
 
   for (const item of filtered) {
     const isDimmed = !item.unread && readAction === 'dim';

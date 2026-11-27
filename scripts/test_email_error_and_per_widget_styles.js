@@ -54,6 +54,15 @@ assert.ok(shellJs.includes("wStyle.cardSurface"), 'shell.js must apply wStyle.ca
 assert.ok(shellJs.includes("wStyle.borderGlow"), 'shell.js must apply wStyle.borderGlow');
 console.log('✅ Shell.js per-widget styling application verified.');
 
+// 6. Verify Email empty states, setup prompt clean layout & zero-overlap protection
+const emailCss = fs.readFileSync(path.join(__dirname, '../windows/css/email.css'), 'utf8');
+assert.ok(emailJs.includes("$('#filterBar').hidden = !isConfigured;"), 'email.js must hide filterBar when email is not configured');
+assert.ok(emailJs.includes("$('#emailList').hidden = !isConfigured;"), 'email.js must hide emailList when email is not configured');
+assert.ok(emailCss.includes('justify-content: safe center;'), 'email.css .empty must use safe center to prevent overflow onto preceding elements');
+assert.ok(emailCss.includes('height: auto;'), 'email.css .empty must override base.css height: 100%');
+assert.ok(emailCss.includes('overflow-y: auto;'), 'email.css .empty must contain vertical overflow safely');
+console.log('✅ Email empty states & setup layout zero-overlap verified.');
+
 console.log('\n========================================================');
 console.log('🎉 ALL EMAIL RECOVERY & PER-WIDGET STYLE TESTS PASSED (100%)');
 console.log('========================================================');
