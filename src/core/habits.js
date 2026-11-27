@@ -155,6 +155,8 @@ const DEFAULT_HABITS = [
     routine: 'afternoon',
     type: 'percentage',
     targetValue: 100,
+    partsCount: 5,
+    stepValue: 20,
     unit: '%',
     unitEn: '%',
     frequency: { type: 'weekly_target', targetDaysPerWeek: 4 },
@@ -1027,6 +1029,9 @@ class HabitsManager extends EventEmitter {
     let unit = (data.unit || '').trim();
     let unitEn = (data.unitEn || data.unit || '').trim();
 
+    let partsCount = undefined;
+    let stepValue = undefined;
+
     if (type === 'boolean') {
       targetValue = 1;
       unit = '';
@@ -1035,6 +1040,8 @@ class HabitsManager extends EventEmitter {
       targetValue = Math.min(100, Math.max(1, targetValue || 100));
       unit = '%';
       unitEn = '%';
+      partsCount = Math.max(1, Math.min(100, Number(data.partsCount) || (data.stepValue ? Math.max(1, Math.round(targetValue / Number(data.stepValue))) : 5)));
+      stepValue = Math.max(1, Math.min(targetValue, Number(data.stepValue) || Math.round(targetValue / partsCount) || 20));
     } else if (type === 'rating') {
       targetValue = 5;
       unit = '⭐';
@@ -1042,9 +1049,11 @@ class HabitsManager extends EventEmitter {
     } else if (type === 'duration') {
       targetValue = Math.max(1, targetValue);
       if (!unit) { unit = 'دقيقة'; unitEn = 'min'; }
+      stepValue = Math.max(1, Number(data.stepValue) || (targetValue >= 30 ? 15 : 1));
     } else if (type === 'number') {
       targetValue = Math.max(1, targetValue);
       if (!unit) { unit = 'مرة'; unitEn = 'times'; }
+      stepValue = Math.max(1, Number(data.stepValue) || 1);
     }
 
     const habit = {
@@ -1057,6 +1066,8 @@ class HabitsManager extends EventEmitter {
       direction: data.direction === 'negative' ? 'negative' : 'positive', // positive (build) or negative (quit bad habit)
       difficulty: ['trivial', 'easy', 'medium', 'hard'].includes(data.difficulty) ? data.difficulty : 'easy',
       targetValue,
+      partsCount: type === 'percentage' ? (partsCount || 5) : undefined,
+      stepValue: stepValue !== undefined ? stepValue : (type === 'percentage' ? 20 : 1),
       unit,
       unitEn,
       frequency: data.frequency || { type: 'daily' }, // daily, weekly_target, specific_days, every_x_days

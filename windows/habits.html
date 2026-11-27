@@ -631,6 +631,35 @@
             </div>
           </div>
 
+          <!-- Percentage Step & Distribution Row for Quick Add -->
+          <div id="qaPercentageStepGroup" style="display: none; background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
+            <label class="f-label" style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 11.5px; margin-bottom: 6px;">
+              <span>🎯 خطوات الإكمال ونسبة النقرة الواحدة</span>
+              <span style="font-size: 10px; opacity: 0.8; font-weight: normal;">(توزيع تلقائي)</span>
+            </label>
+            <div class="form-row-2" style="margin-bottom: 6px;">
+              <div class="form-group">
+                <label class="f-label" style="font-size: 11px;">عدد الأجزاء / الخطوات:</label>
+                <input type="number" min="1" max="100" class="f-input" id="qaPartsCount" value="5" placeholder="5">
+              </div>
+              <div class="form-group">
+                <label class="f-label" style="font-size: 11px;">النسبة لكل نقرة (%):</label>
+                <input type="number" min="1" max="100" class="f-input" id="qaStepPct" value="20" placeholder="20">
+              </div>
+            </div>
+            <!-- Quick Presets -->
+            <div style="display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap;">
+              <span class="unit-badge qa-pct-badge" data-parts="5" data-step="20" style="cursor: pointer;">🕌 5 أجزاء (20%)</span>
+              <span class="unit-badge qa-pct-badge" data-parts="4" data-step="25" style="cursor: pointer;">⏱️ 4 أرباع (25%)</span>
+              <span class="unit-badge qa-pct-badge" data-parts="10" data-step="10" style="cursor: pointer;">🔟 10 خطوات (10%)</span>
+              <span class="unit-badge qa-pct-badge" data-parts="2" data-step="50" style="cursor: pointer;">🌓 خطوتان (50%)</span>
+              <span class="unit-badge qa-pct-badge" data-parts="1" data-step="100" style="cursor: pointer;">🎯 100%</span>
+            </div>
+            <div id="qaPercentageExplanation" style="font-size: 11px; color: var(--accent, #3b82f6); font-weight: 600;">
+              💡 كل نقرة ستضيف 20% (1 من 5) حتى الإكمال عند 100%
+            </div>
+          </div>
+
           <div class="form-row-2">
             <div class="form-group">
               <label class="f-label" data-i18n="habits.difficultyLabel">مستوى الصعوبة</label>

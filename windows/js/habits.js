@@ -2920,12 +2920,20 @@
         actionSlot.appendChild(stepper);
       } else if (h.type === 'percentage') {
         const target = Number(h.targetValue) || 100;
+        const parts = Number(h.partsCount) || (h.stepValue ? Math.max(1, Math.round(target / Number(h.stepValue))) : 5);
+        const step = Number(h.stepValue) || Math.max(1, Math.round(target / parts)) || 20;
         const pctBtn = document.createElement('div');
-        pctBtn.className = 'h-pct-btn';
-        pctBtn.title = lang() === 'en' ? 'Click to advance percentage, or click number to enter exact value' : 'اضغط للتقدم بالنسبة، أو اضغط على الرقم لكتابة قيمة محددة';
+        const isDone = status === 'done' || curVal >= target;
+        pctBtn.className = `h-pct-btn ${isDone ? 'is-complete checked' : ''}`;
+        pctBtn.title = lang() === 'en'
+          ? `Click: +${step}% (${parts} steps to ${target}%), or click number to enter exact value`
+          : `اضغط: +${digits(step)}% (${digits(parts)} خطوات لاكتمال ${digits(target)}%)، أو اضغط الرقم للكتابة`;
         pctBtn.onclick = (e) => {
           e.stopPropagation();
-          const step = target <= 50 ? 10 : 25;
+          const now = Date.now();
+          if (habitToggleLock.has(h.id) && now - habitToggleLock.get(h.id) < 250) return;
+          habitToggleLock.set(h.id, now);
+
           let next = curVal + step;
           if (curVal >= target) {
             next = 0;
@@ -2945,11 +2953,11 @@
         fill.className = 'h-pct-fill';
         const fillPct = Math.min(100, Math.round((curVal / target) * 100));
         fill.style.width = `${fillPct}%`;
-        fill.style.background = h.color || 'var(--accent, #3b82f6)';
+        fill.style.background = isDone ? '#10b981' : (h.color || 'var(--accent, #3b82f6)');
 
         const txt = document.createElement('span');
         txt.className = 'h-pct-text';
-        txt.textContent = `${digits(curVal)}%`;
+        txt.textContent = isDone ? `${digits(target)}% ✓` : `${digits(curVal)}%`;
         txt.onclick = (e) => {
           e.stopPropagation();
           const entered = prompt(lang() === 'en' ? `Enter percentage (0-${target}%):` : `أدخل النسبة (0-${digits(target)}%):`, curVal);
@@ -3025,7 +3033,7 @@
       };
 
       card.onclick = (e) => {
-        if (e.target.closest('button') || e.target.closest('.h-step-val') || e.target.closest('.h-star-dot') || e.target.closest('.h-stepper')) return;
+        if (e.target.closest('button') || e.target.closest('.h-pct-btn') || e.target.closest('.h-step-val') || e.target.closest('.h-star-dot') || e.target.closest('.h-stepper')) return;
         window.widgets?.win?.openHabitsDashboard?.({ habitId: h.id });
       };
 
@@ -3215,6 +3223,19 @@
     if (modal) modal.hidden = true;
   }
 
+  function updateQaPercentageExplanation() {
+    const target = Math.min(100, Math.max(1, Number($('#qaTargetInput')?.value) || 100));
+    const parts = Math.max(1, Math.min(100, Number($('#qaPartsCount')?.value) || 5));
+    const step = Math.max(1, Math.min(target, Number($('#qaStepPct')?.value) || Math.round(target / parts) || 20));
+    const expl = $('#qaPercentageExplanation');
+    if (expl) {
+      const isEn = lang() === 'en';
+      expl.textContent = isEn
+        ? `💡 Each click adds ${step}% (1 of ${parts}) until completion at ${target}%.`
+        : `💡 كل نقرة ستضيف ${digits(step)}% (1 من ${digits(parts)}) حتى الإكمال عند ${digits(target)}%.`;
+    }
+  }
+
   function updateQaTypeUI() {
     const isEn = lang() === 'en';
     $$('.qa-type-btn').forEach(b => {
@@ -3231,10 +3252,12 @@
 
     if (qaSelectedType === 'boolean' || qaSelectedType === 'rating') {
       targetRow.style.display = 'none';
+      if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'none';
       if (targetInp) targetInp.value = qaSelectedType === 'rating' ? '5' : '1';
       if (unitInp) { unitInp.value = qaSelectedType === 'rating' ? '⭐' : ''; unitInp.disabled = false; }
     } else if (qaSelectedType === 'percentage') {
       targetRow.style.display = 'grid';
+      if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'block';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Percentage (%)' : 'النسبة المستهدفة (%)';
       if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
       if (targetInp) {
@@ -3248,6 +3271,9 @@
         unitInp.placeholder = '%';
         unitInp.disabled = true;
       }
+      if ($('#qaPartsCount') && !$('#qaPartsCount').value) $('#qaPartsCount').value = '5';
+      if ($('#qaStepPct') && !$('#qaStepPct').value) $('#qaStepPct').value = '20';
+      updateQaPercentageExplanation();
       if (quickUnits) {
         quickUnits.innerHTML = `
           <span class="unit-badge" data-unit="%" data-val="100">100%</span>
@@ -3260,11 +3286,16 @@
           badge.onclick = () => {
             if (unitInp) unitInp.value = '%';
             if (targetInp) targetInp.value = badge.dataset.val;
+            const target = Number(badge.dataset.val) || 100;
+            const parts = Math.max(1, Number($('#qaPartsCount')?.value) || 5);
+            if ($('#qaStepPct')) $('#qaStepPct').value = Math.round((target / parts) * 10) / 10;
+            updateQaPercentageExplanation();
           };
         });
       }
     } else if (qaSelectedType === 'duration') {
       targetRow.style.display = 'grid';
+      if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Duration' : 'المدة المستهدفة';
       if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
       if (targetInp) {
@@ -3297,6 +3328,7 @@
       }
     } else { // number
       targetRow.style.display = 'grid';
+      if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Daily Target' : 'الهدف اليومي';
       if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
       if (targetInp) {
@@ -3587,6 +3619,41 @@
       });
     });
 
+    // Wire Percentage Step & Distribution in Quick Add
+    $('#qaPartsCount')?.addEventListener('input', () => {
+      const target = Math.min(100, Math.max(1, Number($('#qaTargetInput')?.value) || 100));
+      const parts = Math.max(1, Math.min(100, Number($('#qaPartsCount')?.value) || 1));
+      const step = Math.round((target / parts) * 10) / 10;
+      if ($('#qaStepPct')) $('#qaStepPct').value = step;
+      updateQaPercentageExplanation();
+    });
+
+    $('#qaStepPct')?.addEventListener('input', () => {
+      const target = Math.min(100, Math.max(1, Number($('#qaTargetInput')?.value) || 100));
+      const step = Math.max(1, Math.min(target, Number($('#qaStepPct')?.value) || 1));
+      const parts = Math.max(1, Math.round(target / step));
+      if ($('#qaPartsCount')) $('#qaPartsCount').value = parts;
+      updateQaPercentageExplanation();
+    });
+
+    $('#qaTargetInput')?.addEventListener('input', () => {
+      if (qaSelectedType === 'percentage') {
+        const target = Math.min(100, Math.max(1, Number($('#qaTargetInput')?.value) || 100));
+        const parts = Math.max(1, Math.min(100, Number($('#qaPartsCount')?.value) || 5));
+        const step = Math.round((target / parts) * 10) / 10;
+        if ($('#qaStepPct')) $('#qaStepPct').value = step;
+        updateQaPercentageExplanation();
+      }
+    });
+
+    $$('.qa-pct-badge').forEach(badge => {
+      badge.addEventListener('click', () => {
+        if ($('#qaPartsCount')) $('#qaPartsCount').value = badge.dataset.parts;
+        if ($('#qaStepPct')) $('#qaStepPct').value = badge.dataset.step;
+        updateQaPercentageExplanation();
+      });
+    });
+
     $$('.qa-emoji-opt').forEach(emoji => {
       emoji.addEventListener('click', () => {
         $$('.qa-emoji-opt').forEach(e => e.classList.remove('active'));
@@ -3735,6 +3802,8 @@
 
       let targetVal = Number($('#qaTargetInput')?.value) || 1;
       let unit = $('#qaUnitInput')?.value?.trim() || '';
+      let partsCount = undefined;
+      let stepValue = undefined;
 
       if (qaSelectedType === 'boolean') {
         targetVal = 1;
@@ -3742,6 +3811,8 @@
       } else if (qaSelectedType === 'percentage') {
         targetVal = Math.min(100, Math.max(1, targetVal || 100));
         unit = '%';
+        partsCount = Math.max(1, Math.min(100, Number($('#qaPartsCount')?.value) || 5));
+        stepValue = Math.max(1, Math.min(targetVal, Number($('#qaStepPct')?.value) || Math.round(targetVal / partsCount) || 20));
       } else if (qaSelectedType === 'rating') {
         targetVal = 5;
         unit = '⭐';
@@ -3775,6 +3846,8 @@
         direction,
         difficulty,
         targetValue: targetVal,
+        partsCount: qaSelectedType === 'percentage' ? (partsCount || 5) : undefined,
+        stepValue: qaSelectedType === 'percentage' ? (stepValue || 20) : 1,
         unit,
         unitEn: unit,
         routine,

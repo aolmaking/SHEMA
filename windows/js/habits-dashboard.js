@@ -956,7 +956,7 @@
               btn.textContent = '⏸';
             } else if (hLog.status === 'partial') {
               btn.classList.add('partial');
-              btn.textContent = '½';
+              btn.textContent = h.type === 'percentage' && hLog.value ? `${digits(hLog.value)}%` : '½';
             } else {
               btn.classList.add('empty');
               btn.textContent = '○';
@@ -968,7 +968,8 @@
 
           btn.onclick = async () => {
             const curStatus = hLog ? hLog.status : 'none';
-            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
+            const curVal = hLog && hLog.value !== undefined && hLog.value !== null ? Number(hLog.value) : null;
+            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus, curVal);
 
             if (window.widgets?.habits?.saveStatus) {
               await window.widgets.habits.saveStatus({
@@ -1045,7 +1046,7 @@
             cell.textContent = '⏸';
           } else if (hLog.status === 'partial') {
             cell.classList.add('partial');
-            cell.textContent = '½';
+            cell.textContent = h.type === 'percentage' && hLog.value ? `${digits(hLog.value)}%` : '½';
             doneCount += 0.5;
           } else {
             cell.classList.add('empty');
@@ -1061,7 +1062,8 @@
         if (!isFuture) {
           cell.onclick = async () => {
             const curStatus = hLog ? hLog.status : 'none';
-            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
+            const curVal = hLog && hLog.value !== undefined && hLog.value !== null ? Number(hLog.value) : null;
+            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus, curVal);
 
             if (window.widgets?.habits?.saveStatus) {
               await window.widgets.habits.saveStatus({
@@ -1135,13 +1137,15 @@
       } else if (curStatus === 'skip') {
         actBtn.innerHTML = `<span>⏸</span> <span>${t('habits.todaySkip')}</span>`;
       } else if (curStatus === 'partial') {
-        actBtn.innerHTML = `<span>½</span> <span>${t('habits.todayPartial')}</span>`;
+        const pctLabel = h.type === 'percentage' && hLog?.value ? `${digits(hLog.value)}%` : '½';
+        actBtn.innerHTML = `<span>${pctLabel}</span> <span>${t('habits.todayPartial')}</span>`;
       } else {
         actBtn.innerHTML = `<span>○</span> <span>${t('habits.todayEmpty')}</span>`;
       }
 
       actBtn.onclick = async () => {
-        const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
+        const curVal = hLog && hLog.value !== undefined && hLog.value !== null ? Number(hLog.value) : null;
+        const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus, curVal);
 
         if (window.widgets?.habits?.saveStatus) {
           await window.widgets.habits.saveStatus({
@@ -1316,14 +1320,15 @@
               btn.textContent = '⏸️';
             } else if (hLog.status === 'partial') {
               btn.classList.add('partial');
-              btn.textContent = '½';
+              btn.textContent = h.type === 'percentage' && hLog.value ? `${digits(hLog.value)}%` : '½';
               dailyCompletedTotals[day] += 0.5;
             }
           }
 
           btn.onclick = async () => {
             const curStatus = hLog ? hLog.status : 'none';
-            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
+            const curVal = hLog && hLog.value !== undefined && hLog.value !== null ? Number(hLog.value) : null;
+            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus, curVal);
 
             if (window.widgets?.habits?.saveStatus) {
               await window.widgets.habits.saveStatus({
@@ -3148,8 +3153,21 @@
     });
   }
 
-  function computeNextHabitLog(h, curStatus) {
+  function computeNextHabitLog(h, curStatus, curVal = null) {
     const fullTarget = Number(h.targetValue) || (h.type === 'percentage' ? 100 : 1);
+    if (h.type === 'percentage') {
+      const parts = Number(h.partsCount) || (h.stepValue ? Math.max(1, Math.round(fullTarget / Number(h.stepValue))) : 5);
+      const step = Number(h.stepValue) || Math.max(1, Math.round(fullTarget / parts)) || 20;
+      const current = curVal !== null && curVal !== undefined ? Number(curVal) : (curStatus === 'done' ? fullTarget : 0);
+      if (current >= fullTarget || curStatus === 'done') {
+        return { nextStatus: 'skip', nextVal: 0 };
+      } else if (curStatus === 'skip') {
+        return { nextStatus: 'none', nextVal: 0 };
+      }
+      const nextVal = Math.min(fullTarget, current + step);
+      const nextStatus = nextVal >= fullTarget ? 'done' : 'partial';
+      return { nextStatus, nextVal };
+    }
     const halfTarget = h.type === 'boolean' ? 1 : Math.max(1, Math.round(fullTarget / 2));
     let nextStatus = 'done';
     let nextVal = fullTarget;
@@ -3157,6 +3175,19 @@
     else if (curStatus === 'skip') { nextStatus = 'partial'; nextVal = halfTarget; }
     else if (curStatus === 'partial') { nextStatus = 'none'; nextVal = 0; }
     return { nextStatus, nextVal };
+  }
+
+  function updatePercentageExplanationDash() {
+    const target = Math.min(100, Math.max(1, Number($('#habitInputTarget')?.value) || 100));
+    const parts = Math.max(1, Math.min(100, Number($('#habitInputParts')?.value) || 5));
+    const step = Math.max(1, Math.min(target, Number($('#habitInputStepPct')?.value) || Math.round(target / parts) || 20));
+    const expl = $('#percentageCalcExplanation');
+    if (expl) {
+      const isEn = lang() === 'en';
+      expl.textContent = isEn
+        ? `💡 Each click on the habit will advance by ${step}% (1 of ${parts}) until completion at ${target}%.`
+        : `💡 كل ضغطة على العادة ستتقدم بنسبة ${digits(step)}% (1 من ${digits(parts)}) حتى تكتمل العادة عند ${digits(target)}%.`;
+    }
   }
 
   function updateTargetVisibility(type, preserveValues = false) {
@@ -3171,6 +3202,7 @@
 
     if (type === 'boolean') {
       targetGroup.style.display = 'none';
+      if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
       if (!preserveValues) {
         if (targetNum) targetNum.value = '1';
         if (targetUnit) { targetUnit.value = ''; targetUnit.disabled = false; }
@@ -3178,6 +3210,7 @@
       if (quickUnits) quickUnits.innerHTML = '';
     } else if (type === 'rating') {
       targetGroup.style.display = 'none';
+      if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
       if (!preserveValues) {
         if (targetNum) targetNum.value = '5';
         if (targetUnit) { targetUnit.value = '⭐'; targetUnit.disabled = false; }
@@ -3185,6 +3218,7 @@
       if (quickUnits) quickUnits.innerHTML = '';
     } else if (type === 'percentage') {
       targetGroup.style.display = 'block';
+      if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'block';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Percentage (%)' : 'النسبة المئوية المستهدفة (%)';
       if (targetNum) {
         targetNum.min = '1';
@@ -3198,6 +3232,11 @@
         targetUnit.disabled = true;
         targetUnit.title = isEn ? 'Unit is fixed to % for percentage habits' : 'الوحدة ثابتة (%) لعادة النسبة المئوية';
       }
+      if (!preserveValues) {
+        if ($('#habitInputParts')) $('#habitInputParts').value = '5';
+        if ($('#habitInputStepPct')) $('#habitInputStepPct').value = '20';
+      }
+      updatePercentageExplanationDash();
       if (quickUnits) {
         quickUnits.innerHTML = `
           <span class="unit-badge" data-val="100" data-unit="%" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(59,130,246,0.12); color: var(--accent, #3b82f6); font-weight: 600;">100%</span>
@@ -3210,12 +3249,17 @@
           b.onclick = () => {
             if (targetNum) targetNum.value = b.dataset.val;
             if (targetUnit) targetUnit.value = '%';
+            const target = Number(b.dataset.val) || 100;
+            const parts = Math.max(1, Number($('#habitInputParts')?.value) || 5);
+            if ($('#habitInputStepPct')) $('#habitInputStepPct').value = Math.round((target / parts) * 10) / 10;
+            updatePercentageExplanationDash();
             updateHabitLivePreview();
           };
         });
       }
     } else if (type === 'duration') {
       targetGroup.style.display = 'block';
+      if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Duration & Unit' : 'المدة الزمنية المستهدفة والوحدة';
       if (targetNum) {
         targetNum.removeAttribute('max');
@@ -3250,6 +3294,7 @@
       }
     } else { // number
       targetGroup.style.display = 'block';
+      if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Quantity & Unit' : 'الكمية والعدد المستهدف والوحدة';
       if (targetNum) {
         targetNum.removeAttribute('max');
@@ -3378,6 +3423,14 @@
     // Smart display of targetValueGroup: Hidden for checkmark (boolean), shown for numbers/durations
     updateTargetVisibility(tVal, true);
 
+    if (tVal === 'percentage') {
+      const pCount = h.partsCount || (h.stepValue ? Math.max(1, Math.round((h.targetValue || 100) / Number(h.stepValue))) : 5);
+      const sVal = h.stepValue || Math.max(1, Math.round((h.targetValue || 100) / pCount)) || 20;
+      if ($('#habitInputParts')) $('#habitInputParts').value = String(pCount);
+      if ($('#habitInputStepPct')) $('#habitInputStepPct').value = String(sVal);
+      updatePercentageExplanationDash();
+    }
+
     // Reveal English Title box if populated
     if (h.titleEn && h.titleEn !== h.title) {
       if ($('#enTitleBox')) $('#enTitleBox').style.display = 'block';
@@ -3430,6 +3483,9 @@
     $('#freqIntervalGroup').hidden = true;
     $('#habitInputTarget').value = 1;
     $('#habitInputUnit').value = '';
+    if ($('#habitInputParts')) $('#habitInputParts').value = '5';
+    if ($('#habitInputStepPct')) $('#habitInputStepPct').value = '20';
+    updatePercentageExplanationDash();
     $('#habitInputIcon').value = '⭐';
     $('#habitInputColor').value = '#3b82f6';
     if ($('#habitInputEnablePomodoro')) {
@@ -3687,6 +3743,41 @@
     routineSelect?.addEventListener('change', () => {
       const val = routineSelect.value;
       routinePills.forEach(p => p.classList.toggle('active', p.dataset.val === val));
+    });
+
+    // Percentage Step & Distribution event wiring
+    $('#habitInputParts')?.addEventListener('input', () => {
+      const target = Math.min(100, Math.max(1, Number($('#habitInputTarget')?.value) || 100));
+      const parts = Math.max(1, Math.min(100, Number($('#habitInputParts')?.value) || 1));
+      const step = Math.round((target / parts) * 10) / 10;
+      if ($('#habitInputStepPct')) $('#habitInputStepPct').value = step;
+      updatePercentageExplanationDash();
+    });
+
+    $('#habitInputStepPct')?.addEventListener('input', () => {
+      const target = Math.min(100, Math.max(1, Number($('#habitInputTarget')?.value) || 100));
+      const step = Math.max(1, Math.min(target, Number($('#habitInputStepPct')?.value) || 1));
+      const parts = Math.max(1, Math.round(target / step));
+      if ($('#habitInputParts')) $('#habitInputParts').value = parts;
+      updatePercentageExplanationDash();
+    });
+
+    $('#habitInputTarget')?.addEventListener('input', () => {
+      if ($('#habitInputType')?.value === 'percentage') {
+        const target = Math.min(100, Math.max(1, Number($('#habitInputTarget')?.value) || 100));
+        const parts = Math.max(1, Math.min(100, Number($('#habitInputParts')?.value) || 5));
+        const step = Math.round((target / parts) * 10) / 10;
+        if ($('#habitInputStepPct')) $('#habitInputStepPct').value = step;
+        updatePercentageExplanationDash();
+      }
+    });
+
+    $$('.pct-preset-badge').forEach(badge => {
+      badge.addEventListener('click', () => {
+        if ($('#habitInputParts')) $('#habitInputParts').value = badge.dataset.parts;
+        if ($('#habitInputStepPct')) $('#habitInputStepPct').value = badge.dataset.step;
+        updatePercentageExplanationDash();
+      });
     });
 
     // English title toggle
@@ -4861,6 +4952,8 @@
       const difficulty = $('#habitInputDifficulty')?.value || 'easy';
       let targetVal = Number($('#habitInputTarget')?.value) || 1;
       let unit = $('#habitInputUnit')?.value?.trim() || '';
+      let partsCount = undefined;
+      let stepValue = undefined;
 
       if (type === 'boolean') {
         targetVal = 1;
@@ -4868,6 +4961,8 @@
       } else if (type === 'percentage') {
         targetVal = Math.min(100, Math.max(1, targetVal || 100));
         unit = '%';
+        partsCount = Math.max(1, Math.min(100, Number($('#habitInputParts')?.value) || 5));
+        stepValue = Math.max(1, Math.min(targetVal, Number($('#habitInputStepPct')?.value) || Math.round(targetVal / partsCount) || 20));
       } else if (type === 'rating') {
         targetVal = 5;
         unit = '⭐';
@@ -4901,6 +4996,8 @@
         direction,
         difficulty,
         targetValue: targetVal,
+        partsCount: type === 'percentage' ? (partsCount || 5) : undefined,
+        stepValue: type === 'percentage' ? (stepValue || 20) : 1,
         unit,
         unitEn: unit,
         icon,

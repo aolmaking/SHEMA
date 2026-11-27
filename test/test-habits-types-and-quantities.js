@@ -154,6 +154,88 @@ assert(mainJs.includes('fullVal = h ? (Number(h.targetValue) || (h.type === \'pe
 
 console.log('✅ Frontend and IPC consistency verified 100%.');
 
+// 5. Test Percentage Stepping, Automatic Distribution & Multi-Click Progression (e.g. 5 Prayers)
+console.log('\n--- 5. Testing Percentage Stepping, Auto-Distribution & 5-Step Prayer Progression ---');
+
+// a) Create habit "كل الصلوات الخمس" with 5 parts
+const hPrayers = manager.saveHabit({
+  title: 'كل الصلوات الخمس',
+  titleEn: 'Five Daily Prayers',
+  type: 'percentage',
+  targetValue: 100,
+  partsCount: 5,
+});
+
+assert.strictEqual(hPrayers.type, 'percentage');
+assert.strictEqual(hPrayers.targetValue, 100);
+assert.strictEqual(hPrayers.partsCount, 5, 'Parts count must be exactly 5 for 5 prayers');
+assert.strictEqual(hPrayers.stepValue, 20, 'Auto-distributed step percentage must be 100 / 5 = 20%');
+
+// Simulate 5 successive clicks from the widget / dashboard:
+let simVal = 0;
+const step = hPrayers.stepValue; // 20
+
+// Click 1: Fajr -> 20%
+simVal += step;
+let log1 = manager.saveHabitStatus(today, hPrayers.id, simVal >= hPrayers.targetValue ? 'done' : 'partial', simVal);
+assert.strictEqual(log1.habits[hPrayers.id].status, 'partial', 'Click 1 (20%) must be partial');
+assert.strictEqual(log1.habits[hPrayers.id].value, 20, 'Click 1 must advance value to 20%');
+
+// Click 2: Dhuhr -> 40%
+simVal += step;
+let log2 = manager.saveHabitStatus(today, hPrayers.id, simVal >= hPrayers.targetValue ? 'done' : 'partial', simVal);
+assert.strictEqual(log2.habits[hPrayers.id].status, 'partial', 'Click 2 (40%) must be partial');
+assert.strictEqual(log2.habits[hPrayers.id].value, 40, 'Click 2 must advance value to 40%');
+
+// Click 3: Asr -> 60%
+simVal += step;
+let log3 = manager.saveHabitStatus(today, hPrayers.id, simVal >= hPrayers.targetValue ? 'done' : 'partial', simVal);
+assert.strictEqual(log3.habits[hPrayers.id].status, 'partial', 'Click 3 (60%) must be partial');
+assert.strictEqual(log3.habits[hPrayers.id].value, 60, 'Click 3 must advance value to 60%');
+
+// Click 4: Maghrib -> 80%
+simVal += step;
+let log4 = manager.saveHabitStatus(today, hPrayers.id, simVal >= hPrayers.targetValue ? 'done' : 'partial', simVal);
+assert.strictEqual(log4.habits[hPrayers.id].status, 'partial', 'Click 4 (80%) must be partial');
+assert.strictEqual(log4.habits[hPrayers.id].value, 80, 'Click 4 must advance value to 80%');
+
+// Click 5: Isha -> 100% -> DONE!
+simVal += step;
+let log5 = manager.saveHabitStatus(today, hPrayers.id, simVal >= hPrayers.targetValue ? 'done' : 'partial', simVal);
+assert.strictEqual(log5.habits[hPrayers.id].status, 'done', 'Click 5 (100%) must achieve full completion (done)');
+assert.strictEqual(log5.habits[hPrayers.id].value, 100, 'Click 5 must reach exactly 100%');
+
+// Click 6: Reset cycle -> 0%
+simVal = 0;
+let log6 = manager.saveHabitStatus(today, hPrayers.id, 'none', 0);
+assert(!log6.habits[hPrayers.id] || log6.habits[hPrayers.id].status === 'none', 'Reset click must revert to none / empty');
+
+// b) Verify 4-quarter habit distribution (4 steps = 25% each)
+const hQuarters = manager.saveHabit({
+  title: 'إنجاز ورد الحفظ (4 أرباع)',
+  type: 'percentage',
+  targetValue: 100,
+  partsCount: 4,
+});
+assert.strictEqual(hQuarters.partsCount, 4);
+assert.strictEqual(hQuarters.stepValue, 25, '100% with 4 parts must distribute to 25% per click');
+
+// c) Verify HTML and JS elements for percentage steps
+assert(dashHtml.includes('id="percentageStepGroup"'), 'Dashboard HTML must have #percentageStepGroup');
+assert(dashHtml.includes('id="habitInputParts"'), 'Dashboard HTML must have #habitInputParts');
+assert(dashHtml.includes('id="habitInputStepPct"'), 'Dashboard HTML must have #habitInputStepPct');
+assert(habitsHtml.includes('id="qaPercentageStepGroup"'), 'Widget habits HTML must have #qaPercentageStepGroup');
+assert(habitsHtml.includes('id="qaPartsCount"'), 'Widget habits HTML must have #qaPartsCount');
+assert(habitsHtml.includes('id="qaStepPct"'), 'Widget habits HTML must have #qaStepPct');
+
+// Check frontend JS percentage logic
+assert(habitsJs.includes('h.partsCount'), 'habits.js must inspect h.partsCount');
+assert(habitsJs.includes('h.stepValue'), 'habits.js must inspect h.stepValue');
+assert(dashJs.includes('h.partsCount'), 'habits-dashboard.js must inspect h.partsCount');
+assert(dashJs.includes('h.stepValue'), 'habits-dashboard.js must inspect h.stepValue');
+
+console.log('✅ 5-part prayer progression, auto-distribution, and UI controls verified 100%.');
+
 console.log('\n========================================================');
 console.log('🎉 ALL HABIT TYPES, QUANTITIES & LOGGING TESTS PASSED (100%)');
 console.log('========================================================\n');

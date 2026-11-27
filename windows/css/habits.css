@@ -2086,6 +2086,13 @@ body.dragging .plate {
 .h-pct-btn:hover {
   border-color: var(--accent) !important;
 }
+.h-pct-btn.is-complete {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+}
+.h-pct-btn.is-complete .h-pct-text {
+  color: #059669 !important;
+}
 .h-pct-fill {
   position: absolute;
   top: 0;
