@@ -184,6 +184,10 @@
       'habits.microStepTooltip': 'إنجاز خطوة صغرى (قاعدة الدقيقتين - يحفظ النور بدون إرهاق)',
       'habits.microStepBadge': 'خطوة صغرى 🌱',
       'habits.noPendingHabit': 'لا توجد عادات معلقة لإنجاز خطوتها الصغرى اليوم!',
+      'habits.toggleFocusMode': 'وضع التركيز على العادات (إخفاء البطاقات العلوية وتوسيع مساحة العادات)',
+      'habits.focusModeOn': 'إلغاء وضع التركيز (إظهار البطاقات العلوية)',
+      'habits.showWeekStrip': '📅 شريط أيام الأسبوع',
+      'habits.habitsFocusMode': '🎯 وضع التركيز على العادات (توسيع مساحة العادات)',
     },
     en: {
       'habits.title': 'Habits & Wellness',
@@ -360,6 +364,10 @@
       'habits.microStepTooltip': 'Complete as Micro-Step (2-Min Rule - keeps momentum)',
       'habits.microStepBadge': 'Micro-step 🌱',
       'habits.noPendingHabit': 'No pending habits for a micro-step today!',
+      'habits.toggleFocusMode': 'Habits Focus Mode (Maximize habits space)',
+      'habits.focusModeOn': 'Exit Focus Mode (Show top panels)',
+      'habits.showWeekStrip': '📅 7-Day Week Strip',
+      'habits.habitsFocusMode': '🎯 Habits Focus Mode (Full space)',
     },
   });
 
@@ -1060,6 +1068,21 @@
     const showGamification = s.gamificationEnabled !== false;
     const showAtlasBar = s.showAtlasBar !== false;
     const showSound = s.soundEffects !== false;
+    const showWeekStrip = s.showWeekStrip !== false;
+    const habitsFocusMode = Boolean(s.habitsFocusMode);
+
+    if ($('#popShowWeekStrip')) $('#popShowWeekStrip').checked = showWeekStrip;
+    if ($('#popHabitsFocusMode')) $('#popHabitsFocusMode').checked = habitsFocusMode;
+
+    const plate = $('#habitsPlate');
+    if (plate) {
+      plate.classList.toggle('habits-focus-mode', habitsFocusMode);
+    }
+    const focusBtn = $('#habitsFocusToggleBtn');
+    if (focusBtn) {
+      focusBtn.classList.toggle('active', habitsFocusMode);
+      focusBtn.title = habitsFocusMode ? t('habits.focusModeOn') : t('habits.toggleFocusMode');
+    }
 
     if ($('#popShowStreak')) $('#popShowStreak').checked = showStreak;
     if ($('#popShowStrength')) $('#popShowStrength').checked = showStrength;
@@ -1082,6 +1105,7 @@
     if (heroBento) heroBento.style.display = (showPomodoro || showStreak) ? 'flex' : 'none';
     if ($('#habitsProgressWrap')) $('#habitsProgressWrap').style.display = showProgressBar ? 'block' : 'none';
     if ($('#habitsAtlasMiniBar')) $('#habitsAtlasMiniBar').style.display = showAtlasBar ? 'flex' : 'none';
+    if ($('#habitsWeekStrip')) $('#habitsWeekStrip').style.display = showWeekStrip ? 'grid' : 'none';
 
     if ($('#miniStrip')) $('#miniStrip').style.display = showMiniStrip ? 'flex' : 'none';
     const rTabs = $('#routineFilterBar') || $('#routineTabs');
@@ -3434,6 +3458,17 @@
     $('#popShowAtlasBar')?.addEventListener('change', (e) => {
       persistHabitSettings({ showAtlasBar: e.target.checked });
       renderAtlasMiniBar();
+    });
+    $('#popShowWeekStrip')?.addEventListener('change', (e) => {
+      persistHabitSettings({ showWeekStrip: e.target.checked });
+      renderWeekStrip();
+    });
+    $('#popHabitsFocusMode')?.addEventListener('change', (e) => {
+      persistHabitSettings({ habitsFocusMode: e.target.checked });
+    });
+    $('#habitsFocusToggleBtn')?.addEventListener('click', () => {
+      const nextMode = !state.settings?.habitsFocusMode;
+      persistHabitSettings({ habitsFocusMode: nextMode });
     });
     $('#popShowSoundEffects')?.addEventListener('change', (e) => persistHabitSettings({ soundEffects: e.target.checked }));
 

@@ -59,6 +59,14 @@
             <path d="M12 5v14M5 12h14"/>
           </svg>
         </button>
+        <button class="icon-btn" id="habitsFocusToggleBtn" title="تبديل وضع التركيز على العادات (إخفاء البطاقات العلوية وتوسيع مساحة العادات)" data-i18n-title="habits.toggleFocusMode">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 14 10 14 10 20"/>
+            <polyline points="20 10 14 10 14 4"/>
+            <line x1="14" y1="10" x2="21" y2="3"/>
+            <line x1="3" y1="21" x2="10" y2="14"/>
+          </svg>
+        </button>
         <button class="icon-btn" id="habitsViewControlBtn" title="تخصيص الواجهة والتحكم بالعرض" data-i18n-title="habits.viewControlsTitle">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="21" x2="4" y2="14"/>
@@ -161,6 +169,8 @@
         <div class="popover-section">
           <label class="pop-label" data-i18n="habits.componentsToggle">عناصر الواجهة المرئية</label>
           <div class="pop-switches-grid">
+            <label class="pop-switch-item highlight"><input type="checkbox" id="popHabitsFocusMode"> <span data-i18n="habits.habitsFocusMode">🎯 وضع التركيز على العادات</span></label>
+            <label class="pop-switch-item"><input type="checkbox" id="popShowWeekStrip" checked> <span data-i18n="habits.showWeekStrip">📅 شريط أيام الأسبوع</span></label>
             <label class="pop-switch-item"><input type="checkbox" id="popShowStreak" checked> <span data-i18n="habits.showStreak">🔥 عداد السلسلة</span></label>
             <label class="pop-switch-item"><input type="checkbox" id="popShowStrength" checked> <span data-i18n="habits.showStrength">⚡ قوة العادة %</span></label>
             <label class="pop-switch-item"><input type="checkbox" id="popShowUrgency" checked> <span data-i18n="habits.showUrgency">⚠️ شارة الاستحقاق والتأخير %</span></label>
