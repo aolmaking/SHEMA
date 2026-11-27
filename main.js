@@ -684,13 +684,42 @@ habitsManager.on('wa-habit-reminder-sent', ({ habit, date, recipient }) => {
 
 function syncHabitsToTodos() {
   const hSettings = settings.get('habits') || {};
-  if (hSettings.syncToTodo === false) return;
-
   const today = new Date().toISOString().slice(0, 10);
-  const activeHabits = habitsManager.getHabits(false);
-  const dayLog = habitsManager.getLog(today);
   const currentTodos = todos.get('items', []);
   let modified = false;
+
+  // 1. Purge all expired past-day habit tasks (where the day has passed, e.g. past 12:00 AM midnight)
+  for (let i = currentTodos.length - 1; i >= 0; i--) {
+    const t = currentTodos[i];
+    const isHabitTask = Boolean(t.habitId || t.category === 'habit' || (t.id && String(t.id).startsWith('hbt_')));
+    if (isHabitTask) {
+      let taskDate = t.habitDate;
+      if (!taskDate && t.id) {
+        const parts = String(t.id).split('_');
+        const lastPart = parts[parts.length - 1];
+        if (/^\d{4}-\d{2}-\d{2}$/.test(lastPart)) {
+          taskDate = lastPart;
+        }
+      }
+      const isPastDay = taskDate ? taskDate < today : !String(t.id).endsWith(`_${today}`);
+      if (isPastDay || hSettings.syncToTodo === false) {
+        currentTodos.splice(i, 1);
+        modified = true;
+      }
+    }
+  }
+
+  if (hSettings.syncToTodo === false) {
+    if (modified) {
+      todos.set('items', currentTodos);
+      todos.flush();
+      broadcast('todos:changed', currentTodos);
+    }
+    return;
+  }
+
+  const activeHabits = habitsManager.getHabits(false);
+  const dayLog = habitsManager.getLog(today);
 
   for (const h of activeHabits) {
     const todoId = `hbt_${h.id}_${today}`;
@@ -722,6 +751,7 @@ function syncHabitsToTodos() {
           priority: prio,
           category: 'habit',
           habitId: h.id,
+          habitDate: today,
           createdAt: Date.now(),
           doneAt: isDone ? Date.now() : null,
         });
@@ -733,6 +763,7 @@ function syncHabitsToTodos() {
         currentTodos.splice(existingIndex, 1);
         modified = true;
       } else {
+        existing.habitDate = today;
         if (existing.done !== isDone) {
           existing.done = isDone;
           existing.doneAt = isDone ? (existing.doneAt || Date.now()) : null;
@@ -830,6 +861,18 @@ habitsManager.on('log-changed', (payload) => {
 
 let lastHabitPromptDate = null;
 let lastHabitDigestWeek = null;
+let lastDayRollDate = new Date().toISOString().slice(0, 10);
+
+function scheduleMidnightRollover() {
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
+  const msUntilMidnight = Math.max(1000, tomorrow.getTime() - now.getTime());
+  setTimeout(() => {
+    syncHabitsToTodos();
+    syncHabitsToCalendar();
+    scheduleMidnightRollover();
+  }, msUntilMidnight).unref?.();
+}
 
 async function checkHabitsAutomations() {
   try {
@@ -837,6 +880,13 @@ async function checkHabitsAutomations() {
     const now = new Date();
     const today = now.toISOString().slice(0, 10);
     const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    // Midnight Rollover: automatically purge past-day habits and refresh today's schedule at 12:00 AM
+    if (today !== lastDayRollDate) {
+      lastDayRollDate = today;
+      syncHabitsToTodos();
+      syncHabitsToCalendar();
+    }
 
     // 1. Daily Evening Prompt via WhatsApp
     if (hSettings.waEveningPrompt && hSettings.waEveningTime) {
@@ -4848,7 +4898,10 @@ function registerIpc() {
   });
 
   /* ---- todos ---- */
-  ipcMain.handle('todos:get', () => todos.get('items', []));
+  ipcMain.handle('todos:get', () => {
+    syncHabitsToTodos();
+    return todos.get('items', []);
+  });
   ipcMain.handle('todos:set', (_e, items) => {
     const list = Array.isArray(items) ? items : [];
     const oldItems = todos.get('items', []);
@@ -5633,6 +5686,7 @@ async function main() {
 
   fillDefaults();
   syncHabitsToTodos();
+  scheduleMidnightRollover();
   registerIpc();
 
   // Only the installed copy manages its own login entry; a development or

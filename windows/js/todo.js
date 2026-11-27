@@ -276,15 +276,31 @@ async function hideCourse(courseNameOrId) {
   render();
 }
 
+function isHabitExpired(task) {
+  const isHabitTask = Boolean(task.habitId || task.category === 'habit' || (task.id && String(task.id).startsWith('hbt_')));
+  if (!isHabitTask) return false;
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  let taskDate = task.habitDate;
+  if (!taskDate && task.id) {
+    const parts = String(task.id).split('_');
+    const lastPart = parts[parts.length - 1];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(lastPart)) {
+      taskDate = lastPart;
+    }
+  }
+  return taskDate ? taskDate < today : !String(task.id).endsWith(`_${today}`);
+}
+
 /** Finished tasks past their time are left out, except in the "done" view. */
 function listed() {
-  return items.filter((x) => !isCourseExcluded(x) && !isHidden(x, settings()));
+  return items.filter((x) => !isCourseExcluded(x) && !isHabitExpired(x) && !isHidden(x, settings()));
 }
 
 function visible() {
   let list = [];
-  if (filter === 'active') list = items.filter((x) => !x.done && !isCourseExcluded(x));
-  else if (filter === 'done') list = items.filter((x) => x.done && !isCourseExcluded(x));
+  if (filter === 'active') list = items.filter((x) => !x.done && !isCourseExcluded(x) && !isHabitExpired(x));
+  else if (filter === 'done') list = items.filter((x) => x.done && !isCourseExcluded(x) && !isHabitExpired(x));
   else list = listed();
 
   const s = settings();

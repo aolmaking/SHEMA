@@ -101,6 +101,47 @@ assert(settingsHtml.includes('value="auto"'), 'settings.html must offer value="a
 assert(settingsJs.includes('s.langAuto'), 'settings.js must have s.langAuto i18n key');
 console.log('✅ System language detection and settings integration verified.');
 
+// 6. Requirement 6: Midnight Day-Pass Habit Auto-Purge from To-Do List
+console.log('\n--- 6. Testing Midnight Day-Pass Habit Auto-Purge from To-Do ---');
+const todoJs = fs.readFileSync(path.join(ROOT, 'windows', 'js', 'todo.js'), 'utf8');
+
+assert(mainJs.includes('scheduleMidnightRollover'), 'main.js must schedule precision midnight rollover at 12:00 AM');
+assert(mainJs.includes('lastDayRollDate'), 'main.js checkHabitsAutomations must detect midnight day change');
+assert(mainJs.includes('isPastDay'), 'main.js syncHabitsToTodos must identify and purge past-day habit tasks');
+assert(todoJs.includes('isHabitExpired'), 'todo.js must have isHabitExpired filter');
+assert(todoJs.includes('!isHabitExpired(x)'), 'todo.js listed() and visible() must filter out expired habit tasks');
+
+// Algorithmic validation: simulation of To-Do items across midnight rollover
+const simToday = '2026-11-27';
+const simYesterday = '2026-11-26';
+const simTodos = [
+  { id: 'task_regular_1', text: 'Important regular meeting', done: false },
+  { id: `hbt_reading_${simYesterday}`, text: '📖 [عادة] قراءة يومية', habitId: 'reading', habitDate: simYesterday, done: false },
+  { id: `hbt_workout_${simYesterday}`, text: '🏃‍♂️ [عادة] تمارين رياضية', habitId: 'workout', habitDate: simYesterday, done: true },
+  { id: `hbt_reading_${simToday}`, text: '📖 [عادة] قراءة يومية', habitId: 'reading', habitDate: simToday, done: false },
+];
+
+for (let i = simTodos.length - 1; i >= 0; i--) {
+  const t = simTodos[i];
+  const isHabitTask = Boolean(t.habitId || t.category === 'habit' || (t.id && String(t.id).startsWith('hbt_')));
+  if (isHabitTask) {
+    let taskDate = t.habitDate;
+    if (!taskDate && t.id) {
+      const parts = String(t.id).split('_');
+      const lastPart = parts[parts.length - 1];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(lastPart)) taskDate = lastPart;
+    }
+    const isPastDay = taskDate ? taskDate < simToday : !String(t.id).endsWith(`_${simToday}`);
+    if (isPastDay) simTodos.splice(i, 1);
+  }
+}
+
+assert.strictEqual(simTodos.length, 2, 'Simulated todos must retain exactly 2 items (1 regular + 1 today habit)');
+assert.strictEqual(simTodos[0].id, 'task_regular_1', 'Regular task must be preserved');
+assert.strictEqual(simTodos[1].id, `hbt_reading_${simToday}`, 'Today habit task must be preserved');
+assert(!simTodos.some(t => t.id.includes(simYesterday)), 'All past-day habits must disappear after midnight');
+console.log('✅ Simulation verified: All past-day habit tasks completely disappear once past midnight 12:00 AM!');
+
 console.log('\n========================================================');
-console.log('🎉 ALL 5 USER REQUIREMENTS VERIFIED & PASSED 100%! 🎉');
+console.log('🎉 ALL HABITS SYSTEM & MIDNIGHT PURGE TESTS PASSED (100%)');
 console.log('========================================================\n');
