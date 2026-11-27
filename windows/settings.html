@@ -2047,6 +2047,28 @@
                     <input type="text" class="field ltr small" id="waChanHabitRemindersRecipient" placeholder="رقم هاتف أو معرف مجموعة لتنبيهات العادات الفردية" data-i18n-ph="s.waChanHabitRemindersPh">
                   </div>
                   <p class="hint" style="font-size: 10.5px; margin: 4px 0 0 0;" data-i18n="s.waChanHabitRemindersHint">يمكنك أيضاً تحديد رقم مخصص لكل عادة بشكل مستقل من داخل إعدادات تلك العادة.</p>
+
+                  <!-- Quick Habit Picker & Smart Message Customizer in All Habits view -->
+                  <div class="wa-habit-quick-card" style="margin-top: 10px; padding: 10px; border-radius: 8px; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.18);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                      <label style="font-size: 11px; font-weight: 700; color: var(--accent, #3b82f6); display: flex; align-items: center; gap: 4px;">
+                        <span>🎯 تخصيص عادة معينة وصياغة رسالتها:</span>
+                      </label>
+                      <button type="button" class="btn small primary" id="btnOpenHabitMsgModalAll" style="font-size: 11px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                        <span>✨ صياغة وتخصيص الرسالة الذكية</span>
+                      </button>
+                    </div>
+                    <select class="picker wide" id="waQuickHabitSelect" style="width: 100%; margin-bottom: 6px; font-size: 11.5px;"></select>
+                    
+                    <div id="waQuickHabitDetailBox" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                      <select class="picker small" id="waQuickHabitMode" style="min-width: 130px;">
+                        <option value="default">🌐 الرقم الافتراضي</option>
+                        <option value="custom">✏️ رقم أو مجموعة مخصصة</option>
+                      </select>
+                      <input type="text" class="field ltr small" id="waQuickHabitRecipient" style="flex: 1; min-width: 160px; display: none;" placeholder="رقم هاتف أو معرف مجموعة لهذه العادة">
+                      <span id="waQuickHabitSaveIndicator" style="font-size: 11px; color: #10b981; opacity: 0; transition: opacity 0.2s;">✓ تم الحفظ</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div id="waHabitSpecificWrap" style="display: none; margin-top: 8px;">
@@ -2074,9 +2096,12 @@
                     <div id="waHabitSelectedItemCustomWrap" style="display: none; margin-bottom: 6px;">
                       <input type="text" class="field ltr small wide" id="waHabitSelectedItemCustomRecipient" placeholder="رقم هاتف (مثال: 201012345678) أو معرف مجموعة" data-i18n-ph="s.waHabitItemCustomRecipientPh">
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
-                      <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 6px;">
+                      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                         <button type="button" class="btn small" id="waHabitItemTestBtn" data-i18n="s.waHabitItemTestBtn">🔔 اختبار الإرسال</button>
+                        <button type="button" class="btn small primary" id="btnOpenHabitMsgModalSpecific" style="font-size: 11px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;">
+                          <span>✨ صياغة وتخصيص الرسالة الذكية</span>
+                        </button>
                         <span id="waHabitItemTestStatus" style="font-size: 10.5px;"></span>
                       </div>
                       <span id="waHabitItemSaveIndicator" style="font-size: 11px; color: #10b981; opacity: 0; transition: opacity 0.2s;"></span>
@@ -2442,6 +2467,78 @@
         </div>
         <div class="setup-guide-modal-footer">
           <button type="button" class="btn primary small" id="setupGuideGotItBtn" data-i18n="s.setupGuideGotIt"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Smart Habit Reminder Message Formulator Modal -->
+    <div class="setup-guide-modal-overlay" id="waHabitMsgModal" hidden>
+      <div class="setup-guide-modal-card" style="max-width: 580px; width: 95%;">
+        <div class="setup-guide-modal-header">
+          <div class="setup-guide-header-text">
+            <div class="setup-guide-modal-title" style="display: flex; align-items: center; gap: 8px;">
+              <span>✨ صياغة وتخصيص رسالة التذكير</span>
+              <span class="badge-mini" id="waHabitModalHabitBadge" style="background: rgba(59,130,246,0.15); color: var(--accent); font-weight: 700;">⭐ عادة</span>
+            </div>
+            <div class="setup-guide-modal-sub" id="waHabitModalSub">تخصيص القالب والكلمات التحفيزية وصياغة واتساب الذكية</div>
+          </div>
+          <button type="button" class="icon-btn" id="waHabitMsgModalCloseBtn">✕</button>
+        </div>
+
+        <div class="setup-guide-modal-body scroll" style="padding: 16px; max-height: 72vh; overflow-y: auto;">
+          <!-- Presets Bar -->
+          <div class="wa-presets-bar" style="margin-bottom: 10px;">
+            <span class="wa-presets-label" style="font-size: 11px; font-weight: 700;">💡 نماذج صياغة ذكية جاهزة:</span>
+            <button type="button" class="wa-preset-btn" id="waHabitPresetMotivational">🌟 تشجيعي وتحفيزي</button>
+            <button type="button" class="wa-preset-btn" id="waHabitPresetSpiritual">🕌 إيماني وبركة</button>
+            <button type="button" class="wa-preset-btn" id="waHabitPresetDetailed">📋 تفصيلي بالأهداف</button>
+            <button type="button" class="wa-preset-btn" id="waHabitPresetMinimal">⚡ موجز ومباشر</button>
+          </div>
+
+          <!-- Interactive Tag Chips -->
+          <div class="wa-tags-container" style="margin-bottom: 10px;">
+            <span class="wa-tags-label" style="font-size: 11px; font-weight: 700;">🏷️ اضغط لإدراج عناصر ذكية ديناميكية:</span>
+            <div class="wa-tags-list" id="waHabitModalTagsList" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px;">
+              <button type="button" class="wa-tag-chip" data-tag="{habit}"><span class="wa-tag-code">{habit}</span> اسم العادة والأيقونة</button>
+              <button type="button" class="wa-tag-chip" data-tag="{target}"><span class="wa-tag-code">{target}</span> الهدف والكمية</button>
+              <button type="button" class="wa-tag-chip" data-tag="{streak}"><span class="wa-tag-code">{streak}</span> عدد أيام السلسلة</button>
+              <button type="button" class="wa-tag-chip" data-tag="{time}"><span class="wa-tag-code">{time}</span> وقت التذكير</button>
+              <button type="button" class="wa-tag-chip" data-tag="{cue}"><span class="wa-tag-code">{cue}</span> المحفز المرتبط</button>
+              <button type="button" class="wa-tag-chip" data-tag="{note}"><span class="wa-tag-code">{note}</span> ملاحظات العادة</button>
+            </div>
+          </div>
+
+          <!-- Template Textarea Editor -->
+          <div style="margin-bottom: 12px;">
+            <label class="form-label" style="font-size: 11.5px; font-weight: 700; margin-bottom: 4px; display: block;">صياغة نص الرسالة (يدعم تنسيقات واتساب: *عريض*، _مائل_):</label>
+            <textarea class="field wide wa-template-editor" id="waHabitModalTemplate" rows="4" style="width: 100%; font-family: inherit; font-size: 12px; line-height: 1.5; border-radius: 8px; padding: 10px; resize: vertical;" placeholder="اكتب صياغة الرسالة المخصصة هنا..." dir="auto"></textarea>
+          </div>
+
+          <!-- Real-time Live WhatsApp Chat Bubble Preview -->
+          <div>
+            <label class="form-label" style="font-size: 11.5px; font-weight: 700; margin-bottom: 4px; display: block;">معاينة حية ومباشرة لشكل الرسالة على واتساب:</label>
+            <div class="wa-live-preview-box" style="margin-top: 4px;">
+              <div class="wa-preview-header">
+                <span class="wa-preview-badge">معاينة واتساب</span>
+                <span class="wa-preview-contact" id="waHabitModalPreviewContact">Mirqat Habit Bot</span>
+              </div>
+              <div class="wa-chat-canvas">
+                <div class="wa-chat-bubble" id="waHabitModalPreviewBubble">
+                  <div class="wa-bubble-text" id="waHabitModalPreviewText" style="white-space: pre-wrap; word-break: break-word;">...</div>
+                  <div class="wa-bubble-time" id="waHabitModalPreviewTime">11:59 PM ✓✓</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-guide-modal-footer" style="padding: 12px 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn primary small" id="waHabitModalSaveBtn">💾 حفظ الصياغة للعادة</button>
+            <button type="button" class="btn small" id="waHabitModalTestSendBtn">🔔 تجربة الإرسال</button>
+            <span id="waHabitModalStatus" style="font-size: 11px;"></span>
+          </div>
+          <button type="button" class="btn small" id="waHabitModalCloseBtn2">إغلاق</button>
         </div>
       </div>
     </div>

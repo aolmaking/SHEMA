@@ -54,6 +54,27 @@ assert(msgEn.includes('Keep up the evening reading habit!'), 'En message must co
 assert(msgEn.includes('After dinner'), 'En message must contain cue');
 console.log('✅ English habit reminder message generated successfully.');
 
+// 1.1 Custom Smart Template with Dynamic Tokens
+console.log('--- 1.1 Testing Custom Smart Template Token Substitution ---');
+const sampleHabitTemplate = {
+  id: 'h_pray',
+  name: 'الصلوات الخمس',
+  icon: '🕌',
+  targetValue: 5,
+  unit: 'صلوات',
+  reminderTime: '12:00',
+  triggerCue: 'الأذان',
+  notes: 'في المسجد جماعة',
+  reminderTemplate: '🔔 {habit} | الهدف: {target} | السلسلة: {streak} يوم\n⏰ {time} - {cue}\n📝 {note}',
+};
+const msgTemplate = mgr.buildHabitReminderMessage(sampleHabitTemplate, 12, 'ar');
+assert(msgTemplate.includes('🕌 *الصلوات الخمس*'), 'Template must substitute {habit}');
+assert(msgTemplate.includes('الهدف: 5 صلوات'), 'Template must substitute {target}');
+assert(msgTemplate.includes('السلسلة: 12 يوم'), 'Template must substitute {streak}');
+assert(msgTemplate.includes('12:00 - الأذان'), 'Template must substitute {time} and {cue}');
+assert(msgTemplate.includes('في المسجد جماعة'), 'Template must substitute {note}');
+console.log('✅ Custom reminderTemplate dynamic tokens substituted successfully.');
+
 // 2. Testing Habit Data Storage & Retrieval
 console.log('\n--- 2. Testing Habit Data Storage for Reminders ---');
 const saved = mgr.saveHabit({
@@ -103,6 +124,15 @@ assert(settingsHtml.includes('id="waHabitsScrollList"'), '#waHabitsScrollList mu
 
 assert(settingsHtml.includes('id="habitsOpenManagerForRemindersBtn"'), '#habitsOpenManagerForRemindersBtn must exist');
 assert(settingsHtml.includes('id="habitsActiveRemindersCount"'), '#habitsActiveRemindersCount badge must exist');
+
+// Quick Habit Selector and Message Formulator Modal Markup
+assert(settingsHtml.includes('id="waQuickHabitSelect"'), '#waQuickHabitSelect must exist');
+assert(settingsHtml.includes('id="btnOpenHabitMsgModalAll"'), '#btnOpenHabitMsgModalAll must exist');
+assert(settingsHtml.includes('id="btnOpenHabitMsgModalSpecific"'), '#btnOpenHabitMsgModalSpecific must exist');
+assert(settingsHtml.includes('id="waHabitMsgModal"'), '#waHabitMsgModal must exist');
+assert(settingsHtml.includes('id="waHabitModalTemplate"'), '#waHabitModalTemplate must exist');
+assert(settingsHtml.includes('id="waHabitModalPreviewBubble"'), '#waHabitModalPreviewBubble must exist');
+assert(settingsHtml.includes('id="waHabitModalSaveBtn"'), '#waHabitModalSaveBtn must exist');
 console.log('✅ Settings HTML markup verified.');
 
 // 4. Testing Habits Dashboard Editor Markup
@@ -132,6 +162,9 @@ assert(settingsJs.includes('habitsActiveRemindersCount'), 'settings.js must wire
 assert(settingsJs.includes('setupHabitRemindersCustomizer'), 'settings.js must wire setupHabitRemindersCustomizer');
 assert(settingsJs.includes('waHabitPickerSelect'), 'settings.js must reference waHabitPickerSelect');
 assert(settingsJs.includes('waHabitsScrollList'), 'settings.js must reference waHabitsScrollList');
+assert(settingsJs.includes('openHabitMsgModal'), 'settings.js must define openHabitMsgModal');
+assert(settingsJs.includes('updateHabitModalLivePreview'), 'settings.js must define updateHabitModalLivePreview');
+assert(settingsJs.includes('quickHabitSelect'), 'settings.js must wire quickHabitSelect');
 console.log('✅ Settings.js wiring verified.');
 
 // 6. Testing Main Process Defaults & IPC

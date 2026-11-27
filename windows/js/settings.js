@@ -2609,6 +2609,28 @@ function buildSuperUrgentAndWhatsApp() {
     const testBtn = $('#waHabitItemTestBtn');
     const testStatus = $('#waHabitItemTestStatus');
 
+    // Quick Habit Controls in All Habits view
+    const quickHabitSelect = $('#waQuickHabitSelect');
+    const quickHabitMode = $('#waQuickHabitMode');
+    const quickHabitRecipient = $('#waQuickHabitRecipient');
+    const quickHabitSaveIndicator = $('#waQuickHabitSaveIndicator');
+    const btnOpenHabitMsgModalAll = $('#btnOpenHabitMsgModalAll');
+    const btnOpenHabitMsgModalSpecific = $('#btnOpenHabitMsgModalSpecific');
+
+    // Smart Habit Message Formulator Modal Elements
+    const habitMsgModal = $('#waHabitMsgModal');
+    const habitModalHabitBadge = $('#waHabitModalHabitBadge');
+    const habitModalSub = $('#waHabitModalSub');
+    const habitModalTemplate = $('#waHabitModalTemplate');
+    const habitModalPreviewText = $('#waHabitModalPreviewText');
+    const habitModalPreviewContact = $('#waHabitModalPreviewContact');
+    const habitModalPreviewTime = $('#waHabitModalPreviewTime');
+    const habitModalSaveBtn = $('#waHabitModalSaveBtn');
+    const habitModalTestSendBtn = $('#waHabitModalTestSendBtn');
+    const habitModalStatus = $('#waHabitModalStatus');
+    const habitMsgModalCloseBtn = $('#waHabitMsgModalCloseBtn');
+    const habitModalCloseBtn2 = $('#waHabitModalCloseBtn2');
+
     let currentSelectedHabitId = null;
 
     const showSavedIndicator = () => {
@@ -2616,6 +2638,13 @@ function buildSuperUrgentAndWhatsApp() {
       saveIndicator.textContent = en() ? '✓ Saved for habit' : '✓ تم الحفظ للعادة';
       saveIndicator.style.opacity = '1';
       setTimeout(() => { if (saveIndicator) saveIndicator.style.opacity = '0'; }, 1800);
+    };
+
+    const showQuickSavedIndicator = () => {
+      if (!quickHabitSaveIndicator) return;
+      quickHabitSaveIndicator.textContent = en() ? '✓ Saved for habit' : '✓ تم الحفظ للعادة';
+      quickHabitSaveIndicator.style.opacity = '1';
+      setTimeout(() => { if (quickHabitSaveIndicator) quickHabitSaveIndicator.style.opacity = '0'; }, 1800);
     };
 
     const updateSelectedHabitCard = (habit) => {
@@ -2643,6 +2672,13 @@ function buildSuperUrgentAndWhatsApp() {
       if (itemCustomWrap) itemCustomWrap.style.display = hasCustom ? 'block' : 'none';
       if (itemCustomRecipient) itemCustomRecipient.value = habit.reminderRecipient || '';
       if (testStatus) testStatus.textContent = '';
+
+      if (quickHabitSelect) quickHabitSelect.value = habit.id;
+      if (quickHabitMode) quickHabitMode.value = hasCustom ? 'custom' : 'default';
+      if (quickHabitRecipient) {
+        quickHabitRecipient.style.display = hasCustom ? 'block' : 'none';
+        quickHabitRecipient.value = habit.reminderRecipient || '';
+      }
     };
 
     const renderHabits = () => {
@@ -2684,6 +2720,14 @@ function buildSuperUrgentAndWhatsApp() {
         opt.textContent = `${h.icon || '⭐'} ${title} (${timeStr}) [${recipTag}]`;
         if (h.id === currentSelectedHabitId) opt.selected = true;
         habitPickerSelect.appendChild(opt);
+
+        if (quickHabitSelect) {
+          const qOpt = document.createElement('option');
+          qOpt.value = h.id;
+          qOpt.textContent = `${h.icon || '⭐'} ${title} (${timeStr}) [${recipTag}]`;
+          if (h.id === currentSelectedHabitId) qOpt.selected = true;
+          quickHabitSelect.appendChild(qOpt);
+        }
 
         const row = document.createElement('div');
         row.className = `wa-habit-row-item${h.id === currentSelectedHabitId ? ' active' : ''}`;
@@ -2784,6 +2828,255 @@ function buildSuperUrgentAndWhatsApp() {
             }
           }
         }, 300);
+      };
+    }
+
+    if (quickHabitSelect) {
+      quickHabitSelect.onchange = () => {
+        currentSelectedHabitId = quickHabitSelect.value;
+        const targetHabit = cachedHabits.find(h => h.id === currentSelectedHabitId);
+        updateSelectedHabitCard(targetHabit);
+        if (habitPickerSelect) habitPickerSelect.value = currentSelectedHabitId;
+        document.querySelectorAll('.wa-habit-row-item').forEach(el => {
+          el.classList.toggle('active', el.getAttribute('data-id') === currentSelectedHabitId);
+        });
+      };
+    }
+
+    if (quickHabitMode) {
+      quickHabitMode.onchange = () => {
+        const isCustom = quickHabitMode.value === 'custom';
+        if (quickHabitRecipient) quickHabitRecipient.style.display = isCustom ? 'block' : 'none';
+        const targetHabit = cachedHabits.find(h => h.id === currentSelectedHabitId);
+        if (!targetHabit) return;
+
+        if (!isCustom) {
+          targetHabit.reminderRecipient = '';
+          if (quickHabitRecipient) quickHabitRecipient.value = '';
+          if (itemCustomRecipient) itemCustomRecipient.value = '';
+          if (itemModeSelect) itemModeSelect.value = 'default';
+          if (itemCustomWrap) itemCustomWrap.style.display = 'none';
+          if (window.widgets?.habits?.saveHabit) {
+            window.widgets.habits.saveHabit(targetHabit);
+          }
+          showQuickSavedIndicator();
+          showSavedIndicator();
+          renderHabits();
+        } else {
+          if (quickHabitRecipient) quickHabitRecipient.focus();
+        }
+      };
+    }
+
+    let quickRecipientDebounce = null;
+    if (quickHabitRecipient) {
+      quickHabitRecipient.oninput = () => {
+        clearTimeout(quickRecipientDebounce);
+        quickRecipientDebounce = setTimeout(() => {
+          const targetHabit = cachedHabits.find(h => h.id === currentSelectedHabitId);
+          if (!targetHabit) return;
+          targetHabit.reminderRecipient = quickHabitRecipient.value.trim();
+          if (itemCustomRecipient) itemCustomRecipient.value = targetHabit.reminderRecipient;
+          if (window.widgets?.habits?.saveHabit) {
+            window.widgets.habits.saveHabit(targetHabit);
+          }
+          showQuickSavedIndicator();
+          showSavedIndicator();
+          renderHabits();
+        }, 300);
+      };
+    }
+
+    // Smart Habit Message Formulator Modal Logic
+    const getDefaultHabitTemplate = (h) => {
+      const isEn = en();
+      if (isEn) {
+        return `⏰ *[HABIT REMINDER]* {habit}\n\n🔥 *Current Streak:* {streak} days! Keep the momentum strong!\n🎯 Target: {target}\n\n💡 Every single step counts towards mastery. You've got this! ✨\n✅ Mark it done in Mirqat Widgets!`;
+      }
+      return `⏰ *[تذكير بموعد العادة]* {habit}\n\n🔥 *سلسلة الالتزام:* {streak} أيام متواصلة! استمر ولا تقطع السلسلة!\n📌 الهدف اليومي: {target}\n\n💡 استعن بالله ولا تعجز، خطوة واحدة تصنع فارقاً عظيماً في يومك! ✨\n✅ سجّلها في تطبيق مرقاة عند الإنجاز!`;
+    };
+
+    const updateHabitModalLivePreview = (habit) => {
+      if (!habitModalPreviewText || !habitModalTemplate) return;
+      const h = habit || cachedHabits.find(x => x.id === currentSelectedHabitId) || cachedHabits[0];
+      if (!h) return;
+      const title = (en() && h.titleEn) ? h.titleEn : (h.title || '');
+      let targetStr = '';
+      if (h.type === 'percentage') targetStr = `${h.targetValue || 100}%`;
+      else if (h.type === 'rating') targetStr = '5 ⭐';
+      else if (h.targetValue) targetStr = `${h.targetValue} ${en() ? (h.unitEn || h.unit || '') : (h.unit || '')}`.trim();
+      else targetStr = en() ? 'Daily Goal' : 'الهدف اليومي';
+
+      let text = habitModalTemplate.value || '';
+      const streakNum = h.streak || 0;
+      const streakText = streakNum > 0
+        ? (en() ? `🔥 *Current Streak:* ${streakNum} days! Keep the momentum going!` : `🔥 *سلسلة الالتزام:* ${streakNum} أيام متواصلة! استمر ولا تقطع السلسلة!`)
+        : (en() ? `🌱 *Start your streak today!* Every great journey begins with a single step.` : `🌱 *ابدأ سلسلتك اليوم!* خطوة واحدة تصنع فارقاً عظيماً.`);
+
+      const rendered = text
+        .replace(/{habit}/g, `${h.icon || '⭐'} *${title}*`)
+        .replace(/{habitTitle}/g, title)
+        .replace(/{icon}/g, h.icon || '⭐')
+        .replace(/{target}/g, targetStr)
+        .replace(/{streak}/g, String(streakNum))
+        .replace(/{streakText}/g, streakText)
+        .replace(/{time}/g, h.reminderTime || '08:00')
+        .replace(/{cue}/g, h.triggerCue || (en() ? 'Anchor Cue' : 'المحفز المرتبط'))
+        .replace(/{note}/g, h.notes || '');
+
+      let html = rendered
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
+        .replace(/_(.*?)_/g, '<em>$1</em>')
+        .replace(/~(.*?)~/g, '<del>$1</del>')
+        .replace(/\n/g, '<br>');
+
+      habitModalPreviewText.innerHTML = html;
+      if (habitModalPreviewContact) habitModalPreviewContact.textContent = `${h.icon || '⭐'} ${title}`;
+      if (habitModalPreviewTime) habitModalPreviewTime.textContent = `${h.reminderTime || '08:00'} ✓✓`;
+    };
+
+    const openHabitMsgModal = (habitId) => {
+      const h = cachedHabits.find(x => x.id === habitId) || cachedHabits[0];
+      if (!h || !habitMsgModal) return;
+      currentSelectedHabitId = h.id;
+      const title = (en() && h.titleEn) ? h.titleEn : (h.title || '');
+      if (habitModalHabitBadge) habitModalHabitBadge.textContent = `${h.icon || '⭐'} ${title}`;
+      if (habitModalSub) habitModalSub.textContent = en() ? `Customize WhatsApp reminder format for: ${title}` : `تخصيص الصياغة الذكية لعادة: ${title}`;
+      if (habitModalTemplate) {
+        habitModalTemplate.value = h.reminderTemplate || h.reminderCustomText || getDefaultHabitTemplate(h);
+      }
+      if (habitModalStatus) habitModalStatus.textContent = '';
+      updateHabitModalLivePreview(h);
+      habitMsgModal.hidden = false;
+    };
+
+    const closeHabitMsgModal = () => {
+      if (habitMsgModal) habitMsgModal.hidden = true;
+    };
+
+    if (btnOpenHabitMsgModalAll) btnOpenHabitMsgModalAll.onclick = () => openHabitMsgModal(currentSelectedHabitId);
+    if (btnOpenHabitMsgModalSpecific) btnOpenHabitMsgModalSpecific.onclick = () => openHabitMsgModal(currentSelectedHabitId);
+    if (habitMsgModalCloseBtn) habitMsgModalCloseBtn.onclick = closeHabitMsgModal;
+    if (habitModalCloseBtn2) habitModalCloseBtn2.onclick = closeHabitMsgModal;
+    if (habitMsgModal) {
+      habitMsgModal.onclick = (e) => {
+        if (e.target === habitMsgModal) closeHabitMsgModal();
+      };
+    }
+
+    if (habitModalTemplate) {
+      habitModalTemplate.oninput = () => updateHabitModalLivePreview();
+    }
+
+    // Presets Buttons
+    const setPreset = (tpl) => {
+      if (habitModalTemplate) {
+        habitModalTemplate.value = tpl;
+        updateHabitModalLivePreview();
+      }
+    };
+
+    $('#waHabitPresetMotivational')?.addEventListener('click', () => {
+      setPreset(en()
+        ? `⏰ *[HABIT REMINDER]* {habit}\n\n🔥 *Current Streak:* {streak} days! Keep the momentum strong!\n🎯 Target: {target}\n\n💡 Every single step counts towards mastery. You've got this! ✨\n✅ Mark it done in Mirqat Widgets!`
+        : `⏰ *[تذكير بموعد العادة]* {habit}\n\n🔥 *سلسلة الالتزام:* {streak} أيام متواصلة! استمر ولا تقطع السلسلة!\n📌 الهدف اليومي: {target}\n\n💡 استعن بالله ولا تعجز، خطوة واحدة تصنع فارقاً عظيماً في يومك! ✨\n✅ سجّلها في تطبيق مرقاة عند الإنجاز!`);
+    });
+
+    $('#waHabitPresetSpiritual')?.addEventListener('click', () => {
+      setPreset(en()
+        ? `⏰ *[BLESSED ROUTINE REMINDER]* {habit}\n\n🌸 Time for: *{habit}*\n🎯 Daily Target: {target}\n\n🌿 Consistency is the key to enduring barakah.\nMay this habit bring focus, peace, and growth to your day. 🤲`
+        : `⏰ *[تذكير بالورد والطاعة]* {habit}\n\n🌸 موعدك الآن مع: *{habit}*\n📌 المقدار المستهدف: {target}\n\n🌿 _"أحب الأعمال إلى الله أدومها وإن قل"_\nبارك الله في وقتك وعملك وجعله في ميزان حسناتك. 🤲`);
+    });
+
+    $('#waHabitPresetDetailed')?.addEventListener('click', () => {
+      setPreset(en()
+        ? `⏰ *[DAILY HABIT CHECK]* {habit}\n\n🎯 *Target:* {target}\n⏰ *Scheduled Time:* {time}\n🔥 *Streak:* {streak} days\n📌 *Anchor Cue:* {cue}\n\n📝 *Notes:* {note}\n✅ Log your completion once done!`
+        : `⏰ *[تذكير الإنجاز اليومي]* {habit}\n\n🎯 *الهدف المستهدف:* {target}\n⏰ *وقت التنفيذ المحدد:* {time}\n🔥 *أيام الالتزام المتصلة:* {streak} يوم\n📌 *المحفز المرتبط:* {cue}\n\n📝 *ملاحظة:* {note}\n✅ بانتظار إتمامك لتسجيل النتيجة في النظام!`);
+    });
+
+    $('#waHabitPresetMinimal')?.addEventListener('click', () => {
+      setPreset(en()
+        ? `⏰ Time for: *{habit}* ({target})\n🔥 Streak: {streak} days! Let's get it done! ✅`
+        : `⏰ حان الآن موعد: *{habit}* ({target})\n🔥 رصيدك: {streak} يوم متواصل! انطلق لإنجازها الآن! ✅`);
+    });
+
+    // Tag Insertion
+    $$('#waHabitModalTagsList .wa-tag-chip').forEach(chip => {
+      chip.onclick = () => {
+        const tag = chip.dataset.tag;
+        if (!tag || !habitModalTemplate) return;
+        const start = habitModalTemplate.selectionStart || habitModalTemplate.value.length;
+        const end = habitModalTemplate.selectionEnd || habitModalTemplate.value.length;
+        const cur = habitModalTemplate.value;
+        habitModalTemplate.value = cur.slice(0, start) + tag + cur.slice(end);
+        habitModalTemplate.selectionStart = habitModalTemplate.selectionEnd = start + tag.length;
+        habitModalTemplate.focus();
+        updateHabitModalLivePreview();
+      };
+    });
+
+    // Save in Modal
+    if (habitModalSaveBtn) {
+      habitModalSaveBtn.onclick = () => {
+        const targetHabit = cachedHabits.find(x => x.id === currentSelectedHabitId);
+        if (!targetHabit || !habitModalTemplate) return;
+        targetHabit.reminderTemplate = habitModalTemplate.value.trim();
+        targetHabit.reminderCustomText = targetHabit.reminderTemplate;
+        if (window.widgets?.habits?.saveHabit) {
+          window.widgets.habits.saveHabit(targetHabit);
+        }
+        if (habitModalStatus) {
+          habitModalStatus.style.color = '#10b981';
+          habitModalStatus.textContent = en() ? '✓ Saved template for habit!' : '✓ تم حفظ الصياغة للعادة بنجاح!';
+        }
+        showSavedIndicator();
+        showQuickSavedIndicator();
+      };
+    }
+
+    // Test Send in Modal
+    if (habitModalTestSendBtn) {
+      habitModalTestSendBtn.onclick = async () => {
+        const targetHabit = cachedHabits.find(x => x.id === currentSelectedHabitId);
+        if (!targetHabit) return;
+        if (habitModalTemplate) {
+          targetHabit.reminderTemplate = habitModalTemplate.value.trim();
+          targetHabit.reminderCustomText = targetHabit.reminderTemplate;
+          if (window.widgets?.habits?.saveHabit) {
+            await window.widgets.habits.saveHabit(targetHabit);
+          }
+        }
+        habitModalTestSendBtn.disabled = true;
+        if (habitModalStatus) {
+          habitModalStatus.style.color = 'var(--ink-3)';
+          habitModalStatus.textContent = en() ? '⏳ Sending test...' : '⏳ جاري إرسال التنبيه...';
+        }
+        try {
+          const res = await (window.widgets?.habits?.testHabitReminder
+            ? window.widgets.habits.testHabitReminder({ habitId: targetHabit.id, lang: s.language || 'ar' })
+            : { ok: false, error: 'unavailable' });
+          if (res?.ok || res?.success) {
+            if (habitModalStatus) {
+              habitModalStatus.style.color = '#10b981';
+              habitModalStatus.textContent = en() ? '✅ Sent successfully to WhatsApp!' : '✅ تم الإرسال بنجاح إلى واتساب!';
+            }
+          } else {
+            if (habitModalStatus) {
+              habitModalStatus.style.color = '#ef4444';
+              habitModalStatus.textContent = en() ? `❌ Failed: ${res?.error || 'error'}` : `❌ فشل: ${res?.error || 'خطأ'}`;
+            }
+          }
+        } catch (err) {
+          if (habitModalStatus) {
+            habitModalStatus.style.color = '#ef4444';
+            habitModalStatus.textContent = `❌ ${err.message || 'Error'}`;
+          }
+        } finally {
+          habitModalTestSendBtn.disabled = false;
+        }
       };
     }
 

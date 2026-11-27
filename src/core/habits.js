@@ -391,28 +391,48 @@ class HabitsManager extends EventEmitter {
     const title = isEn ? (habit.titleEn || habit.nameEn || habit.title || habit.name || '') : (habit.title || habit.name || habit.titleEn || '');
     let target = '';
     if (habit.type === 'percentage') {
-      target = ` (${habit.targetValue || 100}%)`;
+      target = `${habit.targetValue || 100}%`;
     } else if (habit.type === 'rating') {
-      target = ` (5 ⭐)`;
+      target = `5 ⭐`;
     } else if (habit.targetValue && habit.targetValue > 1) {
-      target = ` (${habit.targetValue} ${isEn ? (habit.unitEn || habit.unit || '') : (habit.unit || '')})`.trim();
+      target = `${habit.targetValue} ${isEn ? (habit.unitEn || habit.unit || '') : (habit.unit || '')}`.trim();
     }
-    const streakText = streak > 0
-      ? (isEn ? `🔥 *Current Streak:* ${streak} days! Keep the momentum going!` : `🔥 *سلسلة الالتزام:* ${streak} أيام متواصلة! استمر ولا تقطع السلسلة!`)
+    const streakNum = streak || 0;
+    const streakText = streakNum > 0
+      ? (isEn ? `🔥 *Current Streak:* ${streakNum} days! Keep the momentum going!` : `🔥 *سلسلة الالتزام:* ${streakNum} أيام متواصلة! استمر ولا تقطع السلسلة!`)
       : (isEn ? `🌱 *Start your streak today!* Every great journey begins with a single step.` : `🌱 *ابدأ سلسلتك اليوم!* خطوة واحدة تصنع فارقاً عظيماً.`);
 
-    const cueVal = habit.triggerCue || habit.cue;
+    const cueVal = habit.triggerCue || habit.cue || '';
+    const noteVal = habit.notes || '';
+    const timeVal = habit.reminderTime || '';
+
+    // If habit has a custom template, substitute tokens dynamically:
+    if (habit.reminderTemplate && habit.reminderTemplate.trim()) {
+      return habit.reminderTemplate
+        .replace(/{habit}/g, `${icon} *${title}*`)
+        .replace(/{habitTitle}/g, title)
+        .replace(/{icon}/g, icon)
+        .replace(/{target}/g, target || (isEn ? 'Daily target' : 'الهدف اليومي'))
+        .replace(/{streak}/g, String(streakNum))
+        .replace(/{streakText}/g, streakText)
+        .replace(/{time}/g, timeVal)
+        .replace(/{cue}/g, cueVal)
+        .replace(/{note}/g, noteVal)
+        .trim();
+    }
+
+    const targetFormatted = target ? ` (${target})` : '';
     const cue = cueVal ? (isEn ? `\n📌 *Anchor:* ${cueVal}` : `\n📌 *المحفّز المرتبط:* ${cueVal}`) : '';
     const custom = habit.reminderCustomText ? (isEn ? `\n💡 _${habit.reminderCustomText}_\n` : `\n💡 _${habit.reminderCustomText}_\n`) : '';
 
     if (isEn) {
-      return `⏰ *[HABIT REMINDER]* ${icon} *${title}*${target}\n\n` +
+      return `⏰ *[HABIT REMINDER]* ${icon} *${title}*${targetFormatted}\n\n` +
         `${streakText}` +
         `${cue}` +
         `${custom}\n` +
         `✅ Mark it complete in Mirqat Widgets desktop app!`;
     }
-    return `⏰ *[تذكير بموعد العادة]* ${icon} *${title}*${target}\n\n` +
+    return `⏰ *[تذكير بموعد العادة]* ${icon} *${title}*${targetFormatted}\n\n` +
       `${streakText}` +
       `${cue}` +
       `${custom}\n` +
@@ -1081,6 +1101,7 @@ class HabitsManager extends EventEmitter {
       reminderEnabled: Boolean(data.reminderEnabled),
       reminderRecipient: (data.reminderRecipient || '').trim(),
       reminderCustomText: (data.reminderCustomText || '').trim(),
+      reminderTemplate: (data.reminderTemplate || data.reminderCustomText || '').trim(),
       triggerCue: (data.triggerCue || '').trim(),
       notes: (data.notes || '').trim(),
       targetGoalStreak: Number(data.targetGoalStreak) || 30,
