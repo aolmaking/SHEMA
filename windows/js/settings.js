@@ -4319,11 +4319,18 @@ function buildEmail() {
 
   const user = $('#emailUser');
   user.value = em.user || '';
-  user.onchange = (e) => setGroup('email', { user: e.target.value.trim() });
-
   const pass = $('#emailPass');
   pass.value = em.pass || '';
-  pass.onchange = (e) => setGroup('email', { pass: e.target.value });
+
+  const saveEmailCreds = () => {
+    const u = user.value.trim();
+    const p = pass.value;
+    setGroup('email', { user: u, pass: p, enabled: Boolean(u && p) });
+  };
+  user.onchange = saveEmailCreds;
+  user.oninput = saveEmailCreds;
+  pass.onchange = saveEmailCreds;
+  pass.oninput = saveEmailCreds;
 
   const host = $('#emailHost');
   host.value = em.host || (EMAIL_PROVIDERS[prov.value] || {}).host || '';
@@ -4363,14 +4370,21 @@ function buildEmail() {
     status.textContent = t('s.emailTesting');
     status.style.color = 'var(--ink-3)';
     try {
-      const res = await window.widgets.email.test({
+      const cfg = {
         provider: prov.value,
         user: user.value.trim(),
         pass: pass.value,
         host: host.value.trim(),
         port: Number(port.value) || 993,
         secure: $('#emailSecure').getAttribute('aria-checked') === 'true',
-      });
+      };
+      if (cfg.user && cfg.pass) {
+        await setGroup('email', { ...cfg, enabled: true });
+        if (isWidgetEnabled('email') === false) {
+          await window.widgets.widgetsVisible('email', true);
+        }
+      }
+      const res = await window.widgets.email.test(cfg);
       if (res && res.ok) {
         status.textContent = t('s.emailSuccess', { count: digits(res.count), unseen: digits(res.unseen) });
         status.style.color = 'var(--accent)';

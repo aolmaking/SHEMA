@@ -858,7 +858,10 @@ class EmailEngine extends EventEmitter {
 
   get config() {
     const s = this.getSettings() || {};
-    return s.email || {};
+    const em = s.email || {};
+    const hasCreds = Boolean(em.user && em.pass);
+    const enabled = Boolean(em.enabled || hasCreds);
+    return { ...em, enabled };
   }
 
   start() {

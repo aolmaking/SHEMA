@@ -401,7 +401,7 @@ function renderEmails(items = []) {
   currentItems = items;
   renderEmailCounts();
 
-  const isConfigured = Boolean(currentConfig.email && currentConfig.email.enabled && currentConfig.email.user);
+  const isConfigured = Boolean(currentConfig.email && currentConfig.email.user && (currentConfig.email.pass || currentConfig.email.enabled));
   $('#setupPrompt').hidden = isConfigured;
   if ($('#filterBar')) $('#filterBar').hidden = !isConfigured;
   if ($('#emailList')) $('#emailList').hidden = !isConfigured;

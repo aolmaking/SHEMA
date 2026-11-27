@@ -3800,6 +3800,16 @@ function registerIpc() {
     if (clean.classroom && clean.classroom.enabled && !before.classroom?.enabled) {
       runClassroomBackgroundSync();
     }
+    if (clean.email) {
+      if (clean.email.user && clean.email.pass) {
+        clean.email.enabled = true;
+      }
+      syncWidgetServices();
+      if (typeof emailEngine !== 'undefined' && emailEngine && clean.email.user && clean.email.pass) {
+        emailEngine.start();
+        emailEngine.check().catch(() => {});
+      }
+    }
     if ('language' in clean && clean.language !== before.language) {
       updateTrayTooltip();
       for (const [id, w] of windows) if (!w.isDestroyed()) w.setTitle(titleOf(id));
@@ -5108,13 +5118,35 @@ function registerIpc() {
     unreadCount: emailEngine.getUnreadCount(),
   }));
   ipcMain.handle('email:refresh', async () => {
+    if (emailEngine && !emailEngine.running && emailEngine.config?.user && emailEngine.config?.pass) {
+      emailEngine.start();
+    }
     await emailEngine.check();
     return {
       items: emailEngine.getItems(),
       unreadCount: emailEngine.getUnreadCount(),
     };
   });
-  ipcMain.handle('email:test', async (_e, cfg) => emailEngine.testConnection(cfg));
+  ipcMain.handle('email:test', async (_e, cfg) => {
+    const res = await emailEngine.testConnection(cfg);
+    if (res && res.ok && cfg && cfg.user && cfg.pass) {
+      const emailPatch = {
+        enabled: true,
+        provider: cfg.provider || 'gmail',
+        user: cfg.user,
+        pass: cfg.pass,
+        host: cfg.host,
+        port: cfg.port,
+        secure: cfg.secure !== false,
+      };
+      settings.merge({ email: { ...(settings.data.email || {}), ...emailPatch } });
+      broadcast('settings:changed', publicSettings());
+      syncWidgetServices();
+      emailEngine.start();
+      emailEngine.check().catch(() => {});
+    }
+    return res;
+  });
   ipcMain.handle('email:getFull', async (_e, uid) => emailEngine.getFullMessage(uid));
   ipcMain.handle('email:markRead', (_e, uid) => {
     emailEngine.markRead(uid, true);
