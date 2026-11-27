@@ -53,19 +53,20 @@
               box-shadow var(--t) var(--ease);
 }
 
-/* A soft sweep that follows the pointer in, so the card feels alive */
+/* Pointer halo disabled per user requirement */
 .ayah-card::before {
   content: '';
   position: absolute;
   inset: 0;
   background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
               var(--glow), transparent 62%);
-  opacity: 0;
+  opacity: 0 !important;
+  display: none !important;
   transition: opacity var(--t-slow) var(--ease);
   pointer-events: none;
 }
 .ayah-card:hover { background: var(--tile-hover); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,0.14); }
-.ayah-card:hover::before { opacity: 0.16; }
+.ayah-card:hover::before { opacity: 0 !important; display: none !important; }
 .ayah-card:active { transform: translateY(0) scale(0.992); }
 
 .ayah-card.fit-compact {

@@ -707,24 +707,9 @@
     }
   }
 
-  /** A soft light that follows the pointer across the glass. */
+  /** A soft light that follows the pointer across the glass. (Disabled: mouse halo completely removed) */
   function installSheen() {
-    const plate = $('.plate, .folder-plate');
-    if (!plate || $('.sheen', plate)) return;
-    plate.prepend(el('div', { class: 'sheen', 'aria-hidden': 'true' }));
-    let raf = 0;
-    let pos = null;
-    plate.addEventListener('pointermove', (e) => {
-      if (document.body.classList.contains('dragging') || document.body.classList.contains('resizing')) return;
-      pos = e;
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const r = plate.getBoundingClientRect();
-        plate.style.setProperty('--mx', `${pos.clientX - r.left}px`);
-        plate.style.setProperty('--my', `${pos.clientY - r.top}px`);
-      });
-    });
+    return;
   }
 
   /* ---------- boot ---------- */

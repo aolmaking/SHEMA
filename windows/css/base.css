@@ -463,12 +463,13 @@ button { border: 0; background: none; cursor: pointer; padding: 0; margin: 0; }
   border-radius: inherit;
   pointer-events: none;
   z-index: 1;
-  opacity: 0;
+  opacity: 0 !important;
+  display: none !important;
   background: radial-gradient(var(--sheen-radius, 240px) circle at var(--mx, 50%) var(--my, 0%),
               var(--sheen-color, rgba(255, 255, 255, 0.55)), transparent 68%);
   transition: opacity var(--t-slow) var(--ease);
 }
-.plate:hover .sheen { opacity: calc(var(--sheen-strength, 0.42) * var(--hover-k, 1)); }
+.plate:hover .sheen { opacity: 0 !important; display: none !important; }
 
 /* Top highlight: soft light bloom across the glass, behind foreground content */
 .plate::before {

@@ -278,11 +278,6 @@ function wire() {
   });
 
   $('#card').addEventListener('click', openDetail);
-  $('#card').addEventListener('mousemove', (e) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
-    e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
-  });
 
   if (typeof ResizeObserver !== 'undefined') {
     const cardEl = $('#card');
