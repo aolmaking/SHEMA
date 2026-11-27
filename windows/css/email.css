@@ -342,7 +342,35 @@
   gap: 6px;
   box-sizing: border-box;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.empty::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hide all scrollbars in the email widget while preserving full scrollability */
+.empty,
+.email-list,
+.reader-body-wrapper,
+.pane,
+.body,
+.scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.empty::-webkit-scrollbar,
+.email-list::-webkit-scrollbar,
+.reader-body-wrapper::-webkit-scrollbar,
+.pane::-webkit-scrollbar,
+.body::-webkit-scrollbar,
+.scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 .empty-icon {
   width: 40px;

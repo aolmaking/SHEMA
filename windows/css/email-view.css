@@ -23,6 +23,21 @@
   padding: 12px 18px 18px;
   overflow-y: auto;
   box-sizing: border-box;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.email-view-plate,
+.email-view-plate * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.email-view-plate *::-webkit-scrollbar,
+.body.scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Mode Views Container */
