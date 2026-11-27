@@ -968,11 +968,7 @@
 
           btn.onclick = async () => {
             const curStatus = hLog ? hLog.status : 'none';
-            let nextStatus = 'done';
-            let nextVal = 1;
-            if (curStatus === 'done') { nextStatus = 'skip'; nextVal = 0; }
-            else if (curStatus === 'skip') { nextStatus = 'partial'; nextVal = 0.5; }
-            else if (curStatus === 'partial') { nextStatus = 'none'; nextVal = 0; }
+            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
 
             if (window.widgets?.habits?.saveStatus) {
               await window.widgets.habits.saveStatus({
@@ -1065,11 +1061,7 @@
         if (!isFuture) {
           cell.onclick = async () => {
             const curStatus = hLog ? hLog.status : 'none';
-            let nextStatus = 'done';
-            let nextVal = 1;
-            if (curStatus === 'done') { nextStatus = 'skip'; nextVal = 0; }
-            else if (curStatus === 'skip') { nextStatus = 'partial'; nextVal = 0.5; }
-            else if (curStatus === 'partial') { nextStatus = 'none'; nextVal = 0; }
+            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
 
             if (window.widgets?.habits?.saveStatus) {
               await window.widgets.habits.saveStatus({
@@ -1149,11 +1141,7 @@
       }
 
       actBtn.onclick = async () => {
-        let nextStatus = 'done';
-        let nextVal = 1;
-        if (curStatus === 'done') { nextStatus = 'skip'; nextVal = 0; }
-        else if (curStatus === 'skip') { nextStatus = 'partial'; nextVal = 0.5; }
-        else if (curStatus === 'partial') { nextStatus = 'none'; nextVal = 0; }
+        const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
 
         if (window.widgets?.habits?.saveStatus) {
           await window.widgets.habits.saveStatus({
@@ -1335,11 +1323,7 @@
 
           btn.onclick = async () => {
             const curStatus = hLog ? hLog.status : 'none';
-            let nextStatus = 'done';
-            let nextVal = 1;
-            if (curStatus === 'done') { nextStatus = 'skip'; nextVal = 0; }
-            else if (curStatus === 'skip') { nextStatus = 'partial'; nextVal = 0.5; }
-            else if (curStatus === 'partial') { nextStatus = 'none'; nextVal = 0; }
+            const { nextStatus, nextVal } = computeNextHabitLog(h, curStatus);
 
             if (window.widgets?.habits?.saveStatus) {
               await window.widgets.habits.saveStatus({
@@ -2651,6 +2635,17 @@
       const titleText = lang() === 'en' && h.titleEn ? h.titleEn : h.title;
       const typeText = t(`habits.type${h.type ? h.type.charAt(0).toUpperCase() + h.type.slice(1) : 'Boolean'}`);
 
+      let targetSummary = '';
+      if (h.type === 'boolean') {
+        targetSummary = '';
+      } else if (h.type === 'percentage') {
+        targetSummary = ` • ${digits(h.targetValue || 100)}%`;
+      } else if (h.type === 'rating') {
+        targetSummary = ` • 5 ⭐`;
+      } else {
+        targetSummary = ` • ${digits(h.targetValue || 1)} ${lang() === 'en' && h.unitEn ? h.unitEn : (h.unit || '')}`;
+      }
+
       const waBadge = (h.reminderEnabled && h.reminderTime)
         ? `<span class="badge-mini" style="margin-inline-start: 6px; font-size: 10px; background: rgba(37, 211, 102, 0.15); color: #128c7e; padding: 2px 6px; border-radius: 4px; font-weight: 600;">💬 ${h.reminderTime}${h.reminderRecipient ? ` 📱` : ''}</span>`
         : '';
@@ -2659,7 +2654,7 @@
         <div class="m-card-icon">${h.icon || '⭐'}</div>
         <div class="m-card-info">
           <div class="m-card-title">${titleText} ${waBadge}</div>
-          <div class="m-card-meta">${typeText} • ${h.routine || 'anytime'} • ${h.targetValue || 1} ${h.unit || ''}</div>
+          <div class="m-card-meta">${typeText} • ${h.routine || 'anytime'}${targetSummary}</div>
         </div>
         <div class="m-card-actions">
           ${h.reminderEnabled ? `<button type="button" class="btn-m-action wa-test" title="إرسال تذكير تجريبي لهذه العادة عبر WhatsApp" data-id="${h.id}" style="color: #128c7e;">💬</button>` : ''}
@@ -3056,7 +3051,14 @@
       pack.habits.forEach((h, idx) => {
         const hTitle = isEn ? h.titleEn : h.title;
         const routineBadge = t(`habits.routine${h.routine.charAt(0).toUpperCase() + h.routine.slice(1)}`);
-        const targetDesc = (h.type === 'number' || h.type === 'duration') ? ` • ${h.targetValue} ${isEn ? (h.unitEn || h.unit) : h.unit}` : '';
+        let targetDesc = '';
+        if (h.type === 'number' || h.type === 'duration') {
+          targetDesc = ` • ${digits(h.targetValue || 1)} ${isEn ? (h.unitEn || h.unit || '') : (h.unit || '')}`;
+        } else if (h.type === 'percentage') {
+          targetDesc = ` • ${digits(h.targetValue || 100)}%`;
+        } else if (h.type === 'rating') {
+          targetDesc = ` • 5 ⭐`;
+        }
         itemsHtml += `
           <div class="curated-item-row" data-pack-id="${pack.id}" data-item-idx="${idx}">
             <div class="curated-item-left">
@@ -3144,6 +3146,143 @@
       };
       wrap.appendChild(chip);
     });
+  }
+
+  function computeNextHabitLog(h, curStatus) {
+    const fullTarget = Number(h.targetValue) || (h.type === 'percentage' ? 100 : 1);
+    const halfTarget = h.type === 'boolean' ? 1 : Math.max(1, Math.round(fullTarget / 2));
+    let nextStatus = 'done';
+    let nextVal = fullTarget;
+    if (curStatus === 'done') { nextStatus = 'skip'; nextVal = 0; }
+    else if (curStatus === 'skip') { nextStatus = 'partial'; nextVal = halfTarget; }
+    else if (curStatus === 'partial') { nextStatus = 'none'; nextVal = 0; }
+    return { nextStatus, nextVal };
+  }
+
+  function updateTargetVisibility(type, preserveValues = false) {
+    const targetGroup = $('#targetValueGroup');
+    const targetLabel = $('#targetValueLabel');
+    const targetNum = $('#habitInputTarget');
+    const targetUnit = $('#habitInputUnit');
+    const quickUnits = $('#dashQuickUnits');
+    if (!targetGroup) return;
+
+    const isEn = lang() === 'en';
+
+    if (type === 'boolean') {
+      targetGroup.style.display = 'none';
+      if (!preserveValues) {
+        if (targetNum) targetNum.value = '1';
+        if (targetUnit) { targetUnit.value = ''; targetUnit.disabled = false; }
+      }
+      if (quickUnits) quickUnits.innerHTML = '';
+    } else if (type === 'rating') {
+      targetGroup.style.display = 'none';
+      if (!preserveValues) {
+        if (targetNum) targetNum.value = '5';
+        if (targetUnit) { targetUnit.value = '⭐'; targetUnit.disabled = false; }
+      }
+      if (quickUnits) quickUnits.innerHTML = '';
+    } else if (type === 'percentage') {
+      targetGroup.style.display = 'block';
+      if (targetLabel) targetLabel.textContent = isEn ? 'Target Percentage (%)' : 'النسبة المئوية المستهدفة (%)';
+      if (targetNum) {
+        targetNum.min = '1';
+        targetNum.max = '100';
+        if (!preserveValues && (!targetNum.value || targetNum.value === '1')) targetNum.value = '100';
+        targetNum.placeholder = '100';
+      }
+      if (targetUnit) {
+        targetUnit.value = '%';
+        targetUnit.placeholder = '%';
+        targetUnit.disabled = true;
+        targetUnit.title = isEn ? 'Unit is fixed to % for percentage habits' : 'الوحدة ثابتة (%) لعادة النسبة المئوية';
+      }
+      if (quickUnits) {
+        quickUnits.innerHTML = `
+          <span class="unit-badge" data-val="100" data-unit="%" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(59,130,246,0.12); color: var(--accent, #3b82f6); font-weight: 600;">100%</span>
+          <span class="unit-badge" data-val="90" data-unit="%" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(59,130,246,0.12); color: var(--accent, #3b82f6); font-weight: 600;">90%</span>
+          <span class="unit-badge" data-val="80" data-unit="%" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(59,130,246,0.12); color: var(--accent, #3b82f6); font-weight: 600;">80%</span>
+          <span class="unit-badge" data-val="75" data-unit="%" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(59,130,246,0.12); color: var(--accent, #3b82f6); font-weight: 600;">75%</span>
+          <span class="unit-badge" data-val="50" data-unit="%" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(59,130,246,0.12); color: var(--accent, #3b82f6); font-weight: 600;">50%</span>
+        `;
+        quickUnits.querySelectorAll('.unit-badge').forEach(b => {
+          b.onclick = () => {
+            if (targetNum) targetNum.value = b.dataset.val;
+            if (targetUnit) targetUnit.value = '%';
+            updateHabitLivePreview();
+          };
+        });
+      }
+    } else if (type === 'duration') {
+      targetGroup.style.display = 'block';
+      if (targetLabel) targetLabel.textContent = isEn ? 'Target Duration & Unit' : 'المدة الزمنية المستهدفة والوحدة';
+      if (targetNum) {
+        targetNum.removeAttribute('max');
+        targetNum.min = '1';
+        if (!preserveValues && (!targetNum.value || targetNum.value === '1' || targetNum.value === '100')) targetNum.value = '30';
+        targetNum.placeholder = '30';
+      }
+      const defMin = isEn ? 'min' : 'دقيقة';
+      const defHr = isEn ? 'hours' : 'ساعة';
+      if (targetUnit) {
+        targetUnit.disabled = false;
+        if (!preserveValues && (!targetUnit.value || targetUnit.value === '%' || targetUnit.value === 'كوب')) targetUnit.value = defMin;
+        targetUnit.placeholder = isEn ? 'min, hours...' : 'دقيقة، ساعات...';
+        targetUnit.title = '';
+      }
+      if (quickUnits) {
+        quickUnits.innerHTML = `
+          <span class="unit-badge" data-val="15" data-unit="${defMin}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.12); color: #d97706; font-weight: 600;">15 ${defMin}</span>
+          <span class="unit-badge" data-val="30" data-unit="${defMin}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.12); color: #d97706; font-weight: 600;">30 ${defMin}</span>
+          <span class="unit-badge" data-val="45" data-unit="${defMin}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.12); color: #d97706; font-weight: 600;">45 ${defMin}</span>
+          <span class="unit-badge" data-val="60" data-unit="${defMin}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.12); color: #d97706; font-weight: 600;">60 ${defMin}</span>
+          <span class="unit-badge" data-val="90" data-unit="${defMin}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.12); color: #d97706; font-weight: 600;">90 ${defMin}</span>
+          <span class="unit-badge" data-val="2" data-unit="${defHr}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.12); color: #d97706; font-weight: 600;">2 ${defHr}</span>
+        `;
+        quickUnits.querySelectorAll('.unit-badge').forEach(b => {
+          b.onclick = () => {
+            if (targetNum) targetNum.value = b.dataset.val;
+            if (targetUnit) targetUnit.value = b.dataset.unit;
+            updateHabitLivePreview();
+          };
+        });
+      }
+    } else { // number
+      targetGroup.style.display = 'block';
+      if (targetLabel) targetLabel.textContent = isEn ? 'Target Quantity & Unit' : 'الكمية والعدد المستهدف والوحدة';
+      if (targetNum) {
+        targetNum.removeAttribute('max');
+        targetNum.min = '1';
+        if (!preserveValues && (!targetNum.value || targetNum.value === '100')) targetNum.value = '8';
+        targetNum.placeholder = '8';
+      }
+      if (targetUnit) {
+        targetUnit.disabled = false;
+        if (!preserveValues && (!targetUnit.value || targetUnit.value === '%')) targetUnit.value = isEn ? 'cups' : 'كوب';
+        targetUnit.placeholder = isEn ? 'pages, cups, steps...' : 'صفحة، كوب، خطوة، لتر...';
+        targetUnit.title = '';
+      }
+      if (quickUnits) {
+        const uPages = isEn ? 'pages' : 'صفحة';
+        const uCups = isEn ? 'cups' : 'كوب';
+        const uSteps = isEn ? 'steps' : 'خطوة';
+        const uLiters = isEn ? 'liters' : 'لتر';
+        quickUnits.innerHTML = `
+          <span class="unit-badge" data-val="20" data-unit="${uPages}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669; font-weight: 600;">20 ${uPages}</span>
+          <span class="unit-badge" data-val="8" data-unit="${uCups}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669; font-weight: 600;">8 ${uCups}</span>
+          <span class="unit-badge" data-val="10000" data-unit="${uSteps}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669; font-weight: 600;">10000 ${uSteps}</span>
+          <span class="unit-badge" data-val="2.5" data-unit="${uLiters}" style="cursor:pointer; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: rgba(16,185,129,0.12); color: #059669; font-weight: 600;">2.5 ${uLiters}</span>
+        `;
+        quickUnits.querySelectorAll('.unit-badge').forEach(b => {
+          b.onclick = () => {
+            if (targetNum) targetNum.value = b.dataset.val;
+            if (targetUnit) targetUnit.value = b.dataset.unit;
+            updateHabitLivePreview();
+          };
+        });
+      }
+    }
   }
 
   function updateHabitLivePreview() {
@@ -3237,10 +3376,7 @@
     });
 
     // Smart display of targetValueGroup: Hidden for checkmark (boolean), shown for numbers/durations
-    const targetGroup = $('#targetValueGroup');
-    if (targetGroup) {
-      targetGroup.style.display = (tVal === 'boolean') ? 'none' : 'block';
-    }
+    updateTargetVisibility(tVal, true);
 
     // Reveal English Title box if populated
     if (h.titleEn && h.titleEn !== h.title) {
@@ -3342,8 +3478,8 @@
       p.classList.toggle('active', p.dataset.type === 'boolean');
     });
 
-    // Hide target value group by default for boolean
-    if ($('#targetValueGroup')) $('#targetValueGroup').style.display = 'none';
+    // Reset target and unit inputs for boolean
+    updateTargetVisibility('boolean', false);
     if ($('#enTitleBox')) $('#enTitleBox').style.display = 'none';
     if ($('#advOptionsContent')) $('#advOptionsContent').style.display = 'none';
     if ($('#btnToggleAdvOptions')) $('#btnToggleAdvOptions').classList.remove('open');
@@ -3530,23 +3666,6 @@
     const targetGroup = $('#targetValueGroup');
     const targetNum = $('#habitInputTarget');
     const targetUnit = $('#habitInputUnit');
-
-    function updateTargetVisibility(type) {
-      if (!targetGroup) return;
-      if (type === 'boolean') {
-        targetGroup.style.display = 'none';
-      } else {
-        targetGroup.style.display = 'block';
-        if (type === 'number') {
-          if (targetUnit && !targetUnit.value) targetUnit.placeholder = lang() === 'en' ? 'Unit: pages, cups...' : 'الوحدة: صفحة، كوب، خطوة...';
-        } else if (type === 'duration') {
-          if (targetUnit && !targetUnit.value) targetUnit.value = lang() === 'en' ? 'min' : 'دقيقة';
-        } else if (type === 'percentage') {
-          if (targetUnit && !targetUnit.value) targetUnit.value = '%';
-          if (targetNum && (!targetNum.value || targetNum.value === '1')) targetNum.value = '100';
-        }
-      }
-    }
 
     typePills.forEach(pill => {
       pill.addEventListener('click', () => {
@@ -4740,8 +4859,25 @@
       const type = $('#habitInputType')?.value || 'boolean';
       const direction = $('#habitInputDirection')?.value || 'positive';
       const difficulty = $('#habitInputDifficulty')?.value || 'easy';
-      const targetVal = Number($('#habitInputTarget')?.value) || 1;
-      const unit = $('#habitInputUnit')?.value?.trim() || '';
+      let targetVal = Number($('#habitInputTarget')?.value) || 1;
+      let unit = $('#habitInputUnit')?.value?.trim() || '';
+
+      if (type === 'boolean') {
+        targetVal = 1;
+        unit = '';
+      } else if (type === 'percentage') {
+        targetVal = Math.min(100, Math.max(1, targetVal || 100));
+        unit = '%';
+      } else if (type === 'rating') {
+        targetVal = 5;
+        unit = '⭐';
+      } else if (type === 'duration') {
+        targetVal = Math.max(1, targetVal);
+        if (!unit) unit = lang() === 'en' ? 'min' : 'دقيقة';
+      } else if (type === 'number') {
+        targetVal = Math.max(1, targetVal);
+        if (!unit) unit = lang() === 'en' ? 'times' : 'مرة';
+      }
       const icon = $('#habitInputIcon')?.value?.trim() || '⭐';
       const color = $('#habitInputColor')?.value || '#3b82f6';
 
@@ -5352,70 +5488,70 @@
           <span class="atlas-miro-starlight-sparkle">✨</span>
         `;
       }
-        miroBox.onclick = async () => {
-          try {
-            if (window.widgets?.atlas?.getMiroDialogue) {
-              const nextDiag = await window.widgets.atlas.getMiroDialogue({
-                state: 'CELEBRATING',
-                context: { lang: state.language || 'ar', wayfinderName: wf.name },
-              });
-              const sp = $('#atlasMiroSpeech');
-              if (sp && nextDiag) sp.textContent = `"${nextDiag}"`;
-            }
-          } catch (_) { }
-        };
-      }
-      const speechEl = $('#atlasMiroSpeech');
-      if (speechEl) {
-        speechEl.textContent = `"${miro.dialogue || (isEn ? 'Welcome to the First Haven!' : 'أهلاً بك في الملاذ الأول!')}"`;
-      }
+      miroBox.onclick = async () => {
+        try {
+          if (window.widgets?.atlas?.getMiroDialogue) {
+            const nextDiag = await window.widgets.atlas.getMiroDialogue({
+              state: 'CELEBRATING',
+              context: { lang: state.language || 'ar', wayfinderName: wf.name },
+            });
+            const sp = $('#atlasMiroSpeech');
+            if (sp && nextDiag) sp.textContent = `"${nextDiag}"`;
+          }
+        } catch (_) { }
+      };
+    }
+    const speechEl = $('#atlasMiroSpeech');
+    if (speechEl) {
+      speechEl.textContent = `"${miro.dialogue || (isEn ? 'Welcome to the First Haven!' : 'أهلاً بك في الملاذ الأول!')}"`;
+    }
 
-      const interactBtn = $('#atlasMiroInteractBtn');
-      if (interactBtn) {
-        interactBtn.onclick = async () => {
-          try {
-            if (window.widgets?.atlas?.getMiroDialogue) {
-              const nextDiag = await window.widgets.atlas.getMiroDialogue({
-                state: 'CURIOUS_REFLECTIVE',
-                context: { lang: state.language || 'ar' },
-                context: { lang: state.language || 'ar', wayfinderName: wf.name },
-              });
-              if (speechEl && nextDiag) speechEl.textContent = `"${nextDiag}"`;
-            }
-          } catch { }
-        };
-      }
+    const interactBtn = $('#atlasMiroInteractBtn');
+    if (interactBtn) {
+      interactBtn.onclick = async () => {
+        try {
+          if (window.widgets?.atlas?.getMiroDialogue) {
+            const nextDiag = await window.widgets.atlas.getMiroDialogue({
+              state: 'CURIOUS_REFLECTIVE',
+              context: { lang: state.language || 'ar' },
+              context: { lang: state.language || 'ar', wayfinderName: wf.name },
+            });
+            if (speechEl && nextDiag) speechEl.textContent = `"${nextDiag}"`;
+          }
+        } catch { }
+      };
+    }
 
-      // 4. Foreshadowing banner
-      const bannerEl = $('#atlasForeshadowingBanner');
-      const bannerTxtEl = $('#atlasForeshadowingText');
-      if (atlasState.foreshadowing && bannerEl && bannerTxtEl) {
-        bannerEl.style.display = 'flex';
-        bannerTxtEl.textContent = atlasState.foreshadowing.hint;
-      } else if (bannerEl) {
-        bannerEl.style.display = 'none';
-      }
+    // 4. Foreshadowing banner
+    const bannerEl = $('#atlasForeshadowingBanner');
+    const bannerTxtEl = $('#atlasForeshadowingText');
+    if (atlasState.foreshadowing && bannerEl && bannerTxtEl) {
+      bannerEl.style.display = 'flex';
+      bannerTxtEl.textContent = atlasState.foreshadowing.hint;
+    } else if (bannerEl) {
+      bannerEl.style.display = 'none';
+    }
 
-      // 5. Facilities List
-      const facilitiesListEl = $('#atlasFacilitiesList');
-      if (facilitiesListEl) {
-        facilitiesListEl.innerHTML = '';
-        const facilitiesMeta = [
-          { id: 'cartographyHall', icon: '🗺️', nameAr: 'قاعة الخرائط والأطلس', nameEn: 'Cartography Hall', descAr: 'توسيع كشف الطرق', descEn: 'Expands trail revelation' },
-          { id: 'personalAlcove', icon: '📚', nameAr: 'مكتبة الملاذ (خلوة المستكشف)', nameEn: 'Personal Alcove', descAr: 'حفظ المخطوطات والتوثيق', descEn: 'Manuscript archive' },
-          { id: 'hearthBalcony', icon: '🔥', nameAr: 'شرفة المشكاة والموقد', nameEn: 'Hearth Balcony', descAr: 'إشعال فوانيس الملاذ لراحة ميرو', descEn: 'Lanterns for Miro' },
-          { id: 'herbarium', icon: '🌿', nameAr: 'حديقة السكينة والأعشاب', nameEn: 'The Herbarium', descAr: 'استشفاء وتجديد الطاقة', descEn: 'Rest and vitality' },
-        ];
+    // 5. Facilities List
+    const facilitiesListEl = $('#atlasFacilitiesList');
+    if (facilitiesListEl) {
+      facilitiesListEl.innerHTML = '';
+      const facilitiesMeta = [
+        { id: 'cartographyHall', icon: '🗺️', nameAr: 'قاعة الخرائط والأطلس', nameEn: 'Cartography Hall', descAr: 'توسيع كشف الطرق', descEn: 'Expands trail revelation' },
+        { id: 'personalAlcove', icon: '📚', nameAr: 'مكتبة الملاذ (خلوة المستكشف)', nameEn: 'Personal Alcove', descAr: 'حفظ المخطوطات والتوثيق', descEn: 'Manuscript archive' },
+        { id: 'hearthBalcony', icon: '🔥', nameAr: 'شرفة المشكاة والموقد', nameEn: 'Hearth Balcony', descAr: 'إشعال فوانيس الملاذ لراحة ميرو', descEn: 'Lanterns for Miro' },
+        { id: 'herbarium', icon: '🌿', nameAr: 'حديقة السكينة والأعشاب', nameEn: 'The Herbarium', descAr: 'استشفاء وتجديد الطاقة', descEn: 'Rest and vitality' },
+      ];
 
-        facilitiesMeta.forEach(f => {
-          const facData = (atlasState.havenFacilities && atlasState.havenFacilities[f.id]) || { level: 1 };
-          const lvl = facData.level || 1;
-          const upgradeCost = lvl * 40;
-          const canAfford = (wf.havenGold || 0) >= upgradeCost && lvl < 5;
+      facilitiesMeta.forEach(f => {
+        const facData = (atlasState.havenFacilities && atlasState.havenFacilities[f.id]) || { level: 1 };
+        const lvl = facData.level || 1;
+        const upgradeCost = lvl * 40;
+        const canAfford = (wf.havenGold || 0) >= upgradeCost && lvl < 5;
 
-          const row = document.createElement('div');
-          row.className = 'atlas-facility-row';
-          row.innerHTML = `
+        const row = document.createElement('div');
+        row.className = 'atlas-facility-row';
+        row.innerHTML = `
           <div class="facility-main">
             <span class="facility-icon">${f.icon}</span>
             <div>
@@ -5428,98 +5564,98 @@
           </button>
         `;
 
-          const btn = row.querySelector('.facility-upgrade-btn');
-          if (btn && canAfford) {
-            btn.onclick = async () => {
-              btn.disabled = true;
-              try {
-                if (window.widgets?.atlas?.upgradeFacility) {
-                  const res = await window.widgets.atlas.upgradeFacility(f.id);
-                  if (res?.ok) renderAtlasPane();
-                }
-              } catch (err) {
-                console.error('[Atlas] Upgrade failed:', err);
+        const btn = row.querySelector('.facility-upgrade-btn');
+        if (btn && canAfford) {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            try {
+              if (window.widgets?.atlas?.upgradeFacility) {
+                const res = await window.widgets.atlas.upgradeFacility(f.id);
+                if (res?.ok) renderAtlasPane();
               }
-            };
-          }
+            } catch (err) {
+              console.error('[Atlas] Upgrade failed:', err);
+            }
+          };
+        }
 
-          facilitiesListEl.appendChild(row);
-        });
-      }
+        facilitiesListEl.appendChild(row);
+      });
+    }
 
-      // 6. Mystery Clues Grid
-      const cluesGridEl = $('#atlasCluesGrid');
-      if (cluesGridEl) {
-        cluesGridEl.innerHTML = '';
-        const unlockedClues = atlasState.unlockedClues || [];
-        const cluesCountEl = $('#atlasCluesCount');
-        if (cluesCountEl) cluesCountEl.textContent = `${unlockedClues.length} / 6 ${isEn ? 'Shards' : 'شظايا'}`;
+    // 6. Mystery Clues Grid
+    const cluesGridEl = $('#atlasCluesGrid');
+    if (cluesGridEl) {
+      cluesGridEl.innerHTML = '';
+      const unlockedClues = atlasState.unlockedClues || [];
+      const cluesCountEl = $('#atlasCluesCount');
+      if (cluesCountEl) cluesCountEl.textContent = `${unlockedClues.length} / 6 ${isEn ? 'Shards' : 'شظايا'}`;
 
-        if (unlockedClues.length === 0) {
-          cluesGridEl.innerHTML = `
+      if (unlockedClues.length === 0) {
+        cluesGridEl.innerHTML = `
           <div class="atlas-clue-card locked" style="grid-column: 1 / -1; text-align: center; padding: 18px;">
             <div class="clue-icon">🔒</div>
             <div class="clue-title">${isEn ? 'The First Shard Awaits' : 'الشظية الأولى بانتظار خطوتك الأولى'}</div>
             <div class="clue-text">${isEn ? 'Complete your very first habit to awaken the Weave.' : 'أنجز أول عادة لك لتوقظ النسيج وتكشف سر انحلال العالم.'}</div>
           </div>
         `;
-        } else {
-          unlockedClues.forEach(clue => {
-            const card = document.createElement('div');
-            card.className = 'atlas-clue-card';
-            card.innerHTML = `
+      } else {
+        unlockedClues.forEach(clue => {
+          const card = document.createElement('div');
+          card.className = 'atlas-clue-card';
+          card.innerHTML = `
             <div class="clue-head">
               <span class="clue-icon">📜</span>
               <span class="clue-title">${isEn ? clue.titleEn : clue.titleAr}</span>
             </div>
             <div class="clue-text">${isEn ? clue.loreEn : clue.loreAr}</div>
           `;
-            cluesGridEl.appendChild(card);
-          });
-        }
+          cluesGridEl.appendChild(card);
+        });
+      }
+    }
+
+    // 7. Sub-Navigation Tabs Switching
+    const subnavBtns = document.querySelectorAll('.atlas-subnav-btn');
+    subnavBtns.forEach(btn => {
+      btn.onclick = () => {
+        const targetView = btn.dataset.atlasView;
+        subnavBtns.forEach(b => b.classList.toggle('active', b === btn));
+        const subviews = [
+          { id: 'atlasSubViewMap', view: 'map' },
+          { id: 'atlasSubViewSkills', view: 'skills' },
+          { id: 'atlasSubViewWorkshop', view: 'workshop' },
+          { id: 'atlasSubViewTrials', view: 'trials' },
+          { id: 'atlasSubViewChronicles', view: 'chronicles' },
+          { id: 'atlasSubViewBazaar', view: 'bazaar' },
+          { id: 'atlasSubViewMiro', view: 'miro' },
+        ];
+        subviews.forEach(s => {
+          const el = $(`#${s.id}`);
+          if (el) el.style.display = (s.view === targetView) ? 'block' : 'none';
+        });
+      };
+    });
+
+    // 8. Phase 2: Astrolabe Behavioral Skills Grid
+    const skillsGridEl = $('#atlasSkillsGrid');
+    if (skillsGridEl && atlasState.astrolabe) {
+      skillsGridEl.innerHTML = '';
+      const skillsList = atlasState.astrolabe.skills || [];
+      const skillsCountEl = $('#atlasSkillsCount');
+      if (skillsCountEl) {
+        skillsCountEl.textContent = `${atlasState.astrolabe.unlockedCount || 0} / ${atlasState.astrolabe.totalCount || 5} ${isEn ? 'Skills Active' : 'مهارات مفعلة'}`;
       }
 
-      // 7. Sub-Navigation Tabs Switching
-      const subnavBtns = document.querySelectorAll('.atlas-subnav-btn');
-      subnavBtns.forEach(btn => {
-        btn.onclick = () => {
-          const targetView = btn.dataset.atlasView;
-          subnavBtns.forEach(b => b.classList.toggle('active', b === btn));
-          const subviews = [
-            { id: 'atlasSubViewMap', view: 'map' },
-            { id: 'atlasSubViewSkills', view: 'skills' },
-            { id: 'atlasSubViewWorkshop', view: 'workshop' },
-            { id: 'atlasSubViewTrials', view: 'trials' },
-            { id: 'atlasSubViewChronicles', view: 'chronicles' },
-            { id: 'atlasSubViewBazaar', view: 'bazaar' },
-            { id: 'atlasSubViewMiro', view: 'miro' },
-          ];
-          subviews.forEach(s => {
-            const el = $(`#${s.id}`);
-            if (el) el.style.display = (s.view === targetView) ? 'block' : 'none';
-          });
-        };
-      });
+      skillsList.forEach(skill => {
+        const card = document.createElement('div');
+        card.className = `atlas-skill-card ${skill.isUnlocked ? 'unlocked' : 'locked'}`;
+        const req = skill.requirement || {};
+        const rewardText = skill.materialReward
+          ? Object.entries(skill.materialReward).map(([k, v]) => `+${v} ${k}`).join(', ')
+          : '';
 
-      // 8. Phase 2: Astrolabe Behavioral Skills Grid
-      const skillsGridEl = $('#atlasSkillsGrid');
-      if (skillsGridEl && atlasState.astrolabe) {
-        skillsGridEl.innerHTML = '';
-        const skillsList = atlasState.astrolabe.skills || [];
-        const skillsCountEl = $('#atlasSkillsCount');
-        if (skillsCountEl) {
-          skillsCountEl.textContent = `${atlasState.astrolabe.unlockedCount || 0} / ${atlasState.astrolabe.totalCount || 5} ${isEn ? 'Skills Active' : 'مهارات مفعلة'}`;
-        }
-
-        skillsList.forEach(skill => {
-          const card = document.createElement('div');
-          card.className = `atlas-skill-card ${skill.isUnlocked ? 'unlocked' : 'locked'}`;
-          const req = skill.requirement || {};
-          const rewardText = skill.materialReward
-            ? Object.entries(skill.materialReward).map(([k, v]) => `+${v} ${k}`).join(', ')
-            : '';
-
-          card.innerHTML = `
+        card.innerHTML = `
           <div class="skill-header">
             <div class="skill-badge-group">
               <span class="skill-icon">${skill.icon}</span>
@@ -5537,27 +5673,27 @@
             ⚡ ${isEn ? skill.mechanicalEffectEn : skill.mechanicalEffectAr}
           </div>
         `;
-          skillsGridEl.appendChild(card);
-        });
+        skillsGridEl.appendChild(card);
+      });
+    }
+
+    // 9. Phase 2: Haven Restoration Workshop Projects
+    const workshopGridEl = $('#atlasWorkshopGrid');
+    if (workshopGridEl && atlasState.craftingProjects) {
+      workshopGridEl.innerHTML = '';
+      const projects = atlasState.craftingProjects || [];
+      const completedCount = (atlasState.completedProjects || []).length;
+      const projectsCountEl = $('#atlasProjectsCount');
+      if (projectsCountEl) {
+        projectsCountEl.textContent = `${completedCount} / ${projects.length} ${isEn ? 'Restored' : 'مشاريع مكتملة'}`;
       }
 
-      // 9. Phase 2: Haven Restoration Workshop Projects
-      const workshopGridEl = $('#atlasWorkshopGrid');
-      if (workshopGridEl && atlasState.craftingProjects) {
-        workshopGridEl.innerHTML = '';
-        const projects = atlasState.craftingProjects || [];
-        const completedCount = (atlasState.completedProjects || []).length;
-        const projectsCountEl = $('#atlasProjectsCount');
-        if (projectsCountEl) {
-          projectsCountEl.textContent = `${completedCount} / ${projects.length} ${isEn ? 'Restored' : 'مشاريع مكتملة'}`;
-        }
+      projects.forEach(project => {
+        const card = document.createElement('div');
+        card.className = `atlas-workshop-card ${project.isCompleted ? 'completed' : ''}`;
+        const cost = project.cost || {};
 
-        projects.forEach(project => {
-          const card = document.createElement('div');
-          card.className = `atlas-workshop-card ${project.isCompleted ? 'completed' : ''}`;
-          const cost = project.cost || {};
-
-          card.innerHTML = `
+        card.innerHTML = `
           <div class="workshop-head">
             <div class="workshop-title-wrap">
               <span class="workshop-icon">${project.icon}</span>
@@ -5583,63 +5719,63 @@
           ` : ''}
         `;
 
-          const craftBtn = card.querySelector('.workshop-craft-btn');
-          if (craftBtn && project.canAfford) {
-            craftBtn.onclick = async () => {
-              craftBtn.disabled = true;
-              try {
-                if (window.widgets?.atlas?.craftProject) {
-                  const res = await window.widgets.atlas.craftProject(project.id);
-                  if (res?.ok) renderAtlasPane();
-                }
-              } catch (err) {
-                console.error('[Atlas] Crafting failed:', err);
+        const craftBtn = card.querySelector('.workshop-craft-btn');
+        if (craftBtn && project.canAfford) {
+          craftBtn.onclick = async () => {
+            craftBtn.disabled = true;
+            try {
+              if (window.widgets?.atlas?.craftProject) {
+                const res = await window.widgets.atlas.craftProject(project.id);
+                if (res?.ok) renderAtlasPane();
               }
-            };
-          }
-
-          workshopGridEl.appendChild(card);
-        });
-      }
-
-      // 10. Phase 2: Miro Alcove Multi-Modal Consultations
-      const miroModeBtns = document.querySelectorAll('.miro-mode-btn');
-      const miroBoxTitle = $('#atlasMiroConsultationTitle');
-      const miroBoxContent = $('#atlasMiroConsultationContent');
-
-      miroModeBtns.forEach(btn => {
-        btn.onclick = async () => {
-          const modeKey = btn.dataset.mode;
-          btn.style.transform = 'scale(0.96)';
-          setTimeout(() => { btn.style.transform = ''; }, 150);
-
-          try {
-            if (window.widgets?.atlas?.consultMiro) {
-              const consultation = await window.widgets.atlas.consultMiro({
-                modeKey,
-                lang: state.language || 'ar',
-              });
-              if (consultation) {
-                if (miroBoxTitle) miroBoxTitle.textContent = isEn ? consultation.titleEn : consultation.titleAr;
-                if (miroBoxContent) miroBoxContent.textContent = `"${consultation.dialogue}"`;
-                if (speechEl) speechEl.textContent = `"${consultation.dialogue}"`;
-              }
+            } catch (err) {
+              console.error('[Atlas] Crafting failed:', err);
             }
-          } catch (err) {
-            console.error('[Atlas] Miro consultation failed:', err);
-          }
-        };
-      });
+          };
+        }
 
-      // 11. Phase 3: Major Trials (Boss Replacement)
-      const trialsGridEl = $('#atlasTrialsGrid');
-      if (trialsGridEl && Array.isArray(atlasState.trials)) {
-        trialsGridEl.innerHTML = '';
-        atlasState.trials.forEach(trial => {
-          const card = document.createElement('div');
-          card.className = `atlas-trial-card ${trial.isCompleted ? 'completed' : ''}`;
-          const rew = trial.rewards || {};
-          card.innerHTML = `
+        workshopGridEl.appendChild(card);
+      });
+    }
+
+    // 10. Phase 2: Miro Alcove Multi-Modal Consultations
+    const miroModeBtns = document.querySelectorAll('.miro-mode-btn');
+    const miroBoxTitle = $('#atlasMiroConsultationTitle');
+    const miroBoxContent = $('#atlasMiroConsultationContent');
+
+    miroModeBtns.forEach(btn => {
+      btn.onclick = async () => {
+        const modeKey = btn.dataset.mode;
+        btn.style.transform = 'scale(0.96)';
+        setTimeout(() => { btn.style.transform = ''; }, 150);
+
+        try {
+          if (window.widgets?.atlas?.consultMiro) {
+            const consultation = await window.widgets.atlas.consultMiro({
+              modeKey,
+              lang: state.language || 'ar',
+            });
+            if (consultation) {
+              if (miroBoxTitle) miroBoxTitle.textContent = isEn ? consultation.titleEn : consultation.titleAr;
+              if (miroBoxContent) miroBoxContent.textContent = `"${consultation.dialogue}"`;
+              if (speechEl) speechEl.textContent = `"${consultation.dialogue}"`;
+            }
+          }
+        } catch (err) {
+          console.error('[Atlas] Miro consultation failed:', err);
+        }
+      };
+    });
+
+    // 11. Phase 3: Major Trials (Boss Replacement)
+    const trialsGridEl = $('#atlasTrialsGrid');
+    if (trialsGridEl && Array.isArray(atlasState.trials)) {
+      trialsGridEl.innerHTML = '';
+      atlasState.trials.forEach(trial => {
+        const card = document.createElement('div');
+        card.className = `atlas-trial-card ${trial.isCompleted ? 'completed' : ''}`;
+        const rew = trial.rewards || {};
+        card.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 22px;">${trial.icon}</span>
@@ -5665,27 +5801,27 @@
             ${rew.seedsOfLight ? `<span class="workshop-cost-tag">🌱 +${rew.seedsOfLight}</span>` : ''}
           </div>
         `;
-          trialsGridEl.appendChild(card);
-        });
-      }
+        trialsGridEl.appendChild(card);
+      });
+    }
 
-      // 12. Phase 3: Living Obstacles & 3-Tier Progression
-      const obstaclesGridEl = $('#atlasObstaclesGrid');
-      if (obstaclesGridEl && Array.isArray(atlasState.obstacles)) {
-        obstaclesGridEl.innerHTML = '';
-        atlasState.obstacles.forEach(obs => {
-          const card = document.createElement('div');
-          card.className = `atlas-obstacle-card ${obs.isDormantRelic ? 'relic' : ''}`;
-          const tier = obs.currentTier || 0;
-          const tierName = obs.isDormantRelic
-            ? (isEn ? 'Tier 3: Dormant Relic' : 'المستوى 3: أثر تاريخي خامل')
-            : (tier === 0 ? (isEn ? 'Active Friction' : 'احتكاك نشط') : (isEn ? `Tier ${tier} Victory` : `انتصار المستوى ${tier}`));
+    // 12. Phase 3: Living Obstacles & 3-Tier Progression
+    const obstaclesGridEl = $('#atlasObstaclesGrid');
+    if (obstaclesGridEl && Array.isArray(atlasState.obstacles)) {
+      obstaclesGridEl.innerHTML = '';
+      atlasState.obstacles.forEach(obs => {
+        const card = document.createElement('div');
+        card.className = `atlas-obstacle-card ${obs.isDormantRelic ? 'relic' : ''}`;
+        const tier = obs.currentTier || 0;
+        const tierName = obs.isDormantRelic
+          ? (isEn ? 'Tier 3: Dormant Relic' : 'المستوى 3: أثر تاريخي خامل')
+          : (tier === 0 ? (isEn ? 'Active Friction' : 'احتكاك نشط') : (isEn ? `Tier ${tier} Victory` : `انتصار المستوى ${tier}`));
 
-          const strategiesOptions = (obs.availableStrategies || []).map(s => `
+        const strategiesOptions = (obs.availableStrategies || []).map(s => `
           <option value="${s.id}">${isEn ? s.nameEn : s.nameAr}</option>
         `).join('');
 
-          card.innerHTML = `
+        card.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">${isEn ? obs.nameEn : obs.nameAr}</div>
             <span class="obstacle-tier-badge tier-${tier}">${tierName}</span>
@@ -5705,64 +5841,64 @@
           `}
         `;
 
-          const advBtn = card.querySelector('.obstacle-advance-btn');
-          const sel = card.querySelector('.obstacle-strategy-select');
-          if (advBtn && sel) {
-            advBtn.onclick = async () => {
-              advBtn.disabled = true;
-              try {
-                if (window.widgets?.atlas?.advanceObstacle) {
-                  const res = await window.widgets.atlas.advanceObstacle({
-                    obstacleKey: obs.id,
-                    strategyKey: sel.value,
-                  });
-                  if (res?.ok) renderAtlasPane();
-                }
-              } catch (err) {
-                console.error('[Atlas] Advance obstacle failed:', err);
+        const advBtn = card.querySelector('.obstacle-advance-btn');
+        const sel = card.querySelector('.obstacle-strategy-select');
+        if (advBtn && sel) {
+          advBtn.onclick = async () => {
+            advBtn.disabled = true;
+            try {
+              if (window.widgets?.atlas?.advanceObstacle) {
+                const res = await window.widgets.atlas.advanceObstacle({
+                  obstacleKey: obs.id,
+                  strategyKey: sel.value,
+                });
+                if (res?.ok) renderAtlasPane();
               }
-            };
-          }
+            } catch (err) {
+              console.error('[Atlas] Advance obstacle failed:', err);
+            }
+          };
+        }
 
-          obstaclesGridEl.appendChild(card);
-        });
-      }
+        obstaclesGridEl.appendChild(card);
+      });
+    }
 
-      // 13. Phase 3: Chronicles Journal
-      const chroniclesListEl = $('#atlasChroniclesList');
-      if (chroniclesListEl && Array.isArray(atlasState.chronicles)) {
-        chroniclesListEl.innerHTML = '';
-        if (atlasState.chronicles.length === 0) {
-          chroniclesListEl.innerHTML = `
+    // 13. Phase 3: Chronicles Journal
+    const chroniclesListEl = $('#atlasChroniclesList');
+    if (chroniclesListEl && Array.isArray(atlasState.chronicles)) {
+      chroniclesListEl.innerHTML = '';
+      if (atlasState.chronicles.length === 0) {
+        chroniclesListEl.innerHTML = `
           <div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px;">
             ${isEn ? 'The chronicle pages await your first steps in the First Haven.' : 'صفحات السجل بانتظار خطواتك الأولى لتسطير فصول الأطلس.'}
           </div>
         `;
-        } else {
-          atlasState.chronicles.slice(0, 30).forEach(entry => {
-            const item = document.createElement('div');
-            item.className = 'atlas-chronicle-item';
-            const timeStr = entry.timestamp ? new Date(entry.timestamp).toLocaleDateString(state.language === 'en' ? 'en-US' : 'ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-            item.innerHTML = `
+      } else {
+        atlasState.chronicles.slice(0, 30).forEach(entry => {
+          const item = document.createElement('div');
+          item.className = 'atlas-chronicle-item';
+          const timeStr = entry.timestamp ? new Date(entry.timestamp).toLocaleDateString(state.language === 'en' ? 'en-US' : 'ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          item.innerHTML = `
             <div class="chronicle-item-head">
               <span class="chronicle-item-title"><span>${entry.icon || '📜'}</span> <span>${entry.title || ''}</span></span>
               <span class="chronicle-item-time">${timeStr}</span>
             </div>
             <div class="chronicle-item-text">${entry.text || ''}</div>
           `;
-            chroniclesListEl.appendChild(item);
-          });
-        }
+          chroniclesListEl.appendChild(item);
+        });
       }
+    }
 
-      // 14. Phase 3: Rewards Bazaar
-      const bazaarGridEl = $('#atlasBazaarGrid');
-      if (bazaarGridEl && Array.isArray(atlasState.rewards)) {
-        bazaarGridEl.innerHTML = '';
-        atlasState.rewards.forEach(r => {
-          const card = document.createElement('div');
-          card.className = 'atlas-bazaar-card';
-          card.innerHTML = `
+    // 14. Phase 3: Rewards Bazaar
+    const bazaarGridEl = $('#atlasBazaarGrid');
+    if (bazaarGridEl && Array.isArray(atlasState.rewards)) {
+      bazaarGridEl.innerHTML = '';
+      atlasState.rewards.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'atlas-bazaar-card';
+        card.innerHTML = `
           <div class="bazaar-card-head">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 20px;">${r.icon || '🎁'}</span>
@@ -5776,136 +5912,136 @@
           </button>
         `;
 
-          const redeemBtn = card.querySelector('.bazaar-redeem-btn');
-          if (redeemBtn && r.canAfford) {
-            redeemBtn.onclick = async () => {
-              redeemBtn.disabled = true;
-              try {
-                if (window.widgets?.atlas?.redeemReward) {
-                  const res = await window.widgets.atlas.redeemReward(r.id);
-                  if (res?.ok) renderAtlasPane();
-                }
-              } catch (err) {
-                console.error('[Atlas] Redeem failed:', err);
+        const redeemBtn = card.querySelector('.bazaar-redeem-btn');
+        if (redeemBtn && r.canAfford) {
+          redeemBtn.onclick = async () => {
+            redeemBtn.disabled = true;
+            try {
+              if (window.widgets?.atlas?.redeemReward) {
+                const res = await window.widgets.atlas.redeemReward(r.id);
+                if (res?.ok) renderAtlasPane();
               }
-            };
-          }
+            } catch (err) {
+              console.error('[Atlas] Redeem failed:', err);
+            }
+          };
+        }
 
-          bazaarGridEl.appendChild(card);
-        });
-      }
+        bazaarGridEl.appendChild(card);
+      });
+    }
 
-      const openRewardBtn = $('#atlasOpenRewardModalBtn');
-      if (openRewardBtn) {
-        openRewardBtn.onclick = () => {
-          const modal = $('#addRewardModal');
-          if (modal) modal.hidden = false;
-        };
-      }
+    const openRewardBtn = $('#atlasOpenRewardModalBtn');
+    if (openRewardBtn) {
+      openRewardBtn.onclick = () => {
+        const modal = $('#addRewardModal');
+        if (modal) modal.hidden = false;
+      };
+    }
 
-      // 15. Phase 3: Miro Memory & Privacy Sovereignty
-      const miroMem = atlasState.miroMemory || {};
-      const dims = miroMem.dimensions || {};
-      const kEl = $('#miroDimKnowledge'); if (kEl) kEl.textContent = `${isEn ? 'Level' : 'المستوى'} ${dims.knowledge || 1}`;
-      const rEl = $('#miroDimRelationship'); if (rEl) rEl.textContent = `${isEn ? 'Level' : 'المستوى'} ${dims.relationship || 1}`;
-      const eEl = $('#miroDimExpression'); if (eEl) eEl.textContent = `${isEn ? 'Level' : 'المستوى'} ${dims.expression || 1}`;
+    // 15. Phase 3: Miro Memory & Privacy Sovereignty
+    const miroMem = atlasState.miroMemory || {};
+    const dims = miroMem.dimensions || {};
+    const kEl = $('#miroDimKnowledge'); if (kEl) kEl.textContent = `${isEn ? 'Level' : 'المستوى'} ${dims.knowledge || 1}`;
+    const rEl = $('#miroDimRelationship'); if (rEl) rEl.textContent = `${isEn ? 'Level' : 'المستوى'} ${dims.relationship || 1}`;
+    const eEl = $('#miroDimExpression'); if (eEl) eEl.textContent = `${isEn ? 'Level' : 'المستوى'} ${dims.expression || 1}`;
 
-      const notesListEl = $('#atlasMiroNotesList');
-      if (notesListEl) {
-        notesListEl.innerHTML = '';
-        const notes = miroMem.notes || [];
-        if (notes.length === 0) {
-          notesListEl.innerHTML = `
+    const notesListEl = $('#atlasMiroNotesList');
+    if (notesListEl) {
+      notesListEl.innerHTML = '';
+      const notes = miroMem.notes || [];
+      if (notes.length === 0) {
+        notesListEl.innerHTML = `
           <div style="font-size: 11px; color: var(--text-muted); padding: 8px;">
             ${isEn ? 'No personal context notes saved. Miro observes only what you explicitly provide.' : 'لا توجد ملاحظات شخصية محفوظة. لا يسجل ميرو إلا ما تدونه بنفسك.'}
           </div>
         `;
-        } else {
-          notes.forEach(note => {
-            const row = document.createElement('div');
-            row.className = 'miro-note-item';
-            row.innerHTML = `
+      } else {
+        notes.forEach(note => {
+          const row = document.createElement('div');
+          row.className = 'miro-note-item';
+          row.innerHTML = `
             <span>"${note.text}"</span>
             <button type="button" class="icon-btn" title="${isEn ? 'Delete Note' : 'حذف الملاحظة'}" style="font-size: 11px; color: #ef4444;">✕</button>
           `;
-            const delBtn = row.querySelector('.icon-btn');
-            if (delBtn) {
-              delBtn.onclick = async () => {
-                try {
-                  if (window.widgets?.atlas?.deleteMiroNote) {
-                    await window.widgets.atlas.deleteMiroNote(note.id);
-                    renderAtlasPane();
-                  }
-                } catch (err) {
-                  console.error('[Atlas] Delete note failed:', err);
+          const delBtn = row.querySelector('.icon-btn');
+          if (delBtn) {
+            delBtn.onclick = async () => {
+              try {
+                if (window.widgets?.atlas?.deleteMiroNote) {
+                  await window.widgets.atlas.deleteMiroNote(note.id);
+                  renderAtlasPane();
                 }
-              };
-            }
-            notesListEl.appendChild(row);
-          });
-        }
-      }
-
-      const addNoteBtn = $('#atlasMiroAddNoteBtn');
-      const noteInput = $('#atlasMiroNoteInput');
-      if (addNoteBtn && noteInput) {
-        addNoteBtn.onclick = async () => {
-          const text = (noteInput.value || '').trim();
-          if (!text) return;
-          noteInput.value = '';
-          try {
-            if (window.widgets?.atlas?.addMiroNote) {
-              await window.widgets.atlas.addMiroNote({ text });
-              renderAtlasPane();
-            }
-          } catch (err) {
-            console.error('[Atlas] Add note failed:', err);
-          }
-        };
-      }
-
-      const resetMemBtn = $('#atlasMiroResetMemoryBtn');
-      if (resetMemBtn) {
-        resetMemBtn.onclick = async () => {
-          const confirmed = confirm(isEn ? 'Reset Miro memory? Your habit records will remain untouched.' : 'هل تريد مسح ذاكرة ميرو والملاحظات؟ ستبقى سجلات عاداتك وإنجازاتك سالمة بالكامل.');
-          if (confirmed) {
-            try {
-              if (window.widgets?.atlas?.resetMiroMemory) {
-                await window.widgets.atlas.resetMiroMemory();
-                renderAtlasPane();
+              } catch (err) {
+                console.error('[Atlas] Delete note failed:', err);
               }
-            } catch (err) {
-              console.error('[Atlas] Reset memory failed:', err);
-            }
+            };
           }
-        };
+          notesListEl.appendChild(row);
+        });
       }
     }
 
-    /* ---------- Boot via Mirqat UI Framework ---------- */
-    boot(async (currentSettings) => {
-      state.allSettings = currentSettings || {};
-      state.settings = currentSettings?.habits || {};
-      const curTheme = state.settings?.theme || 'match';
-      applyDashboardTheme(curTheme);
-      wireEvents();
-      await loadState();
-
-      window.widgets?.habits?.onDashboardOpts?.((opts) => {
-        if (opts?.tab) {
-          switchTab(opts.tab);
+    const addNoteBtn = $('#atlasMiroAddNoteBtn');
+    const noteInput = $('#atlasMiroNoteInput');
+    if (addNoteBtn && noteInput) {
+      addNoteBtn.onclick = async () => {
+        const text = (noteInput.value || '').trim();
+        if (!text) return;
+        noteInput.value = '';
+        try {
+          if (window.widgets?.atlas?.addMiroNote) {
+            await window.widgets.atlas.addMiroNote({ text });
+            renderAtlasPane();
+          }
+        } catch (err) {
+          console.error('[Atlas] Add note failed:', err);
         }
-      });
+      };
+    }
 
-      window.widgets?.settings?.onChange?.((newSettings) => {
-        state.allSettings = newSettings || {};
-        state.settings = newSettings?.habits || {};
-        const nextTheme = state.settings?.theme || 'match';
-        applyDashboardTheme(nextTheme);
-        renderActiveTab();
-      });
+    const resetMemBtn = $('#atlasMiroResetMemoryBtn');
+    if (resetMemBtn) {
+      resetMemBtn.onclick = async () => {
+        const confirmed = confirm(isEn ? 'Reset Miro memory? Your habit records will remain untouched.' : 'هل تريد مسح ذاكرة ميرو والملاحظات؟ ستبقى سجلات عاداتك وإنجازاتك سالمة بالكامل.');
+        if (confirmed) {
+          try {
+            if (window.widgets?.atlas?.resetMiroMemory) {
+              await window.widgets.atlas.resetMiroMemory();
+              renderAtlasPane();
+            }
+          } catch (err) {
+            console.error('[Atlas] Reset memory failed:', err);
+          }
+        }
+      };
+    }
+  }
 
-      if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(updateDashTabIndicator);
-      window.addEventListener('resize', updateDashTabIndicator);
+  /* ---------- Boot via Mirqat UI Framework ---------- */
+  boot(async (currentSettings) => {
+    state.allSettings = currentSettings || {};
+    state.settings = currentSettings?.habits || {};
+    const curTheme = state.settings?.theme || 'match';
+    applyDashboardTheme(curTheme);
+    wireEvents();
+    await loadState();
+
+    window.widgets?.habits?.onDashboardOpts?.((opts) => {
+      if (opts?.tab) {
+        switchTab(opts.tab);
+      }
     });
-  }) ();
+
+    window.widgets?.settings?.onChange?.((newSettings) => {
+      state.allSettings = newSettings || {};
+      state.settings = newSettings?.habits || {};
+      const nextTheme = state.settings?.theme || 'match';
+      applyDashboardTheme(nextTheme);
+      renderActiveTab();
+    });
+
+    if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(updateDashTabIndicator);
+    window.addEventListener('resize', updateDashTabIndicator);
+  });
+})();

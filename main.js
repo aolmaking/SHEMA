@@ -4909,7 +4909,9 @@ function registerIpc() {
     const today = new Date().toISOString().slice(0, 10);
     for (const item of list) {
       if (item && item.habitId && oldMap.has(item.id) && oldMap.get(item.id) !== item.done) {
-        habitsManager.saveHabitStatus(today, item.habitId, item.done ? 'done' : 'none', item.done ? 1 : 0);
+        const h = habitsManager.getHabit(item.habitId);
+        const fullVal = h ? (Number(h.targetValue) || (h.type === 'percentage' ? 100 : 1)) : 1;
+        habitsManager.saveHabitStatus(today, item.habitId, item.done ? 'done' : 'none', item.done ? fullVal : 0);
       }
     }
     // Track deleted classroom tasks so background sync never resurrects them
@@ -4951,7 +4953,9 @@ function registerIpc() {
       task.doneAt = clean.done ? Date.now() : null;
       if (task.habitId) {
         const today = new Date().toISOString().slice(0, 10);
-        habitsManager.saveHabitStatus(today, task.habitId, clean.done ? 'done' : 'none', clean.done ? 1 : 0);
+        const h = habitsManager.getHabit(task.habitId);
+        const fullVal = h ? (Number(h.targetValue) || (h.type === 'percentage' ? 100 : 1)) : 1;
+        habitsManager.saveHabitStatus(today, task.habitId, clean.done ? 'done' : 'none', clean.done ? fullVal : 0);
       }
     }
     Object.assign(task, clean);
@@ -5055,7 +5059,9 @@ function registerIpc() {
     const res = calendarEventsManager.addOrUpdate(ev);
     if (res && res.habitId && ('completed' in res)) {
       const dateStr = res.date || new Date().toISOString().slice(0, 10);
-      habitsManager.saveHabitStatus(dateStr, res.habitId, res.completed ? 'done' : 'none', res.completed ? 1 : 0);
+      const h = habitsManager.getHabit(res.habitId);
+      const fullVal = h ? (Number(h.targetValue) || (h.type === 'percentage' ? 100 : 1)) : 1;
+      habitsManager.saveHabitStatus(dateStr, res.habitId, res.completed ? 'done' : 'none', res.completed ? fullVal : 0);
     }
     reliableDispatcher.planCalendarEventAlerts(res);
     reliableDispatcher.catchup({

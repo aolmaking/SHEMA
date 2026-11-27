@@ -270,7 +270,7 @@ const beforeGame = manager.getGamification();
 assert(beforeGame.level >= 1, 'Initial level must be >= 1');
 
 // Save a hard habit and mark done -> awards 80 XP and 16 Coins
-const todayDateStr = new Date().toISOString().slice(0, 10);
+const todayDateStr = new Date().toLocaleDateString('en-CA');
 const hardHabit = manager.saveHabit({
   title: 'تمرين كاليستنكس مكثف',
   difficulty: 'hard',

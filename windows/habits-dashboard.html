@@ -773,31 +773,31 @@
           </table>
         </div>
 
-          <!-- Habit Priority & Urgency Matrix -->
-          <div class="kpi-section-title" style="margin-top: 28px;">
-            <span>🎯</span> <span data-i18n="habits.urgencyMatrixTitle">مصفوفة أولوية واستحقاق العادات (Habit Priority &
-              Urgency)</span>
-          </div>
-          <p class="kpi-section-desc" data-i18n="habits.urgencyMatrixDesc">ترتيب ذكي للعادات وفق موعد استحقاقها وجدولها
-            الزمني لتنظيم اليوم بدون ضغط نفسي.</p>
-          <div class="urgency-grid" id="urgencyHabitsGrid">
-            <!-- Rendered dynamically -->
-          </div>
+        <!-- Habit Priority & Urgency Matrix -->
+        <div class="kpi-section-title" style="margin-top: 28px;">
+          <span>🎯</span> <span data-i18n="habits.urgencyMatrixTitle">مصفوفة أولوية واستحقاق العادات (Habit Priority &
+            Urgency)</span>
+        </div>
+        <p class="kpi-section-desc" data-i18n="habits.urgencyMatrixDesc">ترتيب ذكي للعادات وفق موعد استحقاقها وجدولها
+          الزمني لتنظيم اليوم بدون ضغط نفسي.</p>
+        <div class="urgency-grid" id="urgencyHabitsGrid">
+          <!-- Rendered dynamically -->
+        </div>
 
-          <!-- Weekly Drop-Off Pattern Detector & Slump Alert -->
-          <div class="kpi-section-title" style="margin-top: 28px;">
-            <span>📊</span> <span data-i18n="habits.weeklyPatternTitle">تحليل الثبات والنمط الأسبوعي (Weekly Consistency
-              Insights)</span>
+        <!-- Weekly Drop-Off Pattern Detector & Slump Alert -->
+        <div class="kpi-section-title" style="margin-top: 28px;">
+          <span>📊</span> <span data-i18n="habits.weeklyPatternTitle">تحليل الثبات والنمط الأسبوعي (Weekly Consistency
+            Insights)</span>
+        </div>
+        <p class="kpi-section-desc" data-i18n="habits.weeklyPatternDesc">رصد أيام الذروة الإيجابية وفجوات التراجع
+          لمساعدتك على توزيع الجهد وتجنب الركود.</p>
+        <div class="slump-card" id="slumpAlertCard">
+          <div class="slump-icon" id="slumpIcon">📈</div>
+          <div class="slump-info">
+            <h4 class="slump-title" id="slumpTitle">تحليل ثبات الإنجاز عبر أيام الأسبوع</h4>
+            <p class="slump-advice" id="slumpAdviceText">جاري فحص مؤشرات الأيام ورصد فجوات الركود...</p>
           </div>
-          <p class="kpi-section-desc" data-i18n="habits.weeklyPatternDesc">رصد أيام الذروة الإيجابية وفجوات التراجع
-            لمساعدتك على توزيع الجهد وتجنب الركود.</p>
-          <div class="slump-card" id="slumpAlertCard">
-            <div class="slump-icon" id="slumpIcon">📈</div>
-            <div class="slump-info">
-              <h4 class="slump-title" id="slumpTitle">تحليل ثبات الإنجاز عبر أيام الأسبوع</h4>
-              <p class="slump-advice" id="slumpAdviceText">جاري فحص مؤشرات الأيام ورصد فجوات الركود...</p>
-            </div>
-          </div>
+        </div>
       </section>
 
       <!-- 4. HABIT BUILDER & MANAGER TAB -->
@@ -978,6 +978,10 @@
                   <span class="vis-icon">📊</span>
                   <span class="vis-text">نسبة مئوية %</span>
                 </div>
+                <div class="vis-type-card" data-type="rating">
+                  <span class="vis-icon">⭐</span>
+                  <span class="vis-text">تقييم تدريجي (1-5)</span>
+                </div>
               </div>
               <!-- Hidden or synced select for backwards-compatibility -->
               <select class="form-input" id="habitInputType" style="display: none;">
@@ -998,6 +1002,7 @@
                 <input type="text" class="form-input target-val-unit" id="habitInputUnit"
                   placeholder="الوحدة: صفحة، كوب، دقيقة..." data-i18n-ph="habits.unitPh">
               </div>
+              <div class="target-quick-units" id="dashQuickUnits" style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;"></div>
             </div>
 
             <!-- Collapsible Advanced Settings Accordion -->
@@ -1725,26 +1730,34 @@
         <!-- Haven Hero Banner -->
         <div class="atlas-haven-hero">
           <div class="atlas-miro-hub">
-            <div class="atlas-miro-avatar-box" id="atlasMiroAvatarBox" title="ميرو: رفيق الدرب من طائر الحبر ونور النجوم"></div>
+            <div class="atlas-miro-avatar-box" id="atlasMiroAvatarBox"
+              title="ميرو: رفيق الدرب من طائر الحبر ونور النجوم"></div>
             <div class="atlas-miro-bubble-wrap">
-              <div class="atlas-miro-speech" id="atlasMiroSpeech">"أهلاً بك في الملاذ الأول... خطواتك الصادقة تضيء النسيج وتطرد العتمة."</div>
-              <button type="button" class="atlas-miro-interact-btn" id="atlasMiroInteractBtn">✨ استشر ميرو (Ask Miro)</button>
+              <div class="atlas-miro-speech" id="atlasMiroSpeech">"أهلاً بك في الملاذ الأول... خطواتك الصادقة تضيء
+                النسيج وتطرد العتمة."</div>
+              <button type="button" class="atlas-miro-interact-btn" id="atlasMiroInteractBtn">✨ استشر ميرو (Ask
+                Miro)</button>
             </div>
           </div>
 
           <div class="atlas-wayfinder-status">
             <div class="atlas-wf-header">
               <div class="atlas-wf-rank">
-                <span class="atlas-wayfinder-name-tag" id="atlasWayfinderName" title="اسم مستكشف الدرب (انقر للتعديل)">مستكشف الدرب</span>
+                <span class="atlas-wayfinder-name-tag" id="atlasWayfinderName"
+                  title="اسم مستكشف الدرب (انقر للتعديل)">مستكشف الدرب</span>
                 <span class="atlas-level-pill" id="atlasWayfinderLevel">Level 1</span>
                 <span class="atlas-title-text" id="atlasWayfinderTitle">غارس الخطوة الأولى</span>
               </div>
               <div class="atlas-header-currencies">
-                <div class="atlas-gold-badge" title="ذهب الملاذ المكتسب من إتمام العادات">🪙 <span id="atlasHavenGold">0</span> <span data-i18n="atlas.havenGold">ذهب الملاذ</span></div>
+                <div class="atlas-gold-badge" title="ذهب الملاذ المكتسب من إتمام العادات">🪙 <span
+                    id="atlasHavenGold">0</span> <span data-i18n="atlas.havenGold">ذهب الملاذ</span></div>
                 <div class="atlas-materials-badges">
-                  <span class="atlas-mat-badge aether" title="أحجار الأثير: لترميم المنشآت والجسور">💎 <span id="atlasAetherCount">0</span></span>
-                  <span class="atlas-mat-badge manuscript" title="قصاصات المخطوطات: لحفظ الخرائط والتوثيق">📜 <span id="atlasManuscriptCount">0</span></span>
-                  <span class="atlas-mat-badge seeds" title="بذور النور: لحديقة السكينة والاستشفاء">🌱 <span id="atlasSeedsCount">0</span></span>
+                  <span class="atlas-mat-badge aether" title="أحجار الأثير: لترميم المنشآت والجسور">💎 <span
+                      id="atlasAetherCount">0</span></span>
+                  <span class="atlas-mat-badge manuscript" title="قصاصات المخطوطات: لحفظ الخرائط والتوثيق">📜 <span
+                      id="atlasManuscriptCount">0</span></span>
+                  <span class="atlas-mat-badge seeds" title="بذور النور: لحديقة السكينة والاستشفاء">🌱 <span
+                      id="atlasSeedsCount">0</span></span>
                 </div>
               </div>
             </div>
@@ -1762,23 +1775,34 @@
 
             <!-- The 4 World Affinities -->
             <div class="atlas-affinities-row">
-              <div class="affinity-chip vit" title="الحيوية (Vitality)">🌱 <span class="aff-lbl">VIT:</span> <strong id="atlasVitScore">0</strong></div>
-              <div class="affinity-chip wis" title="الحكمة (Wisdom)">📜 <span class="aff-lbl">WIS:</span> <strong id="atlasWisScore">0</strong></div>
-              <div class="affinity-chip ser" title="السكينة (Serenity)">✨ <span class="aff-lbl">SER:</span> <strong id="atlasSerScore">0</strong></div>
-              <div class="affinity-chip dis" title="الانضباط (Discipline)">⚔️ <span class="aff-lbl">DIS:</span> <strong id="atlasDisScore">0</strong></div>
+              <div class="affinity-chip vit" title="الحيوية (Vitality)">🌱 <span class="aff-lbl">VIT:</span> <strong
+                  id="atlasVitScore">0</strong></div>
+              <div class="affinity-chip wis" title="الحكمة (Wisdom)">📜 <span class="aff-lbl">WIS:</span> <strong
+                  id="atlasWisScore">0</strong></div>
+              <div class="affinity-chip ser" title="السكينة (Serenity)">✨ <span class="aff-lbl">SER:</span> <strong
+                  id="atlasSerScore">0</strong></div>
+              <div class="affinity-chip dis" title="الانضباط (Discipline)">⚔️ <span class="aff-lbl">DIS:</span> <strong
+                  id="atlasDisScore">0</strong></div>
             </div>
           </div>
         </div>
 
         <!-- Atlas Sub-Navigation Bar -->
         <div class="atlas-subnav-bar">
-          <button type="button" class="atlas-subnav-btn active" id="atlasBtnTabMap" data-atlas-view="map">🗺️ <span>الخريطة والملاذ</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabSkills" data-atlas-view="skills">🧭 <span>أسطرلاب المهارات</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabWorkshop" data-atlas-view="workshop">🛠️ <span>ورشة الترميم</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabTrials" data-atlas-view="trials">⚔️ <span>المحاكمات والعقبات</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜 <span>سجل الأطلس</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق المكافآت</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو والخصوصية</span></button>
+          <button type="button" class="atlas-subnav-btn active" id="atlasBtnTabMap" data-atlas-view="map">🗺️
+            <span>الخريطة والملاذ</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabSkills" data-atlas-view="skills">🧭
+            <span>أسطرلاب المهارات</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabWorkshop" data-atlas-view="workshop">🛠️
+            <span>ورشة الترميم</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabTrials" data-atlas-view="trials">⚔️
+            <span>المحاكمات والعقبات</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜
+            <span>سجل الأطلس</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق
+              المكافآت</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو
+              والخصوصية</span></button>
         </div>
 
         <!-- Foreshadowing Whispers (If Active) -->
@@ -1872,7 +1896,8 @@
                 <span class="atlas-card-icon">🧭</span>
                 <div>
                   <h3 class="atlas-card-title">أسطرلاب المهارات السلوكية (The Astrolabe Medallion)</h3>
-                  <div class="atlas-card-sub">كفاءات نفسية وبيئية واقعية غير مدفوعة؛ تُفتح حصراً بالإنجاز الفعلي للعادات</div>
+                  <div class="atlas-card-sub">كفاءات نفسية وبيئية واقعية غير مدفوعة؛ تُفتح حصراً بالإنجاز الفعلي للعادات
+                  </div>
                 </div>
               </div>
               <span class="badge-mini" id="atlasSkillsCount">0 / 5 مهارات مفعلة</span>
@@ -1898,7 +1923,8 @@
                 <span class="atlas-card-icon">🛠️</span>
                 <div>
                   <h3 class="atlas-card-title">ورشة ترميم الملاذ والأطلس (Haven Workshop)</h3>
-                  <div class="atlas-card-sub">استثمر خامات الحياة المكتسبة في إعادة إعمار جسور وفوانيس وحدائق النسيج القديم</div>
+                  <div class="atlas-card-sub">استثمر خامات الحياة المكتسبة في إعادة إعمار جسور وفوانيس وحدائق النسيج
+                    القديم</div>
                 </div>
               </div>
               <span class="badge-mini" id="atlasProjectsCount">0 / 4 مشاريع مكتملة</span>
@@ -1918,7 +1944,8 @@
                 <span class="atlas-card-icon">⚔️</span>
                 <div>
                   <h3 class="atlas-card-title">المحاكمات الكبرى ومشاريع النسيج (Major Trials)</h3>
-                  <div class="atlas-card-sub">بديل مواجهات الخصوم؛ مشاريع ممتدة تُنجز بتراكم الخطوات الصادقة دون أشرطة دم أو ضرر أو هزيمة</div>
+                  <div class="atlas-card-sub">بديل مواجهات الخصوم؛ مشاريع ممتدة تُنجز بتراكم الخطوات الصادقة دون أشرطة
+                    دم أو ضرر أو هزيمة</div>
                 </div>
               </div>
             </div>
@@ -1934,7 +1961,8 @@
                 <span class="atlas-card-icon">🛡️</span>
                 <div>
                   <h3 class="atlas-card-title">عراقيل الأقاليم ونموذج الانتصار الثلاثي (3-Tier Obstacles)</h3>
-                  <div class="atlas-card-sub">تفكيك الاحتكاك الواقعي: الانفراج الأول ➔ التثبيت والاستقرار ➔ الإتقان والتحول لأثر خامل في الأرشيف</div>
+                  <div class="atlas-card-sub">تفكيك الاحتكاك الواقعي: الانفراج الأول ➔ التثبيت والاستقرار ➔ الإتقان
+                    والتحول لأثر خامل في الأرشيف</div>
                 </div>
               </div>
             </div>
@@ -1952,7 +1980,8 @@
                 <span class="atlas-card-icon">📜</span>
                 <div>
                   <h3 class="atlas-card-title">سجل وقائع الأطلس والرحلة (The Living Chronicles)</h3>
-                  <div class="atlas-card-sub">تاريخ أدبي موثق بأرقام الأحداث دون اختلاق؛ يسجل ارتقاءك وكشوفاتك وانتصاراتك على العراقيل</div>
+                  <div class="atlas-card-sub">تاريخ أدبي موثق بأرقام الأحداث دون اختلاق؛ يسجل ارتقاءك وكشوفاتك
+                    وانتصاراتك على العراقيل</div>
                 </div>
               </div>
             </div>
@@ -1970,10 +1999,12 @@
                 <span class="atlas-card-icon">🎁</span>
                 <div>
                   <h3 class="atlas-card-title">سوق مكافآت الملاذ بالذهب الحي (Haven Bazaar)</h3>
-                  <div class="atlas-card-sub">استبدل ذهب الملاذ المكتسب بمكافآت واقعية حقيقية تسعد بها نفسك وتغذي همتك دون لوم</div>
+                  <div class="atlas-card-sub">استبدل ذهب الملاذ المكتسب بمكافآت واقعية حقيقية تسعد بها نفسك وتغذي همتك
+                    دون لوم</div>
                 </div>
               </div>
-              <button type="button" class="dash-action-btn primary" id="atlasOpenRewardModalBtn">➕ إضافة مكافأة جديدة</button>
+              <button type="button" class="dash-action-btn primary" id="atlasOpenRewardModalBtn">➕ إضافة مكافأة
+                جديدة</button>
             </div>
             <div class="atlas-bazaar-grid" id="atlasBazaarGrid">
               <!-- Rendered dynamically -->
@@ -1989,7 +2020,8 @@
                 <span class="atlas-card-icon">✨</span>
                 <div>
                   <h3 class="atlas-card-title">مجلس ميرو واستشارات الدرب (Miro's Alcove)</h3>
-                  <div class="atlas-card-sub">جلسات استشارية هادئة تمزج حكمة النسيج بعلم تكوين العادات وتثبيتها دون لوم</div>
+                  <div class="atlas-card-sub">جلسات استشارية هادئة تمزج حكمة النسيج بعلم تكوين العادات وتثبيتها دون لوم
+                  </div>
                 </div>
               </div>
             </div>
@@ -2020,7 +2052,8 @@
                 <span class="miro-sparkle">✨</span>
                 <span class="miro-box-title" id="atlasMiroConsultationTitle">همسة ميرو الحالية</span>
               </div>
-              <div class="miro-box-content" id="atlasMiroConsultationContent">"أنا هنا بجوارك دائماً... اختر نوع المشورة التي تبحث عنها، وسنتأمل النسيج سوياً."</div>
+              <div class="miro-box-content" id="atlasMiroConsultationContent">"أنا هنا بجوارك دائماً... اختر نوع المشورة
+                التي تبحث عنها، وسنتأمل النسيج سوياً."</div>
             </div>
           </div>
 
@@ -2031,7 +2064,8 @@
                 <span class="atlas-card-icon">🧠</span>
                 <div>
                   <h3 class="atlas-card-title">ذاكرة ميرو وسيادة الخصوصية (Privacy & Memory Sovereignty)</h3>
-                  <div class="atlas-card-sub">ذاكرة محلية مشفرة تحفظ فقط ما تصرح به؛ دون أي تقييم نفسي أو استنتاجات سلبية</div>
+                  <div class="atlas-card-sub">ذاكرة محلية مشفرة تحفظ فقط ما تصرح به؛ دون أي تقييم نفسي أو استنتاجات
+                    سلبية</div>
                 </div>
               </div>
             </div>
@@ -2045,7 +2079,8 @@
                 <span>📝</span> <span>الملاحظات المصرح بها لميرو (User-Approved Context Notes)</span>
               </div>
               <div class="miro-notes-input-row">
-                <input type="text" class="form-input" id="atlasMiroNoteInput" placeholder="أضف ملاحظة يراعيها ميرو (مثال: أفضّل ممارسة القراءة صباحاً)...">
+                <input type="text" class="form-input" id="atlasMiroNoteInput"
+                  placeholder="أضف ملاحظة يراعيها ميرو (مثال: أفضّل ممارسة القراءة صباحاً)...">
                 <button type="button" class="dash-action-btn primary" id="atlasMiroAddNoteBtn">حفظ الملاحظة</button>
               </div>
               <div class="atlas-miro-notes-list" id="atlasMiroNotesList">
@@ -2053,7 +2088,8 @@
               </div>
             </div>
             <div class="miro-memory-actions">
-              <button type="button" class="btn btn-subtle" id="atlasMiroResetMemoryBtn" style="color: #ef4444;">🗑️ مسح ذاكرة ميرو والملاحظات (خصوصية تامة)</button>
+              <button type="button" class="btn btn-subtle" id="atlasMiroResetMemoryBtn" style="color: #ef4444;">🗑️ مسح
+                ذاكرة ميرو والملاحظات (خصوصية تامة)</button>
             </div>
           </div>
         </div>
@@ -2106,12 +2142,14 @@
           <div class="atlas-induction-icon">🧭</div>
           <p class="atlas-induction-text">
             مرحباً بك في <strong>أطلس العوالم الحيّة (The Living Atlas)</strong>.<br>
-            قبل أن ننطلق معاً، يود الرفيق <strong>ميرو</strong> أن يعرف اسمك أو اللقب الأحبّ إليك لتخليده في سجلات الأطلس ومخاطبتك به طوال الرحلة.
+            قبل أن ننطلق معاً، يود الرفيق <strong>ميرو</strong> أن يعرف اسمك أو اللقب الأحبّ إليك لتخليده في سجلات
+            الأطلس ومخاطبتك به طوال الرحلة.
           </p>
         </div>
         <div class="form-group" style="margin-top: 16px;">
           <label class="form-label" for="atlasInductionNameInput">اسم المستكشف / لقبك في الرحلة:</label>
-          <input type="text" class="form-input" id="atlasInductionNameInput" placeholder="مثال: أحمد، الباحث، طارق..." maxlength="32" autocomplete="off">
+          <input type="text" class="form-input" id="atlasInductionNameInput" placeholder="مثال: أحمد، الباحث، طارق..."
+            maxlength="32" autocomplete="off">
           <div class="form-hint" style="margin-top: 6px; font-size: 11px; opacity: 0.7;">
             * يمكنك تعديل اسمك في أي وقت بالنقر على شارة اسمك في أعلى لوحة الأطلس.
           </div>

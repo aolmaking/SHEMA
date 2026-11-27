@@ -417,7 +417,7 @@ async function runTests() {
     for (let dayOffset = 29; dayOffset >= 0; dayOffset--) {
       const simDate = new Date(baseDate);
       simDate.setDate(simDate.getDate() - dayOffset);
-      const ds = simDate.toISOString().slice(0, 10);
+      const ds = simDate.toLocaleDateString('en-CA');
       const dayOfWeek = simDate.getDay();
 
       // Daily habit: done 85% of time, skip 10%, none 5%
@@ -446,7 +446,7 @@ async function runTests() {
     // Verify future date lock strictly rejects future logging
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 3);
-    const futureDs = futureDate.toISOString().slice(0, 10);
+    const futureDs = futureDate.toLocaleDateString('en-CA');
     assert.throws(() => {
       e2eMgr.saveHabitStatus(futureDs, 'e2e-daily', 'done', 1);
     }, /Cannot log habits for future dates/);

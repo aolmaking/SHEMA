@@ -387,9 +387,14 @@ class HabitsManager extends EventEmitter {
     const isEn = lang === 'en';
     const icon = habit.icon || '⭐';
     const title = isEn ? (habit.titleEn || habit.nameEn || habit.title || habit.name || '') : (habit.title || habit.name || habit.titleEn || '');
-    const target = (habit.targetValue && habit.targetValue > 1)
-      ? ` (${habit.targetValue} ${isEn ? (habit.unitEn || habit.unit || '') : (habit.unit || '')})`.trim()
-      : '';
+    let target = '';
+    if (habit.type === 'percentage') {
+      target = ` (${habit.targetValue || 100}%)`;
+    } else if (habit.type === 'rating') {
+      target = ` (5 ⭐)`;
+    } else if (habit.targetValue && habit.targetValue > 1) {
+      target = ` (${habit.targetValue} ${isEn ? (habit.unitEn || habit.unit || '') : (habit.unit || '')})`.trim();
+    }
     const streakText = streak > 0
       ? (isEn ? `🔥 *Current Streak:* ${streak} days! Keep the momentum going!` : `🔥 *سلسلة الالتزام:* ${streak} أيام متواصلة! استمر ولا تقطع السلسلة!`)
       : (isEn ? `🌱 *Start your streak today!* Every great journey begins with a single step.` : `🌱 *ابدأ سلسلتك اليوم!* خطوة واحدة تصنع فارقاً عظيماً.`);
@@ -1017,18 +1022,43 @@ class HabitsManager extends EventEmitter {
     const idx = list.findIndex(h => h.id === id);
     const existing = idx >= 0 ? list[idx] : null;
 
+    const type = ['boolean', 'number', 'duration', 'percentage', 'rating'].includes(data.type) ? data.type : 'boolean';
+    let targetValue = Number(data.targetValue) || 1;
+    let unit = (data.unit || '').trim();
+    let unitEn = (data.unitEn || data.unit || '').trim();
+
+    if (type === 'boolean') {
+      targetValue = 1;
+      unit = '';
+      unitEn = '';
+    } else if (type === 'percentage') {
+      targetValue = Math.min(100, Math.max(1, targetValue || 100));
+      unit = '%';
+      unitEn = '%';
+    } else if (type === 'rating') {
+      targetValue = 5;
+      unit = '⭐';
+      unitEn = '⭐';
+    } else if (type === 'duration') {
+      targetValue = Math.max(1, targetValue);
+      if (!unit) { unit = 'دقيقة'; unitEn = 'min'; }
+    } else if (type === 'number') {
+      targetValue = Math.max(1, targetValue);
+      if (!unit) { unit = 'مرة'; unitEn = 'times'; }
+    }
+
     const habit = {
       id,
       title: (data.title || 'عادة جديدة').trim(),
       titleEn: (data.titleEn || data.title || 'New Habit').trim(),
       category: data.category || 'general',
       routine: data.routine || 'anytime', // morning, afternoon, evening, anytime
-      type: data.type || 'boolean', // boolean, number, duration, percentage, rating
+      type, // boolean, number, duration, percentage, rating
       direction: data.direction === 'negative' ? 'negative' : 'positive', // positive (build) or negative (quit bad habit)
       difficulty: ['trivial', 'easy', 'medium', 'hard'].includes(data.difficulty) ? data.difficulty : 'easy',
-      targetValue: Number(data.targetValue) || 1,
-      unit: (data.unit || '').trim(),
-      unitEn: (data.unitEn || data.unit || '').trim(),
+      targetValue,
+      unit,
+      unitEn,
       frequency: data.frequency || { type: 'daily' }, // daily, weekly_target, specific_days, every_x_days
       enablePomodoro: Boolean(data.enablePomodoro),
       syncToTodo: Boolean(data.syncToTodo),
@@ -1209,9 +1239,19 @@ class HabitsManager extends EventEmitter {
       delete day.habits[habitId];
     } else {
       const prevSubItems = prevEntry && prevEntry.subItems ? prevEntry.subItems : null;
+      const fullTarget = Number(habit?.targetValue) || (habit?.type === 'percentage' ? 100 : 1);
+      let finalVal = value !== null && value !== undefined ? Number(value) : null;
+      if (finalVal === null) {
+        if (status === 'done') finalVal = fullTarget;
+        else if (status === 'partial') finalVal = habit?.type === 'boolean' ? 1 : Math.max(1, Math.round(fullTarget / 2));
+        else finalVal = 0;
+      } else if (status === 'done' && habit && habit.type !== 'boolean' && finalVal === 1 && fullTarget > 1) {
+        // Guard: If caller signaled status: 'done' with hardcoded value 1 for multi-target habit, honor done by setting full target
+        finalVal = fullTarget;
+      }
       day.habits[habitId] = {
         status, // 'done' | 'skip' | 'fail' | 'partial'
-        value: value !== null ? Number(value) : (status === 'done' ? 1 : 0),
+        value: finalVal,
         note: (note || '').trim(),
         isMicroStep: Boolean(isMicroStep),
         subItems: prevSubItems,

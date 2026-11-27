@@ -824,9 +824,16 @@
       const card = document.createElement('div');
       card.className = 'qa-preset-card';
       const title = isEn ? p.titleEn : p.title;
-      const targetText = p.type === 'number' || p.type === 'duration'
-        ? `${digits(p.targetValue)} ${isEn ? (p.unitEn || p.unit) : (p.unit || '')}`
-        : (p.type === 'boolean' ? (isEn ? 'Daily Check' : 'إنجاز يومي') : '');
+      let targetText = '';
+      if (p.type === 'number' || p.type === 'duration') {
+        targetText = `${digits(p.targetValue)} ${isEn ? (p.unitEn || p.unit) : (p.unit || '')}`;
+      } else if (p.type === 'percentage') {
+        targetText = `${digits(p.targetValue || 100)}%`;
+      } else if (p.type === 'rating') {
+        targetText = '5 ⭐';
+      } else {
+        targetText = isEn ? 'Daily Check' : 'إنجاز يومي';
+      }
       const routineKey = p.routine ? p.routine.charAt(0).toUpperCase() + p.routine.slice(1) : 'Anytime';
       const routineText = t(`habits.routine${routineKey}`);
 
@@ -2581,7 +2588,7 @@
         const u = lang() === 'en' && h.unitEn ? h.unitEn : (h.unit || '');
         targetText = `${digits(curVal)} / ${digits(target)} ${u}`;
       } else if (h.type === 'percentage') {
-        targetText = `${digits(curVal)}%`;
+        targetText = target === 100 ? `${digits(curVal)}%` : `${digits(curVal)}% / ${digits(target)}%`;
       } else if (h.type === 'rating') {
         targetText = curVal > 0 ? `${digits(curVal)} / 5 ⭐` : '—';
       }
@@ -2888,29 +2895,51 @@
         stepper.appendChild(incBtn);
         actionSlot.appendChild(stepper);
       } else if (h.type === 'percentage') {
+        const target = Number(h.targetValue) || 100;
         const pctBtn = document.createElement('div');
         pctBtn.className = 'h-pct-btn';
+        pctBtn.title = lang() === 'en' ? 'Click to advance percentage, or click number to enter exact value' : 'اضغط للتقدم بالنسبة، أو اضغط على الرقم لكتابة قيمة محددة';
         pctBtn.onclick = (e) => {
           e.stopPropagation();
-          let next = curVal + 25;
-          if (next > 100) next = 0;
-          if (next >= 100) {
+          const step = target <= 50 ? 10 : 25;
+          let next = curVal + step;
+          if (curVal >= target) {
+            next = 0;
+          } else if (next > target) {
+            next = target;
+          }
+          if (next >= target && curVal < target) {
             pctBtn.classList.add('spring-pop');
             setTimeout(() => pctBtn.classList.remove('spring-pop'), 400);
             triggerConfetti(e.clientX, e.clientY);
             playChime('check');
           }
-          saveStatus(h.id, next >= 100 ? 'done' : (next > 0 ? 'partial' : 'none'), next);
+          saveStatus(h.id, next >= target ? 'done' : (next > 0 ? 'partial' : 'none'), next);
         };
 
         const fill = document.createElement('div');
         fill.className = 'h-pct-fill';
-        fill.style.width = `${curVal}%`;
+        const fillPct = Math.min(100, Math.round((curVal / target) * 100));
+        fill.style.width = `${fillPct}%`;
         fill.style.background = h.color || 'var(--accent, #3b82f6)';
 
         const txt = document.createElement('span');
         txt.className = 'h-pct-text';
         txt.textContent = `${digits(curVal)}%`;
+        txt.onclick = (e) => {
+          e.stopPropagation();
+          const entered = prompt(lang() === 'en' ? `Enter percentage (0-${target}%):` : `أدخل النسبة (0-${digits(target)}%):`, curVal);
+          if (entered !== null && !isNaN(entered)) {
+            const next = Math.min(100, Math.max(0, Number(entered)));
+            if (next >= target && curVal < target) {
+              pctBtn.classList.add('spring-pop');
+              setTimeout(() => pctBtn.classList.remove('spring-pop'), 400);
+              triggerConfetti(e.clientX, e.clientY);
+              playChime('check');
+            }
+            saveStatus(h.id, next >= target ? 'done' : (next > 0 ? 'partial' : 'none'), next);
+          }
+        };
 
         pctBtn.appendChild(fill);
         pctBtn.appendChild(txt);
@@ -3163,12 +3192,118 @@
   }
 
   function updateQaTypeUI() {
+    const isEn = lang() === 'en';
     $$('.qa-type-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.type === qaSelectedType);
     });
     const targetRow = $('#qaTargetRow');
-    if (targetRow) {
-      targetRow.style.display = (qaSelectedType === 'number' || qaSelectedType === 'duration') ? 'grid' : 'none';
+    const targetLabel = $('#qaTargetLabel');
+    const unitLabel = $('#qaUnitLabel');
+    const targetInp = $('#qaTargetInput');
+    const unitInp = $('#qaUnitInput');
+    const quickUnits = $('#qaQuickUnits');
+
+    if (!targetRow) return;
+
+    if (qaSelectedType === 'boolean' || qaSelectedType === 'rating') {
+      targetRow.style.display = 'none';
+      if (targetInp) targetInp.value = qaSelectedType === 'rating' ? '5' : '1';
+      if (unitInp) { unitInp.value = qaSelectedType === 'rating' ? '⭐' : ''; unitInp.disabled = false; }
+    } else if (qaSelectedType === 'percentage') {
+      targetRow.style.display = 'grid';
+      if (targetLabel) targetLabel.textContent = isEn ? 'Target Percentage (%)' : 'النسبة المستهدفة (%)';
+      if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
+      if (targetInp) {
+        targetInp.min = '1';
+        targetInp.max = '100';
+        if (!targetInp.value || targetInp.value === '1' || targetInp.value === '8') targetInp.value = '100';
+        targetInp.placeholder = '100';
+      }
+      if (unitInp) {
+        unitInp.value = '%';
+        unitInp.placeholder = '%';
+        unitInp.disabled = true;
+      }
+      if (quickUnits) {
+        quickUnits.innerHTML = `
+          <span class="unit-badge" data-unit="%" data-val="100">100%</span>
+          <span class="unit-badge" data-unit="%" data-val="90">90%</span>
+          <span class="unit-badge" data-unit="%" data-val="80">80%</span>
+          <span class="unit-badge" data-unit="%" data-val="75">75%</span>
+          <span class="unit-badge" data-unit="%" data-val="50">50%</span>
+        `;
+        quickUnits.querySelectorAll('.unit-badge').forEach(badge => {
+          badge.onclick = () => {
+            if (unitInp) unitInp.value = '%';
+            if (targetInp) targetInp.value = badge.dataset.val;
+          };
+        });
+      }
+    } else if (qaSelectedType === 'duration') {
+      targetRow.style.display = 'grid';
+      if (targetLabel) targetLabel.textContent = isEn ? 'Target Duration' : 'المدة المستهدفة';
+      if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
+      if (targetInp) {
+        targetInp.removeAttribute('max');
+        targetInp.min = '1';
+        if (!targetInp.value || targetInp.value === '1' || targetInp.value === '8' || targetInp.value === '100') targetInp.value = '30';
+        targetInp.placeholder = '30';
+      }
+      const defMin = isEn ? 'min' : 'دقيقة';
+      const defHr = isEn ? 'hours' : 'ساعة';
+      if (unitInp) {
+        unitInp.disabled = false;
+        if (!unitInp.value || unitInp.value === '%' || unitInp.value === 'كوب') unitInp.value = defMin;
+        unitInp.placeholder = isEn ? 'min, hours...' : 'دقيقة، ساعات...';
+      }
+      if (quickUnits) {
+        quickUnits.innerHTML = `
+          <span class="unit-badge" data-unit="${defMin}" data-val="15">15 ${defMin}</span>
+          <span class="unit-badge" data-unit="${defMin}" data-val="30">30 ${defMin}</span>
+          <span class="unit-badge" data-unit="${defMin}" data-val="45">45 ${defMin}</span>
+          <span class="unit-badge" data-unit="${defMin}" data-val="60">60 ${defMin}</span>
+          <span class="unit-badge" data-unit="${defHr}" data-val="2">2 ${defHr}</span>
+        `;
+        quickUnits.querySelectorAll('.unit-badge').forEach(badge => {
+          badge.onclick = () => {
+            if (unitInp) unitInp.value = badge.dataset.unit;
+            if (targetInp) targetInp.value = badge.dataset.val;
+          };
+        });
+      }
+    } else { // number
+      targetRow.style.display = 'grid';
+      if (targetLabel) targetLabel.textContent = isEn ? 'Daily Target' : 'الهدف اليومي';
+      if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
+      if (targetInp) {
+        targetInp.removeAttribute('max');
+        targetInp.min = '1';
+        if (!targetInp.value || targetInp.value === '100') targetInp.value = '8';
+        targetInp.placeholder = '8';
+      }
+      if (unitInp) {
+        unitInp.disabled = false;
+        if (!unitInp.value || unitInp.value === '%') unitInp.value = isEn ? 'cups' : 'كوب';
+        unitInp.placeholder = isEn ? 'pages, cups, steps...' : 'كوب، صفحة، خطوة...';
+      }
+      if (quickUnits) {
+        const pPage = isEn ? 'pages' : 'صفحة';
+        const pCup = isEn ? 'cups' : 'كوب';
+        const pStep = isEn ? 'steps' : 'خطوة';
+        const pLit = isEn ? 'liters' : 'لتر';
+        quickUnits.innerHTML = `
+          <span class="unit-badge" data-unit="${pPage}" data-val="20">20 ${pPage}</span>
+          <span class="unit-badge" data-unit="${pCup}" data-val="8">8 ${pCup}</span>
+          <span class="unit-badge" data-unit="${pStep}" data-val="10000">10000 ${pStep}</span>
+          <span class="unit-badge" data-unit="${pLit}" data-val="2.5">2.5 ${pLit}</span>
+        `;
+        quickUnits.querySelectorAll('.unit-badge').forEach(badge => {
+          badge.onclick = () => {
+            if (unitInp) unitInp.value = badge.dataset.unit;
+            if (targetInp) targetInp.value = badge.dataset.val;
+          };
+        });
+      }
     }
   }
 
@@ -3555,8 +3690,26 @@
         return;
       }
 
-      const targetVal = Number($('#qaTargetInput')?.value) || (qaSelectedType === 'percentage' ? 100 : 1);
-      const unit = $('#qaUnitInput')?.value?.trim() || '';
+      let targetVal = Number($('#qaTargetInput')?.value) || 1;
+      let unit = $('#qaUnitInput')?.value?.trim() || '';
+
+      if (qaSelectedType === 'boolean') {
+        targetVal = 1;
+        unit = '';
+      } else if (qaSelectedType === 'percentage') {
+        targetVal = Math.min(100, Math.max(1, targetVal || 100));
+        unit = '%';
+      } else if (qaSelectedType === 'rating') {
+        targetVal = 5;
+        unit = '⭐';
+      } else if (qaSelectedType === 'duration') {
+        targetVal = Math.max(1, targetVal);
+        if (!unit) unit = lang() === 'en' ? 'min' : 'دقيقة';
+      } else if (qaSelectedType === 'number') {
+        targetVal = Math.max(1, targetVal);
+        if (!unit) unit = lang() === 'en' ? 'times' : 'مرة';
+      }
+
       const routine = $('#qaRoutineSelect')?.value || 'anytime';
       const direction = $('#qaDirectionSelect')?.value || 'positive';
       const difficulty = $('#qaDifficultySelect')?.value || 'easy';
