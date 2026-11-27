@@ -146,6 +146,7 @@
       'habits.emptyFilterDesc': 'لا توجد عادات تطابق التصفية الحالية. اضغط أدناه لعرض كل عاداتك.',
       'habits.showStreak': '🔥 عداد السلسلة',
       'habits.showStrength': '⚡ قوة العادة %',
+      'habits.showUrgency': '⚠️ شارة الاستحقاق والتأخير %',
       'habits.showPomodoro': '⏱️ زر بومودورو السريع',
       'habits.showProgressBar': '📊 شريط التقدم اليومي',
       'habits.showMiniStrip': '📅 شريط الـ 7 أيام',
@@ -321,6 +322,7 @@
       'habits.emptyFilterDesc': 'No habits match the active filter. Click below to view all habits.',
       'habits.showStreak': '🔥 Streak Counter',
       'habits.showStrength': '⚡ Habit Strength %',
+      'habits.showUrgency': '⚠️ Urgency & Overdue Badges %',
       'habits.showPomodoro': '⏱️ Quick Pomodoro Button',
       'habits.showProgressBar': '📊 Daily Progress Bar',
       'habits.showMiniStrip': '📅 7-Day Mini Strip',
@@ -1041,6 +1043,7 @@
     // Component visibility
     const showStreak = s.showStreak !== false;
     const showStrength = s.showStrength !== false;
+    const showUrgency = s.showUrgency !== false;
     const showPomodoro = s.showPomodoroShortcut !== false;
     const showProgressBar = s.showProgressBar !== false;
     const showMiniStrip = s.showMiniStrip !== false;
@@ -1053,6 +1056,7 @@
 
     if ($('#popShowStreak')) $('#popShowStreak').checked = showStreak;
     if ($('#popShowStrength')) $('#popShowStrength').checked = showStrength;
+    if ($('#popShowUrgency')) $('#popShowUrgency').checked = showUrgency;
     if ($('#popShowPomodoro')) $('#popShowPomodoro').checked = showPomodoro;
     if ($('#popShowProgressBar')) $('#popShowProgressBar').checked = showProgressBar;
     if ($('#popShowMiniStrip')) $('#popShowMiniStrip').checked = showMiniStrip;
@@ -2636,8 +2640,9 @@
       }
 
       // Urgency / Overdue Pill (OpenHabitTracker - Streak Guilt Eliminator)
+      const showUrgency = (state.settings?.showUrgency !== false) && (state.allSettings?.habits?.showUrgency !== false);
       const urgScore = calculateUrgencyScore(h.id);
-      if (urgScore >= 50 && status !== 'done' && status !== 'skip') {
+      if (showUrgency && urgScore >= 50 && status !== 'done' && status !== 'skip') {
         const urgPill = document.createElement('span');
         const isOverdue = urgScore >= 80;
         urgPill.className = `h-urgency-pill ${isOverdue ? 'overdue' : 'due-today'}`;
@@ -3259,6 +3264,10 @@
       persistHabitSettings({ showStreak: enabled });
     });
     $('#popShowStrength')?.addEventListener('change', (e) => persistHabitSettings({ showStrength: e.target.checked }));
+    $('#popShowUrgency')?.addEventListener('change', (e) => {
+      persistHabitSettings({ showUrgency: e.target.checked });
+      renderHabitsList();
+    });
     $('#popShowPomodoro')?.addEventListener('change', (e) => {
       const enabled = e.target.checked;
       const heroFocus = $('#heroFocusCard');

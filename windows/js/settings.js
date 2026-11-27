@@ -353,6 +353,8 @@ strings({
     's.habitsShowDailyTotalsHint': 'يعرض مجموع العادات المكتملة في كل يوم من أيام الشهر أسفل الجدول كما في دفاتر التخطيط.',
     's.habitsShowStreak': 'إظهار عداد السلسلة ومستوى التوهج (Streak Flame)',
     's.habitsShowStrength': 'إظهار نسبة قوة واستقرار العادة (Strength %)',
+    's.habitsShowUrgency': 'إظهار شارة الاستحقاق والتأخير (⚠️ %)',
+    's.habitsShowUrgencyHint': 'يعرض نسبة الاستحقاق والتنبيه عند تأخر العادة لتفادي كسر السلسلة وإلغاء شعور الذنب.',
     's.habitsShowProgressBar': 'إظهار شريط أو حلقة التقدم اليومي في أعلى الودجت',
     's.habitsShowMiniStrip': 'إظهار شريط الأيام السبعة السريع (7-Day Strip)',
     's.habitsShowRoutineFilters': 'إظهار شريط تصنيفات الروتين (صباحي/مسائي/عمل...)',
@@ -1120,6 +1122,8 @@ strings({
     's.habitsShowDailyTotalsHint': 'Displays the total number of habits completed on each day of the month.',
     's.habitsShowStreak': 'Show Streak Counter & Flame Level',
     's.habitsShowStrength': 'Show Habit Strength & Stability %',
+    's.habitsShowUrgency': 'Show Urgency & Overdue Badges (⚠️ %)',
+    's.habitsShowUrgencyHint': 'Displays urgency percentage and overdue warnings to prevent streak breaks and guilt.',
     's.habitsShowProgressBar': 'Show Daily Progress Bar/Ring at top of widget',
     's.habitsShowMiniStrip': 'Show 7-Day Matrix Strip',
     's.habitsShowRoutineFilters': 'Show Routine Period Chips (Morning/Evening/Work)',
@@ -4128,6 +4132,9 @@ function buildHabits() {
   }
   if ($('#habitsShowStrength')) {
     switchEl('#habitsShowStrength', h.showStrength !== false, (v) => setGroup('habits', { showStrength: v }));
+  }
+  if ($('#habitsShowUrgency')) {
+    switchEl('#habitsShowUrgency', h.showUrgency !== false, (v) => setGroup('habits', { showUrgency: v }));
   }
   if ($('#habitsShowProgressBar')) {
     switchEl('#habitsShowProgressBar', h.showProgressBar !== false, (v) => setGroup('habits', { showProgressBar: v }));

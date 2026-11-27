@@ -15,6 +15,8 @@ console.log('\n--- 1. Testing UI Ultimate Controls (Popover, Density, Sort, Visi
 const habitsHtml = fs.readFileSync(path.join(ROOT, 'windows', 'habits.html'), 'utf8');
 const habitsJs = fs.readFileSync(path.join(ROOT, 'windows', 'js', 'habits.js'), 'utf8');
 const habitsCss = fs.readFileSync(path.join(ROOT, 'windows', 'css', 'habits.css'), 'utf8');
+const settingsHtml = fs.readFileSync(path.join(ROOT, 'windows', 'settings.html'), 'utf8');
+const settingsJs = fs.readFileSync(path.join(ROOT, 'windows', 'js', 'settings.js'), 'utf8');
 
 assert(habitsHtml.includes('id="habitsViewControlBtn"'), 'Must have #habitsViewControlBtn header button');
 assert(habitsHtml.includes('id="habitsViewPopover"'), 'Must have #habitsViewPopover floating popover');
@@ -22,10 +24,11 @@ assert(habitsHtml.includes('id="popoverStatusFilter"'), 'Must have #popoverStatu
 assert(habitsHtml.includes('id="popoverDensity"'), 'Must have #popoverDensity density control');
 assert(habitsHtml.includes('id="popoverSort"'), 'Must have #popoverSort sort select');
 
-// 10 visibility toggles
+// Component visibility toggles
 const toggles = [
   'popShowStreak',
   'popShowStrength',
+  'popShowUrgency',
   'popShowPomodoro',
   'popShowProgressBar',
   'popShowMiniStrip',
@@ -33,12 +36,18 @@ const toggles = [
   'popShowFooterCheckin',
   'popShowMindsetSpark',
   'popShowGamification',
+  'popShowAtlasBar',
   'popShowSoundEffects',
 ];
 toggles.forEach(t => {
   assert(habitsHtml.includes(`id="${t}"`), `Must have visibility switch #${t}`);
   assert(habitsJs.includes(t), `Must wire visibility switch #${t} in habits.js`);
 });
+
+assert(habitsJs.includes('showUrgency'), 'habits.js must check showUrgency before rendering urgency pill');
+assert(habitsJs.includes('h-urgency-pill'), 'habits.js must reference h-urgency-pill');
+assert(settingsHtml.includes('id="habitsShowUrgency"'), 'settings.html must have #habitsShowUrgency switch');
+assert(settingsJs.includes('habitsShowUrgency'), 'settings.js must wire #habitsShowUrgency switch');
 
 assert(habitsJs.includes('heroFocusCard') && habitsJs.includes('showPomodoroShortcut'), 'Must control #heroFocusCard visibility with showPomodoroShortcut');
 assert(habitsCss.includes('.hero-purpose-card') && habitsCss.includes('display: none !important'), 'Must hide empty green .hero-purpose-card');
@@ -91,8 +100,6 @@ console.log('✅ Per-habit To-Do sync and priority selection verified.');
 // 5. Requirement 5: Follow System Language
 console.log('\n--- 5. Testing Follow System Language (language: auto) ---');
 const shellJs = fs.readFileSync(path.join(ROOT, 'windows', 'js', 'shell.js'), 'utf8');
-const settingsHtml = fs.readFileSync(path.join(ROOT, 'windows', 'settings.html'), 'utf8');
-const settingsJs = fs.readFileSync(path.join(ROOT, 'windows', 'js', 'settings.js'), 'utf8');
 
 assert(mainJs.includes('getAppLanguage'), 'main.js must have getAppLanguage for language: auto');
 assert(mainJs.includes('app.getLocale()'), 'main.js getAppLanguage must inspect app.getLocale()');
