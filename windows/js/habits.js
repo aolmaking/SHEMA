@@ -3530,6 +3530,14 @@
     $('#qaCloseBtn')?.addEventListener('click', closeQuickAddModal);
     $('#qaCancelBtn')?.addEventListener('click', closeQuickAddModal);
 
+    // Habits widget immunity: double-click / double-tap NEVER closes or minimizes habits
+    $('#habitsPlate')?.addEventListener('dblclick', (e) => {
+      const isMini = document.documentElement.dataset.appIcon === '1' || document.documentElement.dataset.compact === 'ultra';
+      if (!isMini) {
+        e.stopPropagation();
+      }
+    }, true);
+
     // Quick Add Tabs
     $('#qaTabPresetsBtn')?.addEventListener('click', () => {
       $('#qaTabPresetsBtn').classList.add('active');

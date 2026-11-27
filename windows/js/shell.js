@@ -1102,8 +1102,11 @@
     const plate = $('.plate');
     if (plate) {
       plate.addEventListener('dblclick', (e) => {
-        if (e.target.closest('button, input, textarea, a, .grip, .rz, [contenteditable]')) return;
+        const isHabits = PAGE === 'habits' || document.documentElement.dataset.page === 'habits';
         const isMini = document.documentElement.dataset.appIcon === '1' || document.documentElement.dataset.compact === 'ultra';
+        // The habits widget is the ONLY widget that does NOT close on double-click/double-tap
+        if (isHabits && !isMini) return;
+        if (e.target.closest('button, input, textarea, a, .grip, .rz, [contenteditable]')) return;
         if (isMini) {
           prepareDOMForExpand();
         } else {

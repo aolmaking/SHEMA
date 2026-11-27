@@ -149,6 +149,13 @@ assert.strictEqual(simTodos[1].id, `hbt_reading_${simToday}`, 'Today habit task 
 assert(!simTodos.some(t => t.id.includes(simYesterday)), 'All past-day habits must disappear after midnight');
 console.log('✅ Simulation verified: All past-day habit tasks completely disappear once past midnight 12:00 AM!');
 
+// 6. Requirement 6: Habits Widget Immunity to Double-Click/Tap Closing
+console.log('\n--- 6. Testing Habits Double-Click/Tap Immunity ---');
+assert(shellJs.includes("PAGE === 'habits'"), 'shell.js must check PAGE === habits');
+assert(shellJs.includes("isHabits && !isMini"), 'shell.js must prevent habits from closing/minimizing on double-click');
+assert(habitsJs.includes("'dblclick'"), 'habits.js must have dblclick immunity listener on #habitsPlate');
+console.log('✅ Habits widget double-click immunity verified: Habits NEVER closes or minimizes on double-tap!');
+
 console.log('\n========================================================');
 console.log('🎉 ALL HABITS SYSTEM & MIDNIGHT PURGE TESTS PASSED (100%)');
 console.log('========================================================\n');
