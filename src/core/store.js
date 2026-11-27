@@ -60,7 +60,11 @@ class Store {
         const bm = this._backupManager || require('./backup-manager').defaultBackupManager;
         const recovered = bm.autoRecover(this.file);
         if (recovered && typeof recovered === 'object') {
-          this._data = { ...structuredClone(this.defaults), ...recovered };
+          if (Array.isArray(recovered)) {
+            this._data = structuredClone(recovered);
+          } else {
+            this._data = { ...structuredClone(this.defaults), ...recovered };
+          }
           this._lastSerialized = null;
           this._dirEnsured = true;
           loaded = true;

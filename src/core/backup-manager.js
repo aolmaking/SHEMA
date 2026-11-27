@@ -218,7 +218,10 @@ class BackupManager {
       'calendarEvents',
       'pomodoro',
       'quranState',
-      'hadithState'
+      'hadithState',
+      'emails',
+      'photoState',
+      'dispatchQueue'
     ];
 
     const bundleData = customStores && typeof customStores === 'object' ? { ...customStores } : {};
@@ -307,7 +310,8 @@ class BackupManager {
     for (const [key, storeData] of Object.entries(bundle.stores)) {
       let targetPath;
       if (targetDir) {
-        targetPath = path.join(targetDir, `${key}.json`);
+        const baseName = paths[key] ? path.basename(paths[key]) : `${key}.json`;
+        targetPath = path.join(targetDir, baseName);
       } else {
         targetPath = paths[key] || path.join(paths.root, `${key}.json`);
       }
@@ -317,7 +321,7 @@ class BackupManager {
         if (fs.existsSync(targetPath)) {
           try {
             const curRaw = fs.readFileSync(targetPath, 'utf8');
-            this.createSnapshot(targetPath, JSON.parse(curRaw), 'pre_import');
+            this.createSnapshot(targetPath, JSON.parse(curRaw), 'pre_import', true);
           } catch (_) {}
         }
 
@@ -330,7 +334,7 @@ class BackupManager {
         fs.renameSync(tmp, targetPath);
 
         // Also create milestone snapshot of newly imported data
-        this.createSnapshot(targetPath, storeData, 'milestone');
+        this.createSnapshot(targetPath, storeData, 'milestone', true);
         restoredCount++;
       } catch (err) {
         errors.push(`Failed restoring ${key}: ${err.message}`);

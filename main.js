@@ -1931,7 +1931,7 @@ function saveFolders(folders) {
   settings.flush();
   try {
     const { defaultBackupManager } = require('./src/core/backup-manager');
-    defaultBackupManager.createSnapshot(paths.settings, settings.data, 'shutdown', true);
+    defaultBackupManager.createSnapshot(paths.settings, settings.data, 'folders', true);
   } catch (_) {}
 }
 
@@ -3879,6 +3879,10 @@ function registerIpc() {
   }));
 
   ipcMain.handle('settings:reset', () => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      defaultBackupManager.createSnapshot(paths.settings, settings.data, 'pre_reset', true);
+    } catch (_) {}
     const keep = settings.get('widgets', {});
     const language = settings.get('language');
     settings.merge({ ...structuredClone(DEFAULTS), language });
@@ -3926,13 +3930,37 @@ function registerIpc() {
   ipcMain.handle('backup:create-checkpoint', (_e, { store, reason } = {}) => {
     try {
       const { defaultBackupManager } = require('./src/core/backup-manager');
-      const targetStore = store || 'settings';
+      const targetStore = store || 'all';
+      if (targetStore === 'all') {
+        const results = {};
+        const storesList = [
+          { name: 'settings', path: paths.settings, store: settings },
+          { name: 'todos', path: paths.todos, store: todos },
+          { name: 'notes', path: paths.notes, store: notes },
+          { name: 'habits', path: paths.habits, store: typeof habitsStore !== 'undefined' ? habitsStore : null },
+          { name: 'atlas', path: paths.atlas, store: typeof atlasEngine !== 'undefined' && atlasEngine && atlasEngine.store ? atlasEngine.store.store : null },
+          { name: 'calendarEvents', path: paths.calendarEvents, store: typeof calendarEventsStore !== 'undefined' ? calendarEventsStore : null },
+        ];
+        for (const item of storesList) {
+          let data = item.store ? item.store.data : null;
+          if (!data && fs.existsSync(item.path)) {
+            try { data = JSON.parse(fs.readFileSync(item.path, 'utf8')); } catch (_) {}
+          }
+          if (data) {
+            results[item.name] = defaultBackupManager.createSnapshot(item.path, data, reason || 'manual', true);
+          }
+        }
+        return results;
+      }
+
       const p = paths[targetStore] || path.join(paths.root, `${targetStore}.json`);
       let data = null;
       if (targetStore === 'settings') data = settings.data;
-      else if (targetStore === 'habits') data = habitsStore.data;
+      else if (targetStore === 'habits') data = typeof habitsStore !== 'undefined' ? habitsStore.data : null;
       else if (targetStore === 'todos') data = todos.data;
       else if (targetStore === 'notes') data = notes.data;
+      else if (targetStore === 'atlas') data = typeof atlasEngine !== 'undefined' && atlasEngine && atlasEngine.store ? atlasEngine.store.data : null;
+      else if (targetStore === 'calendarEvents') data = typeof calendarEventsStore !== 'undefined' ? calendarEventsStore.data : null;
       else if (fs.existsSync(p)) {
         try { data = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) {}
       }
@@ -3951,10 +3979,24 @@ function registerIpc() {
       const targetStore = storeName || 'settings';
       const p = paths[targetStore] || path.join(paths.root, `${targetStore}.json`);
       const recovered = defaultBackupManager.autoRecover(p);
-      if (recovered && targetStore === 'settings') {
-        settings.merge(recovered);
-        settings.flush();
-        broadcast('settings:changed', publicSettings());
+      if (recovered) {
+        if (targetStore === 'settings') {
+          settings.merge(recovered);
+          settings.flush();
+          broadcast('settings:changed', publicSettings());
+        } else if (targetStore === 'todos') {
+          todos.merge(recovered);
+          todos.flush();
+          broadcast('todos:changed', todos.data);
+        } else if (targetStore === 'notes') {
+          notes.merge(recovered);
+          notes.flush();
+          broadcast('notes:changed', notes.data);
+        } else if (targetStore === 'habits' && typeof habitsStore !== 'undefined') {
+          habitsStore.merge(recovered);
+          habitsStore.flush();
+          broadcast('habits:changed', habitsStore.data);
+        }
       }
       return { success: Boolean(recovered), data: recovered };
     } catch (err) {
@@ -3965,6 +4007,17 @@ function registerIpc() {
   ipcMain.handle('backup:export-archive', async (e, { password } = {}) => {
     try {
       const { defaultBackupManager } = require('./src/core/backup-manager');
+      try {
+        if (settings && settings.flush) settings.flush();
+        if (todos && todos.flush) todos.flush();
+        if (notes && notes.flush) notes.flush();
+        if (typeof habitsStore !== 'undefined' && habitsStore && habitsStore.flush) habitsStore.flush();
+        if (typeof calendarEventsStore !== 'undefined' && calendarEventsStore && calendarEventsStore.flush) calendarEventsStore.flush();
+        if (typeof atlasEngine !== 'undefined' && atlasEngine && atlasEngine.store && atlasEngine.store.store && atlasEngine.store.store.flush) {
+          atlasEngine.store.store.flush();
+        }
+      } catch (_) {}
+
       const win = senderWindow(e);
       const res = await dialog.showSaveDialog(win || null, {
         title: 'Export Encrypted Sovereign Backup',
@@ -3990,12 +4043,30 @@ function registerIpc() {
       });
       if (res.canceled || !res.filePaths || !res.filePaths[0]) return { canceled: true };
       const result = defaultBackupManager.importEncryptedArchive(res.filePaths[0], password || 'shema-secure');
-      // Reload active in-memory stores
+      // Reload active in-memory stores and notify renderer windows
       try {
         if (fs.existsSync(paths.settings)) {
           const raw = fs.readFileSync(paths.settings, 'utf8');
           settings.merge(JSON.parse(raw));
           broadcast('settings:changed', publicSettings());
+        }
+        if (fs.existsSync(paths.todos)) {
+          const raw = fs.readFileSync(paths.todos, 'utf8');
+          todos.merge(JSON.parse(raw));
+          broadcast('todos:changed', todos.data);
+        }
+        if (fs.existsSync(paths.notes)) {
+          const raw = fs.readFileSync(paths.notes, 'utf8');
+          notes.merge(JSON.parse(raw));
+          broadcast('notes:changed', notes.data);
+        }
+        if (typeof habitsStore !== 'undefined' && fs.existsSync(paths.habits)) {
+          const raw = fs.readFileSync(paths.habits, 'utf8');
+          habitsStore.merge(JSON.parse(raw));
+          broadcast('habits:changed', habitsStore.data);
+        }
+        if (typeof atlasEngine !== 'undefined' && atlasEngine && fs.existsSync(paths.atlas)) {
+          broadcast('atlas:updated', await atlasEngine.getDashboardState(settings.get('language') || 'ar'));
         }
       } catch (_) {}
       return { ...result, filePath: res.filePaths[0] };
@@ -5620,7 +5691,18 @@ function saveAllWidgetStates() {
   settings.flush();
   try {
     const { defaultBackupManager } = require('./src/core/backup-manager');
-    defaultBackupManager.createSnapshot(paths.settings, settings.data, 'shutdown', true);
+    const storesToSnapshot = [
+      { path: paths.settings, store: settings },
+      { path: paths.todos, store: todos },
+      { path: paths.notes, store: notes },
+      { path: paths.habits, store: typeof habitsStore !== 'undefined' ? habitsStore : null },
+      { path: paths.atlas, store: typeof atlasEngine !== 'undefined' && atlasEngine && atlasEngine.store ? atlasEngine.store.store : null },
+    ];
+    for (const item of storesToSnapshot) {
+      if (item.store && item.store.data) {
+        defaultBackupManager.createSnapshot(item.path, item.store.data, 'shutdown', true);
+      }
+    }
   } catch (_) {}
 }
 

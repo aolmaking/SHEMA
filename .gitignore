@@ -30,6 +30,7 @@ backups/
 .backups/
 user-backups/
 *.shemabak
+*.shemavault
 *.mirqatbak
 *.vault
 *.enc
@@ -42,6 +43,21 @@ vault.key
 *.key
 *.tokens
 *.credentials
+
+# Sovereign User Stores & Sensitive Configurations (Absolute Zero-Leakage Guarantee)
+settings.json
+todos.json
+notes.json
+habits.json
+atlas.json
+atlas-data.json
+calendar-events.json
+emails.json
+photo-state.json
+dispatch-queue.json
+pomodoro.json
+quran-state.json
+hadith-state.json
 
 # OS & IDE Metadata
 .DS_Store
