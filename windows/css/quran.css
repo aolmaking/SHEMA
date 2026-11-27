@@ -1,16 +1,20 @@
-/* ---------- Header for Quran Widget with standard edge clearance ---------- */
+/* ---------- Header for Quran Widget with slim refined clearance ---------- */
 .quran-plate .head {
-  padding: var(--pad) var(--pad) 8px;
+  padding: calc(var(--pad) * 0.48) var(--pad) 3px;
+  min-height: 28px;
+  gap: 6px;
 }
 .quran-plate .head-title {
-  font-size: calc(11px * var(--fs));
+  font-size: calc(10.5px * var(--fs));
   font-weight: 600;
   color: var(--ink-2);
+  line-height: 1.22;
 }
 .quran-plate .head-sub {
-  font-size: calc(9.5px * var(--fs));
+  font-size: calc(9px * var(--fs));
   color: var(--ink-3);
   opacity: 0.8;
+  line-height: 1.15;
 }
 
 /* ---------- Body Container: Fully responsive stretch on window resize ---------- */
@@ -37,7 +41,7 @@
   gap: 4px;
   width: 100%;
   text-align: start;
-  padding: 8px 12px 6px;
+  padding: 6px 12px 5px;
   border-radius: var(--radius-lg);
   background: var(--field);
   color: inherit;
@@ -74,7 +78,7 @@
   min-height: 0;
   margin: 0;
   font-family: var(--font-quran);
-  font-size: var(--ayah-size, calc(21.5px * var(--fs)));
+  font-size: var(--ayah-size, calc(22px * var(--fs)));
   line-height: var(--ayah-lh, calc(2.2 * var(--lh-k, 1)));
   font-weight: 500;
   direction: rtl;
@@ -82,7 +86,7 @@
   text-align: center;
   align-content: safe center;
   user-select: text;
-  padding: 2px 4px;
+  padding: 2px 5px;
   /* Quranic marks sit high; give them room rather than clipping */
   overflow-wrap: break-word;
   overflow-y: auto;
@@ -128,7 +132,7 @@
   font-size: calc(9.5px * var(--fs));
   color: var(--ink-3);
   margin-top: auto;
-  padding-top: 3px;
+  padding-top: 2px;
   position: relative;
   z-index: 2;
   background: transparent;
@@ -222,8 +226,8 @@
 
 @container plate (max-width: 280px) {
   .quran-plate .head {
-    padding: 6px 10px 4px;
-    gap: 6px;
+    padding: 5px 8px 3px;
+    gap: 5px;
   }
   .head-icon {
     display: flex !important;
@@ -234,8 +238,8 @@
     min-height: 0;
   }
   .ayah-card {
-    padding: 6px 10px 6px;
-    gap: 3px;
+    padding: 5px 8px 5px;
+    gap: 2.5px;
     flex: 1;
     min-height: 0;
     box-sizing: border-box;
