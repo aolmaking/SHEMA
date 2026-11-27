@@ -1879,6 +1879,10 @@ function getFolders() {
 function saveFolders(folders) {
   settings.set('folders', folders);
   settings.flush();
+  try {
+    const { defaultBackupManager } = require('./src/core/backup-manager');
+    defaultBackupManager.createSnapshot(paths.settings, settings.data, 'shutdown', true);
+  } catch (_) {}
 }
 
 function getFolderOfWidget(id) {
@@ -3831,6 +3835,115 @@ function registerIpc() {
     return next;
   });
 
+  /* ---- sovereign backup & auto-recovery vault ---- */
+  ipcMain.handle('backup:get-stats', () => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      return defaultBackupManager.getStats();
+    } catch (err) {
+      return { error: err.message, totalSnapshots: 0 };
+    }
+  });
+
+  ipcMain.handle('backup:list', (_e, storeName) => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      return defaultBackupManager.listSnapshots(storeName);
+    } catch (err) {
+      return [];
+    }
+  });
+
+  ipcMain.handle('backup:list-snapshots', (_e, storeName) => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      return defaultBackupManager.listSnapshots(storeName);
+    } catch (err) {
+      return [];
+    }
+  });
+
+  ipcMain.handle('backup:create-checkpoint', (_e, { store, reason } = {}) => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      const targetStore = store || 'settings';
+      const p = paths[targetStore] || path.join(paths.root, `${targetStore}.json`);
+      let data = null;
+      if (targetStore === 'settings') data = settings.data;
+      else if (targetStore === 'habits') data = habitsStore.data;
+      else if (targetStore === 'todos') data = todos.data;
+      else if (targetStore === 'notes') data = notes.data;
+      else if (fs.existsSync(p)) {
+        try { data = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) {}
+      }
+      if (data) {
+        return defaultBackupManager.createSnapshot(p, data, reason || 'manual', true);
+      }
+      return null;
+    } catch (err) {
+      return null;
+    }
+  });
+
+  ipcMain.handle('backup:auto-heal', (_e, storeName) => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      const targetStore = storeName || 'settings';
+      const p = paths[targetStore] || path.join(paths.root, `${targetStore}.json`);
+      const recovered = defaultBackupManager.autoRecover(p);
+      if (recovered && targetStore === 'settings') {
+        settings.merge(recovered);
+        settings.flush();
+        broadcast('settings:changed', publicSettings());
+      }
+      return { success: Boolean(recovered), data: recovered };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('backup:export-archive', async (e, { password } = {}) => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      const win = senderWindow(e);
+      const res = await dialog.showSaveDialog(win || null, {
+        title: 'Export Encrypted Sovereign Backup',
+        defaultPath: path.join(os.homedir(), `shema-backup-${Date.now()}.shemabak`),
+        filters: [{ name: 'SHĒMA Encrypted Vault', extensions: ['shemabak'] }],
+      });
+      if (res.canceled || !res.filePath) return { canceled: true };
+      defaultBackupManager.exportEncryptedArchive(password || 'shema-secure', res.filePath);
+      return { success: true, filePath: res.filePath };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('backup:import-archive', async (e, { password } = {}) => {
+    try {
+      const { defaultBackupManager } = require('./src/core/backup-manager');
+      const win = senderWindow(e);
+      const res = await dialog.showOpenDialog(win || null, {
+        title: 'Import Encrypted Sovereign Backup',
+        filters: [{ name: 'SHĒMA Encrypted Vault', extensions: ['shemabak'] }],
+        properties: ['openFile'],
+      });
+      if (res.canceled || !res.filePaths || !res.filePaths[0]) return { canceled: true };
+      const result = defaultBackupManager.importEncryptedArchive(res.filePaths[0], password || 'shema-secure');
+      // Reload active in-memory stores
+      try {
+        if (fs.existsSync(paths.settings)) {
+          const raw = fs.readFileSync(paths.settings, 'utf8');
+          settings.merge(JSON.parse(raw));
+          broadcast('settings:changed', publicSettings());
+        }
+      } catch (_) {}
+      return { ...result, filePath: res.filePaths[0] };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  });
+
   ipcMain.handle('browser:getProfiles', () => {
     const chromeExe = findChromeExecutable();
     return {
@@ -5414,6 +5527,10 @@ function saveAllWidgetStates() {
     }
   }
   settings.flush();
+  try {
+    const { defaultBackupManager } = require('./src/core/backup-manager');
+    defaultBackupManager.createSnapshot(paths.settings, settings.data, 'shutdown', true);
+  } catch (_) {}
 }
 
 function debounce(fn, ms) {

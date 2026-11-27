@@ -30,6 +30,7 @@ if (!base) base = path.join(os.homedir(), '.mirqat-widgets');
 const dirs = {
   root: base,
   cache: path.join(base, 'cache'),
+  backups: path.join(base, 'backups'),
 };
 
 for (const d of Object.values(dirs)) fs.mkdirSync(d, { recursive: true });
@@ -37,6 +38,7 @@ for (const d of Object.values(dirs)) fs.mkdirSync(d, { recursive: true });
 module.exports = {
   root: dirs.root,
   cache: dirs.cache,
+  backups: dirs.backups,
   settings: path.join(dirs.root, 'settings.json'),
   todos: path.join(dirs.root, 'todos.json'),
   notes: path.join(dirs.root, 'notes.json'),

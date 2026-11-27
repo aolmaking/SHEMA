@@ -23,6 +23,25 @@ yarn-error.log*
 auth_info_baileys/
 sessions/
 userData/
+data/
+
+# Secure User Backup Vaults & Encrypted Snapshots (Zero Data Leakage / Absolute Local Privacy)
+backups/
+.backups/
+user-backups/
+*.shemabak
+*.mirqatbak
+*.vault
+*.enc
+*.backup
+*.backup.json
+*.snapshot
+*.corrupt*
+.vault*
+vault.key
+*.key
+*.tokens
+*.credentials
 
 # OS & IDE Metadata
 .DS_Store

@@ -202,6 +202,15 @@ contextBridge.exposeInMainWorld('widgets', {
     forceCatchup: () => ipcRenderer.invoke('dispatch:force-catchup'),
   },
 
+  backup: {
+    getStats: () => ipcRenderer.invoke('backup:get-stats'),
+    list: (storeName) => ipcRenderer.invoke('backup:list', storeName),
+    createCheckpoint: (opts) => ipcRenderer.invoke('backup:create-checkpoint', opts),
+    autoHeal: (storeName) => ipcRenderer.invoke('backup:auto-heal', storeName),
+    exportArchive: (opts) => ipcRenderer.invoke('backup:export-archive', opts),
+    importArchive: (opts) => ipcRenderer.invoke('backup:import-archive', opts),
+  },
+
   notes: {
     get: () => ipcRenderer.invoke('notes:get'),
     set: (payload) => ipcRenderer.invoke('notes:set', payload),

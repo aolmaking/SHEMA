@@ -9,11 +9,14 @@
 
 const fs = require('fs');
 const path = require('path');
+const paths = require('./paths');
 
 class Store {
-  constructor(file, defaults = {}) {
+  constructor(file, defaults = {}, options = {}) {
     this.file = file;
     this.defaults = defaults;
+    this.options = options;
+    this._backupManager = options.backupManager || null;
     this._data = null;
     this._writeTimer = null;
     this._pending = false;
@@ -27,12 +30,19 @@ class Store {
   }
 
   _load() {
+    let loaded = false;
     try {
-      const raw = fs.readFileSync(this.file, 'utf8');
-      const parsed = JSON.parse(raw);
-      this._data = { ...structuredClone(this.defaults), ...parsed };
-      this._lastSerialized = raw;
-      this._dirEnsured = true;
+      if (fs.existsSync(this.file)) {
+        const stat = fs.statSync(this.file);
+        if (stat.size > 0) {
+          const raw = fs.readFileSync(this.file, 'utf8');
+          const parsed = JSON.parse(raw);
+          this._data = { ...structuredClone(this.defaults), ...parsed };
+          this._lastSerialized = raw;
+          this._dirEnsured = true;
+          loaded = true;
+        }
+      }
     } catch (err) {
       if (err.code !== 'ENOENT') {
         // Corrupt file: keep a copy so nothing is silently destroyed.
@@ -40,6 +50,36 @@ class Store {
           fs.copyFileSync(this.file, `${this.file}.corrupt-${Date.now()}`);
         } catch { /* best effort */ }
       }
+    }
+
+    const isManagedStore = this._backupManager || (path.dirname(path.resolve(this.file)) === path.resolve(paths.root));
+
+    if (!loaded && isManagedStore) {
+      // Self-Healing: Attempt automatic recovery from encrypted local backup vault
+      try {
+        const bm = this._backupManager || require('./backup-manager').defaultBackupManager;
+        const recovered = bm.autoRecover(this.file);
+        if (recovered && typeof recovered === 'object') {
+          this._data = { ...structuredClone(this.defaults), ...recovered };
+          this._lastSerialized = null;
+          this._dirEnsured = true;
+          loaded = true;
+          // Atomically heal disk file immediately
+          this._pending = true;
+          this.flush();
+        }
+      } catch (_) {}
+    }
+
+    if (loaded && isManagedStore && this._data && Object.keys(this._data).length > 0) {
+      // Ensure a secure baseline snapshot exists for this healthy store
+      try {
+        const bm = this._backupManager || require('./backup-manager').defaultBackupManager;
+        bm.ensureBaselineSnapshot(this.file, this._data);
+      } catch (_) {}
+    }
+
+    if (!loaded) {
       this._data = structuredClone(this.defaults);
     }
   }
@@ -88,6 +128,32 @@ class Store {
     fs.writeFileSync(tmp, serialized, 'utf8');
     fs.renameSync(tmp, this.file);
     this._lastSerialized = serialized;
+
+    // Automated rolling snapshot in local secure vault for managed stores
+    const isManagedStore = this._backupManager || (path.dirname(path.resolve(this.file)) === path.resolve(paths.root));
+    if (isManagedStore) {
+      try {
+        const bm = this._backupManager || require('./backup-manager').defaultBackupManager;
+        bm.createSnapshot(this.file, this._data, 'auto');
+      } catch (_) {}
+    }
+  }
+
+  /**
+   * Explicitly triggers an immediate named snapshot checkpoint.
+   * @param {'milestone'|'manual'|'setup'} reason
+   */
+  createCheckpoint(reason = 'milestone') {
+    const isManagedStore = this._backupManager || (path.dirname(path.resolve(this.file)) === path.resolve(paths.root));
+    if (isManagedStore) {
+      try {
+        const bm = this._backupManager || require('./backup-manager').defaultBackupManager;
+        return bm.createSnapshot(this.file, this.data, reason);
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
   }
 }
 
