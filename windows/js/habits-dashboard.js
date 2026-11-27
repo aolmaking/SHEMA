@@ -830,11 +830,37 @@
     return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
   }
 
+  function renderEmptyState(container) {
+    if (!container) return;
+    const isEn = (lang() === 'en');
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'dash-empty-state';
+    if (!state.habits || state.habits.length === 0) {
+      emptyDiv.innerHTML = `
+        <div class="empty-icon">🌱</div>
+        <div class="empty-title">${isEn ? 'No active habits tracked yet' : 'لا توجد عادات قيد المتابعة حالياً'}</div>
+        <div class="empty-sub">${isEn ? 'Start your journey by adding your first habit from (+ New Habit) above.' : 'ابدأ رحلتك بإضافة عادتك الأولى من زر <strong>(+ عادة جديدة)</strong> في أعلى اللوحة.'}</div>
+      `;
+    } else {
+      emptyDiv.innerHTML = `
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">${isEn ? 'No habits match your search or filter' : 'لا توجد عادات تطابق البحث أو الفلتر'}</div>
+        <div class="empty-sub">${isEn ? 'Try selecting another routine or clearing the search text.' : 'جرّب اختيار فترة أخرى أو مسح نص البحث لعرض بقية العادات.'}</div>
+      `;
+    }
+    container.appendChild(emptyDiv);
+  }
+
   /* 1A. Weekly Focus Grid (7 Days, Spacious & Click-Friendly) */
   function renderWeeklyGrid(filteredHabits) {
     const wrap = $('#weeklyGridContainer');
     if (!wrap) return;
     wrap.innerHTML = '';
+
+    if (!filteredHabits || filteredHabits.length === 0) {
+      renderEmptyState(wrap);
+      return;
+    }
 
     const todayStr = formatLocalDate();
     const now = new Date();
@@ -1005,6 +1031,11 @@
     if (!wrap) return;
     wrap.innerHTML = '';
 
+    if (!filteredHabits || filteredHabits.length === 0) {
+      renderEmptyState(wrap);
+      return;
+    }
+
     const [year, month] = state.activeMonth.split('-').map(Number);
     const totalDays = getDaysInMonth(year, month);
     const todayStr = formatLocalDate();
@@ -1104,6 +1135,11 @@
     const wrap = $('#cardsGridContainer');
     if (!wrap) return;
     wrap.innerHTML = '';
+
+    if (!filteredHabits || filteredHabits.length === 0) {
+      renderEmptyState(wrap);
+      return;
+    }
 
     const todayStr = formatLocalDate();
 
@@ -5142,6 +5178,12 @@
     });
 
     // Live Settings Listener (Reflects changes immediately)
+    window.widgets?.habits?.onDashboardOpts?.((opts) => {
+      if (opts?.tab) {
+        switchTab(opts.tab);
+      }
+    });
+
     window.widgets?.settings?.onChange?.((newSettings) => {
       state.allSettings = newSettings || {};
       state.settings = newSettings?.habits || {};
@@ -5880,6 +5922,20 @@
     applyDashboardTheme(curTheme);
     wireEvents();
     await loadState();
+
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialTab = urlParams.get('tab') || (window.location.hash ? window.location.hash.replace('#', '') : null);
+      if (initialTab && $(`[data-tab="${initialTab}"]`)) {
+        switchTab(initialTab);
+      }
+    } catch (_) {}
+
+    window.widgets?.habits?.onDashboardOpts?.((opts) => {
+      if (opts?.tab) {
+        switchTab(opts.tab);
+      }
+    });
 
     window.widgets?.settings?.onChange?.((newSettings) => {
       state.allSettings = newSettings || {};
