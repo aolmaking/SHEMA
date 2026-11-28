@@ -2136,6 +2136,7 @@
           <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق المكافآت</span></button>
           <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜 <span>سجل وقائع الأطلس</span></button>
           <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو والخصوصية</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabGallery" data-atlas-view="gallery">🖼️ <span>أرشيف الصور المرجعية (19 لوحة)</span></button>
         </div>
 
         <!-- Foreshadowing Whispers (If Active) -->
@@ -2494,6 +2495,25 @@
             </div>
           </div>
         </div>
+
+        <!-- SUB-VIEW 8: Official Reference Art Gallery (أرشيف الصور المرجعية) -->
+        <div class="atlas-subview" id="atlasSubViewGallery" style="display: none;">
+          <div class="atlas-card gallery-card">
+            <div class="atlas-card-head">
+              <div class="atlas-card-title-group">
+                <span class="atlas-card-icon">🖼️</span>
+                <div>
+                  <h3 class="atlas-card-title">أرشيف الصور المرجعية الرسمية للأطلس (Official Art Reference Gallery)</h3>
+                  <div class="atlas-card-sub">اللوحات الـ 19 المعتمدة كمرجعية بصرية حصرية ودائمة لعالم الأطلس ومستكشف الدرب والملاذ</div>
+                </div>
+              </div>
+              <span class="badge-mini" id="atlasGalleryCountBadge">19 لوحة مرجعية</span>
+            </div>
+            <div class="atlas-gallery-grid" id="atlasGalleryGrid">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   </div>
@@ -2647,6 +2667,20 @@
 
   <script src="js/shell.js"></script>
   <script src="js/habits-dashboard.js"></script>
+
+  <!-- The Living Atlas: Reference Art Lightbox Modal -->
+  <div class="modal-backdrop" id="atlasGalleryLightboxModal" hidden>
+    <div class="modal-card modal-compact atlas-lightbox-card">
+      <div class="modal-head">
+        <span class="modal-title" id="atlasLightboxTitle">لوحة مرجعية</span>
+        <button type="button" class="icon-btn" id="atlasLightboxCloseBtn">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 12px; text-align: center;">
+        <img id="atlasLightboxImg" src="" alt="Reference Art" style="max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.8); border: 1.5px solid rgba(251,191,36,0.5);">
+        <div id="atlasLightboxDesc" style="margin-top: 10px; font-size: 13px; color: #cbd5e1; line-height: 1.6; text-align: right; background: rgba(15,23,42,0.8); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

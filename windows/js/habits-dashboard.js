@@ -5864,6 +5864,7 @@
           { id: 'atlasSubViewChronicles', view: 'chronicles' },
           { id: 'atlasSubViewBazaar', view: 'bazaar' },
           { id: 'atlasSubViewMiro', view: 'miro' },
+          { id: 'atlasSubViewGallery', view: 'gallery' },
         ];
         subviews.forEach(s => {
           const el = $(`#${s.id}`);
@@ -6639,6 +6640,7 @@
 
     // Initialize Living Spores Particle Animation
     initAtlasSporeCanvas();
+    renderAtlasGallery();
   }
 
   /* ---------- Boot via Mirqat UI Framework ---------- */
@@ -6667,4 +6669,208 @@
     if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(updateDashTabIndicator);
     window.addEventListener('resize', updateDashTabIndicator);
   });
+
+  /* ==================================================================== *
+   * 17. OFFICIAL REFERENCE ARTWORKS GALLERY (الصور الـ 19 المعتمدة)
+   * ==================================================================== */
+  const ATLAS_REFERENCE_ARTWORKS = [
+    {
+      num: '01',
+      file: '01_world_panorama_floating_islands.jpg',
+      titleAr: 'The Grand Living Atlas Panorama (بانوراما العالم الكبرى)',
+      titleEn: 'The Grand World Panorama & Floating Islands',
+      tag: 'بانوراما العالم والمقياس الكلي',
+      desc: 'البانوراما العامة لعالم الأطلس: جزر عائمة، شلالات سماوية، أفق جبلي شاسع، ومنطاد الاستكشاف. يمثل مقياس التقدم الكلي للرحلة.'
+    },
+    {
+      num: '02',
+      file: '02_living_map_parchment_aethelia.jpg',
+      titleAr: 'The Lands of Aethelia — Core Map (خريطة قارة إيثيليا)',
+      titleEn: 'The Living Parchment Map of Aethelia',
+      tag: 'خريطة النسيج التفاعلية',
+      desc: 'الخريطة التفاعلية الأساسية: رق جلدي عتيق مع إضاءات نسيجية سحرية تشع من المسارات والمدن وبوصلة أسطرلاب مرصعة بالجواهر.'
+    },
+    {
+      num: '03',
+      file: '03_the_crossroads_stone_bridges.jpg',
+      titleAr: 'The Crossroads (مفترق الطرق الحجري)',
+      titleEn: 'The Crossroads & Ancient Stone Bridges',
+      tag: 'تكديس العادات وترابط الروتينات',
+      desc: 'ملتقى المسارات الحجرية والجسور الأثرية والشلالات المنسابة بين القباب العتيقة؛ يمثل ترابط الروتينات وتكديس العادات الواقعية.'
+    },
+    {
+      num: '04',
+      file: '04_storybook_map_forest_runes.jpg',
+      titleAr: 'The Forest Region Map & Rune Trails (خريطة دروب الغابة)',
+      titleEn: 'Hand-Drawn Storybook Forest Trails',
+      tag: 'الرسم القصصي اليدوي',
+      desc: 'خريطة إقليمية بأسلوب الرسم القصصي اليدوي: دروب بحروف ومسارات مشعة بين الأشجار العريقة ومحطات الاستراحة.'
+    },
+    {
+      num: '05',
+      file: '05_verdant_ruins_mossy_path.jpg',
+      titleAr: 'The Verdant Ruins (أطلال الغابة العتيقة)',
+      titleEn: 'Mossy Paths of the Verdant Ruins',
+      tag: 'مسارات النمو والبدايات',
+      desc: 'الممرات الحجرية المغطاة بالطحالب وجذور الأشجار الضخمة؛ تمثل مسارات النمو والجسد ومواجهة ركام البدايات.'
+    },
+    {
+      num: '06',
+      file: '06_the_wayfinder_pilgrim_journey.jpg',
+      titleAr: 'The Wayfinder & The Glowing Wisps (رحلة المستكشف ومسار النور)',
+      titleEn: 'The Wayfinder Pilgrim Following Wisps',
+      tag: 'شخصية المستكشف والرحلة',
+      desc: 'شخصية المستكشف بحقيبة السفر وعصا الترحال، يتبع أضواء النسيج الهادية نحو الأفق المفتوح.'
+    },
+    {
+      num: '07',
+      file: '07_cartographer_study_haven_library.jpg',
+      titleAr: "The Cartographer's Hall (قاعة الخرائط ومكتبة الملاذ)",
+      titleEn: 'Haven Library & Cartographer Study',
+      tag: 'بيئة التركيز والأرشيف',
+      desc: 'المقر الرئيسي بالملاذ الأول: طاولة الخرائط الضخمة المنارة بالشموع، رفوف الكتب اللانهائية، والمخطوطات؛ بيئة التعلم والأرشيف.'
+    },
+    {
+      num: '08',
+      file: '08_world_tree_radiant_city.jpg',
+      titleAr: 'The World Tree & Radiant Haven (شجرة العالم الكبرى)',
+      titleEn: 'The World Tree & Radiant Valley Haven',
+      tag: 'شجرة العالم والازدهار التام',
+      desc: 'شجرة العالم الكبرى المضيئة المظلة على المدينة المشيدة في الوادي الأخضر؛ يمثل الازدهار والاستقرار التام للعادات.'
+    },
+    {
+      num: '09',
+      file: '09_astrolabe_skill_tree_medallion.jpg',
+      titleAr: 'The Astrolabe Skill Tree (شجرة المهارات الأسطرلابية)',
+      titleEn: 'Celestial Astrolabe Constellation Medallion',
+      tag: 'شجرة المهارات السلوكية',
+      desc: 'ميدالية أسطرلاب ذهبية ونحاسية منقوشة بشجرة الحياة والدوائر والرموز الفلكية؛ التصميم المعتمد لشجرة المهارات.'
+    },
+    {
+      num: '10',
+      file: '10_shadow_confrontation_ink_wash.jpg',
+      titleAr: 'Encountering the Great Shadow (مواجهة الظلال بالحبر المائي)',
+      titleEn: 'Ink-Wash Encounter with the Shadow',
+      tag: 'المحاكمات والمشاريع الكبرى',
+      desc: 'أسلوب الحبر المائي: المستكشف بفانوسه في الغابة المظلمة يواجه ظلاً عملاقاً يمثل التحديات والمشاريع الكبرى دون لوم.'
+    },
+    {
+      num: '11',
+      file: '11_enchanted_archway_waymark.jpg',
+      titleAr: 'The Living Waymark (علامة الطريق الحية)',
+      titleEn: 'Enchanted Archway & Miro Sprout Waymark',
+      tag: 'علامات الطريق ونوايا التنفيذ',
+      desc: 'قوس صخري أثري مغطى بأوراق لبلاب ندية يخرج من قاعدته كائن النور؛ يمثل علامات الطريق ونوايا التنفيذ.'
+    },
+    {
+      num: '12',
+      file: '12_woodland_echoes_shadow_spirits.jpg',
+      titleAr: 'The Woodland Echoes (أصداء الغابة اللطيفة)',
+      titleEn: 'Woodland Echoes & Ancient Habit Patterns',
+      tag: 'أصداء الأنماط السابقة',
+      desc: 'كائنات ظلال لطيفة وغامضة بعيون بيضاء مشعة تطل من خلف جذوع الأشجار؛ يمثل أصداء الأنماط القديمة والتعافي الواعي.'
+    },
+    {
+      num: '13',
+      file: '13_miro_starlight_spirit_official.jpg',
+      titleAr: 'Miro Official Reference (طائر الحبر ونور النجوم)',
+      titleEn: 'Miro the Starlight Ink Spirit Official',
+      tag: 'الرفيق الحي ميرو',
+      desc: 'كائن النور والرفيق الحي لمستكشف الدرب. يجمع بين طائر النور الحبري والنجوم المتلألئة؛ يقدم الحوارات والاستشارات والتشجيع.'
+    },
+    {
+      num: '14',
+      file: '14_arco_mossy_entrance_wayfinder.jpg',
+      titleAr: 'Arco Ancient Temple & Wayfinder (بطل الأطلس ومدخل المعبد)',
+      titleEn: 'Arco Style Ancient Ruin & Pixel Adventurer',
+      tag: 'تجسيد شخصية المستكشف البكسلية',
+      desc: 'المرجع البصري الأساسي لتجسيد شخصية المستكشف البكسلي القائم أمام معبد الغابة العتيق المكسو بالطحالب مع اليراعات السحرية.'
+    },
+    {
+      num: '15',
+      file: '15_sword_pedestal_godrays.jpg',
+      titleAr: 'Sword on Stone Pedestal with God Rays (سيف الصرح وحزم النور)',
+      titleEn: 'Sword on Stone Pedestal with Sunbeams',
+      tag: 'أشعة الشمس الإلهية ومحراب النصب',
+      desc: 'المرجع الأساسي لأشعة الشمس الإلهية المتلألئة (God Rays) المتدفقة عبر غصون الغابة؛ صرح النُّصُب ومحراب التثبيت والاستقرار.'
+    },
+    {
+      num: '16',
+      file: '16_colossal_ancient_arches_canopy.jpg',
+      titleAr: 'Colossal Ancient Arches & Canopy (الأقواس الحجرية والمظلة الكبرى)',
+      titleEn: 'Colossal Ancient Arches & Forest Canopy',
+      tag: 'بانوراما مسرح الملاذ الحي',
+      desc: 'الخلفية البانورامية الرئيسية لمسرح الملاذ الحي: أقواس معمارية مهيبة تعانق الأشجار العملاقة وضوء الصباح الضبابي.'
+    },
+    {
+      num: '17',
+      file: '17_giant_stone_face_ruins.jpg',
+      titleAr: 'Colossal Stone Face Sanctuary (وجه الصرح الحجري العملاق)',
+      titleEn: 'Colossal Stone Face in the Overgrown Ruins',
+      tag: 'أطلال المحاكمات والعقبات الكبرى',
+      desc: 'المرجع البصري لصرح المحاكمات والعقبات الكبرى: وجه صخري عملاق نابت عليه الأعشاب واللبلاب يواجهه المستكشف بهيبة وسلام.'
+    },
+    {
+      num: '18',
+      file: '18_nature_reclaims_sanctuary.jpg',
+      titleAr: 'Nature Reclaims Architecture (الطبيعة تستعيد العمارة القديمة)',
+      titleEn: 'Nature Reclaiming Train Station & Architecture',
+      tag: 'سوق غنائم الملاذ والاستشفاء',
+      desc: 'المرجع البصري لسوق غنائم الملاذ ومحطات السكينة: عمارة عتيقة مكسوة بالأوراق الخضراء تتغلغل فيها شمس الصباح الحيوية.'
+    },
+    {
+      num: '19',
+      file: '19_overgrown_creeping_vines_border.png',
+      titleAr: 'Overgrown Creeping Vines & Border Foliage (الإطار النباتي الزاحف)',
+      titleEn: 'Creeping Pixel Vines & Border Foliage',
+      tag: 'الإطار الزاحف خارج حدود النافذة',
+      desc: 'المرجع الدقيق والحصري لأنيميشن الفروع النباتية والأوراق والبراعم الزاحفة على حواف النافذة الفائضة خارج الحدود بعدة مليمترات.'
+    }
+  ];
+
+  function renderAtlasGallery() {
+    const grid = document.getElementById('atlasGalleryGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    ATLAS_REFERENCE_ARTWORKS.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'atlas-gallery-item';
+      card.innerHTML = `
+        <div class="gallery-thumb-wrap">
+          <img class="gallery-thumb-img" src="../../assets/brand/living-atlas/${item.file}" alt="${item.titleAr}" loading="lazy">
+          <span class="gallery-num-badge">#${item.num}</span>
+        </div>
+        <div class="gallery-meta">
+          <div class="gallery-title-ar">${item.titleAr}</div>
+          <div class="gallery-title-en">${item.titleEn}</div>
+          <div class="gallery-desc">${item.desc}</div>
+          <span class="gallery-role-tag">${item.tag}</span>
+        </div>
+      `;
+
+      card.onclick = () => {
+        const modal = document.getElementById('atlasGalleryLightboxModal');
+        const img = document.getElementById('atlasLightboxImg');
+        const title = document.getElementById('atlasLightboxTitle');
+        const desc = document.getElementById('atlasLightboxDesc');
+        if (modal && img) {
+          img.src = `../../assets/brand/living-atlas/${item.file}`;
+          if (title) title.textContent = `[${item.num}] ${item.titleAr}`;
+          if (desc) desc.innerHTML = `<strong>${item.tag}</strong><br>${item.desc}`;
+          modal.hidden = false;
+        }
+      };
+
+      grid.appendChild(card);
+    });
+
+    const closeBtn = document.getElementById('atlasLightboxCloseBtn');
+    const modal = document.getElementById('atlasGalleryLightboxModal');
+    if (closeBtn && modal) {
+      closeBtn.onclick = () => { modal.hidden = true; };
+      modal.onclick = (e) => { if (e.target === modal) modal.hidden = true; };
+    }
+  }
+
 })();
