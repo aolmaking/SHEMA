@@ -26,13 +26,18 @@ const { AtlasTrialsEngine, MAJOR_TRIALS_CATALOG } = require('./atlas-trials');
 const { AtlasRewardsEngine, PRESET_REWARD_TEMPLATES } = require('./atlas-rewards');
 
 class AtlasEngine extends EventEmitter {
-  constructor({ storePath = null } = {}) {
+  constructor({ storePath = null, getSettings = null } = {}) {
     super();
     this.store = new AtlasStore(storePath);
     this.bus = new AtlasEventBus();
     this.miro = new MiroCompanion();
     this._habitsManager = null;
+    this._getSettings = getSettings;
     this._initListeners();
+  }
+
+  setSettingsGetter(fn) {
+    this._getSettings = fn;
   }
 
   _initListeners() {
@@ -451,9 +456,38 @@ class AtlasEngine extends EventEmitter {
 
   /**
    * Miro Multi-Modal Interactive Consultation
+   * AI-powered when Gemini API is enabled in settings, with graceful deterministic fallback.
+   * Returns consultation synchronously when AI is not configured, or a Promise when AI is active.
    */
-  consultMiro(modeKey, lang = 'ar') {
+  consultMiro(modeKey, lang = 'ar', userQuestion = '') {
     const consultation = this.miro.consult(modeKey, lang);
+    const settings = (typeof this._getSettings === 'function') ? this._getSettings() : null;
+    const atlasConf = settings?.atlas || {};
+
+    if (atlasConf.aiEnabled && atlasConf.apiKey && atlasConf.apiKey.trim()) {
+      const { consultMiroWithAi } = require('./atlas-ai');
+      const wayfinderState = this.store.data.wayfinder || {};
+      return consultMiroWithAi({
+        apiKey: atlasConf.apiKey.trim(),
+        model: atlasConf.model || 'gemini-1.5-flash',
+        modeKey,
+        userQuestion,
+        wayfinderState,
+        lang,
+      }).then(aiRes => {
+        if (aiRes && aiRes.ok && aiRes.text) {
+          consultation.dialogue = aiRes.text;
+          consultation.isAiGenerated = true;
+        }
+        this.emit('atlas:miro-consulted', consultation);
+        return consultation;
+      }).catch(err => {
+        consultation.aiError = err.message;
+        this.emit('atlas:miro-consulted', consultation);
+        return consultation;
+      });
+    }
+
     this.emit('atlas:miro-consulted', consultation);
     return consultation;
   }

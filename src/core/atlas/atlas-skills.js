@@ -89,7 +89,7 @@ const ASTROLABE_SKILLS = Object.freeze([
     icon: '🧹',
     descriptionAr: 'توثيق خطة تمهيد البيئة أو إعداد الأدوات لـ 5 مرات في المساء.',
     descriptionEn: 'Prime your environment or prepare tools the evening before 5 times.',
-    mechanicalEffectAr: 'خفض مقاومة البداية ومنح 25 حجر أثير لترميم الملاذ.',
+    mechanicalEffectAr: 'خفض مقاومة البداية ومنح 25 بلورة طاقة لترميم الملاذ.',
     mechanicalEffectEn: 'Reduces startup friction and awards 25 Aether Shards for Haven restoration.',
     materialReward: { aetherShards: 25 },
     evaluateRequirement: (stats) => {
@@ -133,7 +133,7 @@ const ASTROLABE_SKILLS = Object.freeze([
     icon: '🌊',
     descriptionAr: 'إنجاز 3 خطوات مصغرة منقذة في الأيام المزدحمة بدلاً من الانقطاع.',
     descriptionEn: 'Execute 3 micro-step fallbacks during heavy days instead of dropping the habit.',
-    mechanicalEffectAr: 'تعزيز استقرار المسار ومنح 25 حجر أثير و15 قصاصة مخطوطات.',
+    mechanicalEffectAr: 'تعزيز استقرار المسار ومنح 25 بلورة طاقة و15 قصاصة مخطوطات.',
     mechanicalEffectEn: 'Reinforces trail stability and awards 25 Aether Shards and 15 Manuscripts.',
     materialReward: { aetherShards: 25, manuscriptScraps: 15 },
     evaluateRequirement: (stats) => {
@@ -155,7 +155,7 @@ const ASTROLABE_SKILLS = Object.freeze([
     icon: '⚓',
     descriptionAr: 'إيصال عادة واحدة على الأقل إلى حالة الرسوخ التام (42 تكراراً فأكثر).',
     descriptionEn: 'Bring at least one habit to full Mastery state (42+ verified repetitions).',
-    mechanicalEffectAr: 'نقش وسام الرسوخ الدائم في أطلس الملاذ ومنح 40 بذرة نور و40 حجر أثير.',
+    mechanicalEffectAr: 'نقش وسام الرسوخ الدائم في أطلس الملاذ ومنح 40 بذرة نور و40 بلورة طاقة.',
     mechanicalEffectEn: 'Engraves a permanent Mastery Crest in the Atlas, awards 40 Seeds & 40 Aether.',
     materialReward: { seedsOfLight: 40, aetherShards: 40 },
     evaluateRequirement: (stats, habits = []) => {

@@ -5925,6 +5925,47 @@
       };
     });
 
+    // Interactive Ask Miro directly
+    const askInput = $('#atlasMiroAskInput');
+    const askBtn = $('#atlasMiroAskBtn');
+    if (askBtn && askInput) {
+      const handleAsk = async () => {
+        const question = askInput.value.trim();
+        if (!question) return;
+        askBtn.disabled = true;
+        const prevText = miroBoxContent ? miroBoxContent.textContent : '';
+        if (miroBoxContent) miroBoxContent.textContent = isEn ? '"Miro is reflecting on the Weave..."' : '"ميرو يتأمل النسيج الحي ويصيغ المشورة..."';
+        try {
+          if (window.widgets?.atlas?.consultMiro) {
+            const consultation = await window.widgets.atlas.consultMiro({
+              modeKey: 'reflection',
+              lang: state.language || 'ar',
+              userQuestion: question,
+            });
+            if (consultation && consultation.dialogue) {
+              if (miroBoxTitle) miroBoxTitle.textContent = isEn ? (consultation.isAiGenerated ? '✨ Miro AI Counsel' : consultation.titleEn) : (consultation.isAiGenerated ? '✨ مشورة ميرو الذكية' : consultation.titleAr);
+              if (miroBoxContent) miroBoxContent.textContent = `"${consultation.dialogue}"`;
+              if (speechEl) speechEl.textContent = `"${consultation.dialogue}"`;
+              askInput.value = '';
+            }
+          }
+        } catch (err) {
+          console.error('[Atlas] Miro AI consultation failed:', err);
+          if (miroBoxContent) miroBoxContent.textContent = prevText;
+        } finally {
+          askBtn.disabled = false;
+        }
+      };
+
+      askBtn.onclick = handleAsk;
+      askInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAsk();
+        }
+      };
+    }
+
     // 11. Phase 3: Major Trials (Boss Replacement)
     const trialsGridEl = $('#atlasTrialsGrid');
     if (trialsGridEl && Array.isArray(atlasState.trials)) {

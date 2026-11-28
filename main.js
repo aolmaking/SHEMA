@@ -475,7 +475,7 @@ habitsManager.on('habits-changed', (habits) => broadcast('habits:changed', habit
 habitsManager.on('log-changed', (payload) => broadcast('habits:log-changed', payload));
 habitsManager.on('gamification-updated', (gamification) => broadcast('habits:gamification-updated', gamification));
 
-const atlasEngine = new AtlasEngine({ storePath: paths.atlas });
+const atlasEngine = new AtlasEngine({ storePath: paths.atlas, getSettings: () => settings.data });
 atlasEngine.bridgeHabitsManager(habitsManager);
 atlasEngine.on('atlas:updated', (atlasState) => broadcast('atlas:updated', atlasState));
 
@@ -5630,7 +5630,7 @@ function registerIpc() {
   ipcMain.handle('atlas:resolve-obstacle', (_e, { obstacleKey, strategyKey } = {}) => atlasEngine.resolveObstacle(obstacleKey, strategyKey));
   ipcMain.handle('atlas:get-miro-dialogue', (_e, { state, context } = {}) => atlasEngine.miro.getDialogueForState(state, context));
   ipcMain.handle('atlas:craft-project', (_e, projectId) => atlasEngine.craftProject(projectId));
-  ipcMain.handle('atlas:consult-miro', (_e, { modeKey, lang } = {}) => atlasEngine.consultMiro(modeKey, lang || settings.get('language') || 'ar'));
+  ipcMain.handle('atlas:consult-miro', (_e, { modeKey, lang, userQuestion } = {}) => atlasEngine.consultMiro(modeKey, lang || settings.get('language') || 'ar', userQuestion || ''));
   ipcMain.handle('atlas:advance-obstacle', (_e, { obstacleKey, strategyKey } = {}) => atlasEngine.advanceObstacleTier(obstacleKey, strategyKey));
   ipcMain.handle('atlas:complete-trial', (_e, trialId) => atlasEngine.completeTrial(trialId));
   ipcMain.handle('atlas:redeem-reward', (_e, rewardId) => atlasEngine.redeemReward(rewardId));

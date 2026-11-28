@@ -180,6 +180,8 @@ class MiroCompanion {
     return {
       mode: mode.id,
       title: isEn ? mode.titleEn : mode.titleAr,
+      titleAr: mode.titleAr,
+      titleEn: mode.titleEn,
       icon: mode.icon,
       dialogue,
       glowIntensity: this.glowIntensity,
