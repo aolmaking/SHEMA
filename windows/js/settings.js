@@ -3,6 +3,7 @@
    update while the user is still dragging a slider. */
 
 const { $, el, icon, boot, closeWindow, applySettings, debounce, t, strings, lang, digits } = window.UI;
+const $$ = (typeof window.UI?.$$ === 'function') ? window.UI.$$ : (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
 strings({
   ar: {
@@ -2569,6 +2570,135 @@ function buildSuperUrgentAndWhatsApp() {
     };
   });
 
+  // Channel Testing Handlers
+  const suTestBtn = $('#waChanSuperUrgentTestBtn');
+  const suTestStatus = $('#waChanSuperUrgentTestStatus');
+  if (suTestBtn) {
+    suTestBtn.onclick = async () => {
+      suTestBtn.disabled = true;
+      if (suTestStatus) {
+        suTestStatus.style.color = 'var(--ink-3)';
+        suTestStatus.textContent = en() ? '⏳ Testing...' : '⏳ جاري الاختبار...';
+      }
+      try {
+        const modeEl = $('#waChanSuperUrgentMode');
+        const inputEl = $('#waChanSuperUrgentRecipient');
+        const isCustom = modeEl && modeEl.value === 'custom';
+        const targetRecip = isCustom && inputEl ? inputEl.value.trim() : (wa.phone || '');
+        const res = await window.widgets.whatsapp.test({
+          ...wa,
+          phone: targetRecip,
+          phoneNumbers: targetRecip ? [targetRecip] : [],
+        });
+        if (res?.ok) {
+          if (suTestStatus) {
+            suTestStatus.style.color = '#10b981';
+            suTestStatus.textContent = en() ? '✅ Sent!' : '✅ تم الإرسال!';
+          }
+        } else {
+          if (suTestStatus) {
+            suTestStatus.style.color = '#ef4444';
+            suTestStatus.textContent = en() ? `❌ Failed: ${res?.error || ''}` : `❌ فشل: ${res?.error || ''}`;
+          }
+        }
+      } catch (err) {
+        if (suTestStatus) {
+          suTestStatus.style.color = '#ef4444';
+          suTestStatus.textContent = `❌ ${err.message || 'Error'}`;
+        }
+      } finally {
+        suTestBtn.disabled = false;
+        setTimeout(() => { if (suTestStatus) suTestStatus.textContent = ''; }, 4000);
+      }
+    };
+  }
+
+  const hrTestBtn = $('#waChanHabitsReportsTestBtn');
+  const hrTestStatus = $('#waChanHabitsReportsTestStatus');
+  if (hrTestBtn) {
+    hrTestBtn.onclick = async () => {
+      hrTestBtn.disabled = true;
+      if (hrTestStatus) {
+        hrTestStatus.style.color = 'var(--ink-3)';
+        hrTestStatus.textContent = en() ? '⏳ Testing...' : '⏳ جاري الاختبار...';
+      }
+      try {
+        const modeEl = $('#waChanHabitsReportsMode');
+        const inputEl = $('#waChanHabitsReportsRecipient');
+        const isCustom = modeEl && modeEl.value === 'custom';
+        const customRecip = isCustom && inputEl ? inputEl.value.trim() : null;
+        const res = await (window.widgets?.habits?.sendWaReport
+          ? window.widgets.habits.sendWaReport({ type: 'daily', recipient: customRecip, lang: s.language || 'ar' })
+          : { ok: false, error: 'unavailable' });
+        if (res?.ok || res?.success) {
+          if (hrTestStatus) {
+            hrTestStatus.style.color = '#10b981';
+            hrTestStatus.textContent = en() ? '✅ Sent!' : '✅ تم الإرسال!';
+          }
+        } else {
+          if (hrTestStatus) {
+            hrTestStatus.style.color = '#ef4444';
+            hrTestStatus.textContent = en() ? `❌ Failed: ${res?.error || ''}` : `❌ فشل: ${res?.error || ''}`;
+          }
+        }
+      } catch (err) {
+        if (hrTestStatus) {
+          hrTestStatus.style.color = '#ef4444';
+          hrTestStatus.textContent = `❌ ${err.message || 'Error'}`;
+        }
+      } finally {
+        hrTestBtn.disabled = false;
+        setTimeout(() => { if (hrTestStatus) hrTestStatus.textContent = ''; }, 4000);
+      }
+    };
+  }
+
+  const calTestBtn = $('#waChanCalendarTestBtn');
+  const calTestStatus = $('#waChanCalendarTestStatus');
+  if (calTestBtn) {
+    calTestBtn.onclick = async () => {
+      calTestBtn.disabled = true;
+      if (calTestStatus) {
+        calTestStatus.style.color = 'var(--ink-3)';
+        calTestStatus.textContent = en() ? '⏳ Testing...' : '⏳ جاري الاختبار...';
+      }
+      try {
+        const modeEl = $('#waChanCalendarMode');
+        const inputEl = $('#waChanCalendarRecipient');
+        const isCustom = modeEl && modeEl.value === 'custom';
+        const customRecip = isCustom && inputEl ? inputEl.value.trim() : null;
+        const testEvent = {
+          title: en() ? 'Upcoming Meeting / Occasion' : 'موعد / مناسبة هامة في التقويم',
+          date: new Date().toISOString().slice(0, 10),
+          time: '12:00',
+          category: 'work',
+        };
+        const res = await (window.widgets?.calendar?.testEventWhatsApp
+          ? window.widgets.calendar.testEventWhatsApp({ event: testEvent, overrideRecipient: customRecip })
+          : { ok: false, error: 'unavailable' });
+        if (res?.ok || res?.success) {
+          if (calTestStatus) {
+            calTestStatus.style.color = '#10b981';
+            calTestStatus.textContent = en() ? '✅ Sent!' : '✅ تم الإرسال!';
+          }
+        } else {
+          if (calTestStatus) {
+            calTestStatus.style.color = '#ef4444';
+            calTestStatus.textContent = en() ? `❌ Failed: ${res?.error || ''}` : `❌ فشل: ${res?.error || ''}`;
+          }
+        }
+      } catch (err) {
+        if (calTestStatus) {
+          calTestStatus.style.color = '#ef4444';
+          calTestStatus.textContent = `❌ ${err.message || 'Error'}`;
+        }
+      } finally {
+        calTestBtn.disabled = false;
+        setTimeout(() => { if (calTestStatus) calTestStatus.textContent = ''; }, 4000);
+      }
+    };
+  }
+
   // ── Habit Reminders: Scope Switcher (All Habits vs Specific Habit) & Interactive Habits List ──
   const setupHabitRemindersCustomizer = async () => {
     const habitRoute = (wa.routes && wa.routes.habitReminders) || {};
@@ -2579,24 +2709,26 @@ function buildSuperUrgentAndWhatsApp() {
     const allWrap = $('#waHabitAllWrap');
     const specificWrap = $('#waHabitSpecificWrap');
 
-    const updateScopeUI = (scope) => {
+    const updateScopeUI = (scope, save = false) => {
       activeScope = scope;
       if (scopeAllBtn) scopeAllBtn.classList.toggle('on', scope === 'all');
       if (scopeSpecificBtn) scopeSpecificBtn.classList.toggle('on', scope === 'specific');
       if (allWrap) allWrap.style.display = scope === 'all' ? 'block' : 'none';
       if (specificWrap) specificWrap.style.display = scope === 'specific' ? 'block' : 'none';
 
-      if (!s.whatsapp) s.whatsapp = {};
-      if (!s.whatsapp.routes) s.whatsapp.routes = {};
-      if (!s.whatsapp.routes.habitReminders) s.whatsapp.routes.habitReminders = { useCustom: false, recipient: '' };
-      s.whatsapp.routes.habitReminders.scope = scope;
-      setGroup('whatsapp', { routes: s.whatsapp.routes });
+      if (save) {
+        if (!s.whatsapp) s.whatsapp = {};
+        if (!s.whatsapp.routes) s.whatsapp.routes = {};
+        if (!s.whatsapp.routes.habitReminders) s.whatsapp.routes.habitReminders = { useCustom: false, recipient: '' };
+        s.whatsapp.routes.habitReminders.scope = scope;
+        setGroup('whatsapp', { routes: s.whatsapp.routes });
+      }
     };
 
-    if (scopeAllBtn) scopeAllBtn.onclick = () => updateScopeUI('all');
-    if (scopeSpecificBtn) scopeSpecificBtn.onclick = () => updateScopeUI('specific');
+    if (scopeAllBtn) scopeAllBtn.onclick = () => updateScopeUI('all', true);
+    if (scopeSpecificBtn) scopeSpecificBtn.onclick = () => updateScopeUI('specific', true);
 
-    updateScopeUI(activeScope);
+    updateScopeUI(activeScope, false);
 
     let cachedHabits = [];
     const habitPickerSelect = $('#waHabitPickerSelect');
@@ -2618,6 +2750,8 @@ function buildSuperUrgentAndWhatsApp() {
     const quickHabitMode = $('#waQuickHabitMode');
     const quickHabitRecipient = $('#waQuickHabitRecipient');
     const quickHabitSaveIndicator = $('#waQuickHabitSaveIndicator');
+    const quickHabitTestBtn = $('#waQuickHabitTestBtn');
+    const quickHabitTestStatus = $('#waQuickHabitTestStatus');
     const btnOpenHabitMsgModalAll = $('#btnOpenHabitMsgModalAll');
     const btnOpenHabitMsgModalSpecific = $('#btnOpenHabitMsgModalSpecific');
 
@@ -2900,6 +3034,50 @@ function buildSuperUrgentAndWhatsApp() {
       };
     }
 
+    if (quickHabitTestBtn) {
+      quickHabitTestBtn.onclick = async () => {
+        const targetHabit = cachedHabits.find(h => h.id === currentSelectedHabitId) || cachedHabits[0];
+        if (!targetHabit) {
+          if (quickHabitTestStatus) {
+            quickHabitTestStatus.style.color = '#ef4444';
+            quickHabitTestStatus.textContent = en() ? 'No habit selected' : 'لم يتم اختيار عادة';
+          }
+          return;
+        }
+        quickHabitTestBtn.disabled = true;
+        if (quickHabitTestStatus) {
+          quickHabitTestStatus.style.color = 'var(--ink-3)';
+          quickHabitTestStatus.textContent = en() ? '⏳ Sending test...' : '⏳ جاري إرسال التجربة...';
+        }
+        try {
+          const isCustom = quickHabitMode?.value === 'custom';
+          const customRecip = isCustom && quickHabitRecipient ? quickHabitRecipient.value.trim() : null;
+          const res = await (window.widgets?.habits?.testHabitReminder
+            ? window.widgets.habits.testHabitReminder({ habitId: targetHabit.id, lang: s.language || 'ar', recipient: customRecip })
+            : { ok: false, error: 'unavailable' });
+          if (res?.ok || res?.success) {
+            if (quickHabitTestStatus) {
+              quickHabitTestStatus.style.color = '#10b981';
+              quickHabitTestStatus.textContent = en() ? '✅ Sent successfully!' : '✅ تم الإرسال بنجاح!';
+            }
+          } else {
+            if (quickHabitTestStatus) {
+              quickHabitTestStatus.style.color = '#ef4444';
+              quickHabitTestStatus.textContent = en() ? `❌ Failed: ${res?.error || 'error'}` : `❌ فشل: ${res?.error || 'خطأ'}`;
+            }
+          }
+        } catch (err) {
+          if (quickHabitTestStatus) {
+            quickHabitTestStatus.style.color = '#ef4444';
+            quickHabitTestStatus.textContent = `❌ ${err.message || 'Error'}`;
+          }
+        } finally {
+          quickHabitTestBtn.disabled = false;
+          setTimeout(() => { if (quickHabitTestStatus) quickHabitTestStatus.textContent = ''; }, 4000);
+        }
+      };
+    }
+
     // Smart Habit Message Formulator Modal Logic
     const getDefaultHabitTemplate = (h) => {
       const isEn = en();
@@ -3017,7 +3195,7 @@ function buildSuperUrgentAndWhatsApp() {
     });
 
     // Tag Insertion
-    $$('#waHabitModalTagsList .wa-tag-chip').forEach(chip => {
+    document.querySelectorAll('#waHabitModalTagsList .wa-tag-chip').forEach(chip => {
       chip.onclick = () => {
         const tag = chip.dataset.tag;
         if (!tag || !habitModalTemplate) return;
@@ -3131,15 +3309,17 @@ function buildSuperUrgentAndWhatsApp() {
         if (window.widgets?.habits?.getState) {
           const state = await window.widgets.habits.getState();
           cachedHabits = (state?.habits || []).filter(h => !h.archived);
-          renderHabits();
         } else if (window.widgets?.habits?.getHabits) {
           const list = await window.widgets.habits.getHabits(true);
           cachedHabits = (list || []).filter(h => !h.archived);
-          renderHabits();
         }
-      } catch (_err) { }
+      } catch (err) {
+        console.warn('Failed to load habits for WhatsApp settings:', err);
+      }
+      renderHabits();
     };
 
+    renderHabits();
     window.__refreshWaHabits = refreshHabits;
     await refreshHabits();
 
@@ -4547,6 +4727,43 @@ function buildHabits() {
   if ($('#habitsWaReportLang')) {
     $('#habitsWaReportLang').value = h.reportLang || 'ar';
     $('#habitsWaReportLang').onchange = (e) => setGroup('habits', { reportLang: e.target.value });
+  }
+
+  const habitsWaTestReportBtn = $('#habitsWaTestReportBtn');
+  const habitsWaTestReportStatus = $('#habitsWaTestReportStatus');
+  if (habitsWaTestReportBtn) {
+    habitsWaTestReportBtn.onclick = async () => {
+      habitsWaTestReportBtn.disabled = true;
+      if (habitsWaTestReportStatus) {
+        habitsWaTestReportStatus.style.color = 'var(--ink-3)';
+        habitsWaTestReportStatus.textContent = en() ? '⏳ Sending test report...' : '⏳ جاري إرسال التقرير...';
+      }
+      try {
+        const customRecip = $('#habitsWaRecipientOverride')?.value.trim() || null;
+        const res = await (window.widgets?.habits?.sendWaReport
+          ? window.widgets.habits.sendWaReport({ type: 'daily', recipient: customRecip, lang: h.reportLang || s.language || 'ar' })
+          : { ok: false, error: 'unavailable' });
+        if (res?.ok || res?.success) {
+          if (habitsWaTestReportStatus) {
+            habitsWaTestReportStatus.style.color = '#10b981';
+            habitsWaTestReportStatus.textContent = en() ? '✅ Report sent successfully!' : '✅ تم إرسال التقرير بنجاح!';
+          }
+        } else {
+          if (habitsWaTestReportStatus) {
+            habitsWaTestReportStatus.style.color = '#ef4444';
+            habitsWaTestReportStatus.textContent = en() ? `❌ Failed: ${res?.error || 'error'}` : `❌ فشل: ${res?.error || 'خطأ'}`;
+          }
+        }
+      } catch (err) {
+        if (habitsWaTestReportStatus) {
+          habitsWaTestReportStatus.style.color = '#ef4444';
+          habitsWaTestReportStatus.textContent = `❌ ${err.message || 'Error'}`;
+        }
+      } finally {
+        habitsWaTestReportBtn.disabled = false;
+        setTimeout(() => { if (habitsWaTestReportStatus) habitsWaTestReportStatus.textContent = ''; }, 4000);
+      }
+    };
   }
 
   if ($('#habitsOpenManagerForRemindersBtn')) {

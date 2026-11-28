@@ -5568,15 +5568,15 @@ function registerIpc() {
     return habitsManager.attackBoss(p.damage, p.source);
   });
   ipcMain.handle('habits:cast-skill', (_e, skillId) => habitsManager.castSkill(skillId));
-  ipcMain.handle('habits:send-wa-report', async (_e, { type, previewOnly, targetDateStr, lang } = {}) => {
+  ipcMain.handle('habits:send-wa-report', async (_e, { type, previewOnly, targetDateStr, lang, recipient: customRecipient } = {}) => {
     const reportText = habitsManager.generateWhatsAppReport(type || 'monthly', targetDateStr, lang);
     if (previewOnly) {
       return { success: true, text: reportText, preview: reportText };
     }
     const hSettings = settings.get('habits', {});
-    const recipient = (settings.data.whatsapp?.routes?.habitsReports?.useCustom && settings.data.whatsapp?.routes?.habitsReports?.recipient)
+    const recipient = customRecipient || ((settings.data.whatsapp?.routes?.habitsReports?.useCustom && settings.data.whatsapp?.routes?.habitsReports?.recipient)
       ? settings.data.whatsapp.routes.habitsReports.recipient
-      : (hSettings.waRecipientOverride || '');
+      : (hSettings.waRecipientOverride || ''));
     const res = await WhatsAppDispatcher.send(settings.data, {
       type: 'habits_report',
       text: reportText,
@@ -5593,13 +5593,14 @@ function registerIpc() {
 
   ipcMain.handle('habits:test-habit-reminder', async (_e, payload) => {
     const habitId = typeof payload === 'object' && payload !== null ? payload.habitId : payload;
+    const overrideRecipient = typeof payload === 'object' && payload !== null ? (payload.recipient || payload.overrideRecipient) : null;
     const habit = habitsManager.getHabit(habitId);
     if (!habit) return { success: false, error: 'العادة غير موجودة' };
     const streak = habitsManager.calculateStreak(habitId);
-    const lang = settings.get('language') || 'ar';
+    const lang = (payload && payload.lang) || settings.get('language') || 'ar';
     const text = habitsManager.buildHabitReminderMessage(habit, streak, lang);
     const hSettings = settings.get('habits', {});
-    const recipient = habit.reminderRecipient ||
+    const recipient = overrideRecipient || habit.reminderRecipient ||
       (settings.data.whatsapp?.routes?.habitReminders?.scope !== 'specific' && settings.data.whatsapp?.routes?.habitReminders?.useCustom && settings.data.whatsapp?.routes?.habitReminders?.recipient
         ? settings.data.whatsapp.routes.habitReminders.recipient
         : (settings.data.whatsapp?.routes?.habitsReports?.useCustom && settings.data.whatsapp?.routes?.habitsReports?.recipient

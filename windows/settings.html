@@ -1280,6 +1280,13 @@
             </select>
           </div>
 
+          <div class="row buttons" style="margin-top: 10px;">
+            <button type="button" class="btn small primary" id="habitsWaTestReportBtn">
+              <span>🚀</span> <span>إرسال تقرير تجريبي إلى واتساب الآن</span>
+            </button>
+            <span class="hint inline" id="habitsWaTestReportStatus"></span>
+          </div>
+
           <!-- Individual Habit WhatsApp Reminders Hub in Habits Section -->
           <div class="habit-reminders-overview-box" style="margin-top: 14px; padding: 12px 14px; background: color-mix(in srgb, var(--tile) 90%, transparent); border: 1px solid var(--line); border-radius: var(--radius-md);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -2017,6 +2024,10 @@
                 <div class="wa-chan-input-wrap" id="waChanSuperUrgentInputWrap" style="display: none;">
                   <input type="text" class="field ltr small" id="waChanSuperUrgentRecipient" placeholder="رقم هاتف (2010xxxx) أو معرف مجموعة (120363@g.us)" data-i18n-ph="s.waChanSuperUrgentPh">
                 </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                  <button type="button" class="btn small" id="waChanSuperUrgentTestBtn" style="font-size: 10px; padding: 2px 8px;">🔔 اختبار التوجيه</button>
+                  <span id="waChanSuperUrgentTestStatus" style="font-size: 10px;"></span>
+                </div>
               </div>
 
               <!-- Channel 2: Habits Reports & Digests -->
@@ -2031,6 +2042,10 @@
                 </div>
                 <div class="wa-chan-input-wrap" id="waChanHabitsReportsInputWrap" style="display: none;">
                   <input type="text" class="field ltr small" id="waChanHabitsReportsRecipient" placeholder="رقم هاتف أو معرف مجموعة لتقارير العادات" data-i18n-ph="s.waChanHabitsReportsPh">
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                  <button type="button" class="btn small" id="waChanHabitsReportsTestBtn" style="font-size: 10px; padding: 2px 8px;">🔔 اختبار التوجيه</button>
+                  <span id="waChanHabitsReportsTestStatus" style="font-size: 10px;"></span>
                 </div>
               </div>
 
@@ -2073,6 +2088,14 @@
                       </select>
                       <input type="text" class="field ltr small" id="waQuickHabitRecipient" style="flex: 1; min-width: 160px; display: none;" placeholder="رقم هاتف أو معرف مجموعة لهذه العادة">
                       <span id="waQuickHabitSaveIndicator" style="font-size: 11px; color: #10b981; opacity: 0; transition: opacity 0.2s;">✓ تم الحفظ</span>
+                    </div>
+
+                    <!-- Quick Habit Test Button -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                      <button type="button" class="btn small" id="waQuickHabitTestBtn" style="font-size: 11px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                        <span>🔔</span> <span>اختبار إرسال الرسالة للعادة</span>
+                      </button>
+                      <span id="waQuickHabitTestStatus" style="font-size: 11px;"></span>
                     </div>
                   </div>
                 </div>
@@ -2127,6 +2150,10 @@
                 </div>
                 <div class="wa-chan-input-wrap" id="waChanCalendarInputWrap" style="display: none;">
                   <input type="text" class="field ltr small" id="waChanCalendarRecipient" placeholder="رقم هاتف أو معرف مجموعة للتقويم" data-i18n-ph="s.waChanCalendarPh">
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                  <button type="button" class="btn small" id="waChanCalendarTestBtn" style="font-size: 10px; padding: 2px 8px;">🔔 اختبار التوجيه</button>
+                  <span id="waChanCalendarTestStatus" style="font-size: 10px;"></span>
                 </div>
               </div>
             </div>
