@@ -667,6 +667,35 @@
             </div>
           </div>
 
+          <!-- Duration Step & Progression Row for Quick Add -->
+          <div id="qaDurationStepGroup" style="display: none; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.22); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
+            <label class="f-label" style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 11.5px; margin-bottom: 6px;">
+              <span>⏱️ مقدار الوقت لكل نقرة (دقائق)</span>
+              <span style="font-size: 10px; opacity: 0.8; font-weight: normal;">(زيادة بالدقائق مع كل ضغطة)</span>
+            </label>
+            <div class="form-row-2" style="margin-bottom: 6px;">
+              <div class="form-group">
+                <label class="f-label" style="font-size: 11px;">الدقائق المضافة لكل نقرة:</label>
+                <input type="number" min="1" max="720" class="f-input" id="qaDurationStepInput" value="10" placeholder="10">
+              </div>
+              <div class="form-group">
+                <label class="f-label" style="font-size: 11px;">المدة المستهدفة الإجمالية:</label>
+                <input type="number" min="1" max="1440" class="f-input" id="qaDurationTargetSync" value="30" placeholder="30">
+              </div>
+            </div>
+            <!-- Quick Presets -->
+            <div style="display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap;">
+              <span class="unit-badge qa-dur-badge" data-step="5" style="cursor: pointer;">⚡ 5 د</span>
+              <span class="unit-badge qa-dur-badge" data-step="10" style="cursor: pointer;">⚡ 10 د</span>
+              <span class="unit-badge qa-dur-badge" data-step="15" style="cursor: pointer;">⚡ 15 د</span>
+              <span class="unit-badge qa-dur-badge" data-step="20" style="cursor: pointer;">⚡ 20 د</span>
+              <span class="unit-badge qa-dur-badge" data-step="30" style="cursor: pointer;">⚡ 30 د</span>
+            </div>
+            <div id="qaDurationExplanation" style="font-size: 11px; color: #d97706; font-weight: 600;">
+              💡 كل نقرة ستضيف 10 دقائق حتى الإكمال عند 30 دقيقة
+            </div>
+          </div>
+
           <div class="form-row-2">
             <div class="form-group">
               <label class="f-label" data-i18n="habits.difficultyLabel">مستوى الصعوبة</label>

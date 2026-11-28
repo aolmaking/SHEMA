@@ -3137,7 +3137,7 @@ function buildSuperUrgentAndWhatsApp() {
           cachedHabits = (list || []).filter(h => !h.archived);
           renderHabits();
         }
-      } catch (_err) {}
+      } catch (_err) { }
     };
 
     window.__refreshWaHabits = refreshHabits;
@@ -3989,7 +3989,7 @@ function setEcoProp(prop, value) {
   syncEcoScopeUI();
   renderEcoMatrixGrid();
   if (window.widgets?.power?.getStatus) {
-    window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => {});
+    window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => { });
   }
 }
 
@@ -4002,7 +4002,7 @@ function resetEcoScope() {
   syncEcoScopeUI();
   renderEcoMatrixGrid();
   if (window.widgets?.power?.getStatus) {
-    window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => {});
+    window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => { });
   }
 }
 
@@ -4106,7 +4106,7 @@ function buildEcoControls() {
       syncEcoScopeUI();
       renderEcoMatrixGrid();
       if (window.widgets?.power?.getStatus) {
-        window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => {});
+        window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => { });
       }
     };
   }
@@ -4142,7 +4142,7 @@ function buildEcoControls() {
   renderEcoMatrixGrid();
 
   if (window.widgets?.power?.getStatus) {
-    window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => {});
+    window.widgets.power.getStatus().then(updateEcoLiveBadge).catch(() => { });
   }
   if (!ecoPowerSubscribed && window.widgets?.power?.onStatus) {
     ecoPowerSubscribed = true;
@@ -4565,7 +4565,7 @@ function buildHabits() {
           ? `${count} active reminder${count > 1 ? 's' : ''}`
           : `${count} تذكير نشط`;
       }
-    }).catch(() => {});
+    }).catch(() => { });
   }
 }
 
@@ -5881,7 +5881,7 @@ function wire() {
     syncBrowserSetup();
     syncPhoto();
     updateSummaryStatuses();
-  if (window.__refreshWaHabits) window.__refreshWaHabits();
+    if (window.__refreshWaHabits) window.__refreshWaHabits();
     buildPerWidgetStyles();
   });
   window.widgets.win.onSection(jumpTo);

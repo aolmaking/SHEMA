@@ -1069,7 +1069,7 @@ class HabitsManager extends EventEmitter {
     } else if (type === 'duration') {
       targetValue = Math.max(1, targetValue);
       if (!unit) { unit = 'دقيقة'; unitEn = 'min'; }
-      stepValue = Math.max(1, Number(data.stepValue) || (targetValue >= 30 ? 15 : 1));
+      stepValue = Math.max(1, Number(data.stepValue || data.durationStep) || (targetValue >= 60 ? 15 : 10));
     } else if (type === 'number') {
       targetValue = Math.max(1, targetValue);
       if (!unit) { unit = 'مرة'; unitEn = 'times'; }
@@ -1110,7 +1110,7 @@ class HabitsManager extends EventEmitter {
       icon: data.icon || '⭐',
       // OpenHabitTracker / Habitica / Loop features
       subItems: Array.isArray(data.subItems) ? data.subItems : (existing && Array.isArray(existing.subItems) ? existing.subItems : []),
-      timerMode: Boolean(data.timerMode || data.type === 'duration'),
+      timerMode: Boolean(data.timerMode && data.timerMode !== false),
       attributeAffinity: data.attributeAffinity || '',
       createdAt: data.createdAt || (existing ? existing.createdAt : new Date().toISOString()),
       archived: Boolean(data.archived),

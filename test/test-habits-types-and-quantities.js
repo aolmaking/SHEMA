@@ -236,6 +236,40 @@ assert(dashJs.includes('h.stepValue'), 'habits-dashboard.js must inspect h.stepV
 
 console.log('✅ 5-part prayer progression, auto-distribution, and UI controls verified 100%.');
 
+// 6. Test Duration Step Progression (e.g. 10 min per click to 60 min target)
+console.log('\n--- 6. Testing Duration Stepping & Single-Click Progression ---');
+const hReading = manager.saveHabit({
+  title: 'جلسة قراءة وتركيز',
+  type: 'duration',
+  targetValue: 60,
+  stepValue: 10,
+});
+assert.strictEqual(hReading.type, 'duration');
+assert.strictEqual(hReading.targetValue, 60);
+assert.strictEqual(hReading.stepValue, 10, 'Duration habit stepValue must be preserved as 10 minutes');
+
+// Simulate 6 clicks: +10 min each
+let durSimVal = 0;
+for (let c = 1; c <= 6; c++) {
+  durSimVal += 10;
+  let log = manager.saveHabitStatus(today, hReading.id, durSimVal >= 60 ? 'done' : 'partial', durSimVal);
+  if (c < 6) {
+    assert.strictEqual(log.habits[hReading.id].status, 'partial', `Click ${c} (${durSimVal}m) must be partial`);
+  } else {
+    assert.strictEqual(log.habits[hReading.id].status, 'done', 'Click 6 (60m) must achieve done status');
+  }
+  assert.strictEqual(log.habits[hReading.id].value, durSimVal);
+}
+
+// Check markup and JS for duration steps
+assert(dashHtml.includes('id="durationStepGroup"'), 'Dashboard HTML must have #durationStepGroup');
+assert(dashHtml.includes('id="habitInputDurationStep"'), 'Dashboard HTML must have #habitInputDurationStep');
+assert(habitsHtml.includes('id="qaDurationStepGroup"'), 'habits.html must have #qaDurationStepGroup');
+assert(habitsHtml.includes('id="qaDurationStepInput"'), 'habits.html must have #qaDurationStepInput');
+assert(habitsJs.includes('h-duration-btn'), 'habits.js must define h-duration-btn');
+
+console.log('✅ Duration 10-min progression, customizable stepValue, and UI markup verified 100%.');
+
 console.log('\n========================================================');
 console.log('🎉 ALL HABIT TYPES, QUANTITIES & LOGGING TESTS PASSED (100%)');
 console.log('========================================================\n');

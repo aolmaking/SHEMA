@@ -1977,15 +1977,17 @@ body.dragging .plate {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: flex-end;
+  gap: 5px;
+  min-width: 90px;
 }
 
 /* 1. Boolean Checkbox Button */
 .h-check-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--line) !important;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1.8px solid var(--line) !important;
   background: var(--field) !important;
   color: var(--ink-on-accent, #ffffff);
   display: grid;
@@ -2007,14 +2009,19 @@ body.dragging .plate {
   transform: scale(1.05);
 }
 
-/* 2. Stepper Button (Number & Duration) */
+/* 2. Stepper Button (Number) */
 .h-stepper {
   display: flex;
   align-items: center;
   background: var(--tile) !important;
   border: 1px solid var(--line) !important;
   border-radius: 8px;
+  height: 26px;
   overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.h-stepper:hover {
+  border-color: var(--accent) !important;
 }
 
 /* Quick Pomodoro Linkage Button */
@@ -2039,12 +2046,12 @@ body.dragging .plate {
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 .h-step-btn {
-  width: 24px;
+  width: 22px;
   height: 26px;
   border: none;
   background: transparent;
   color: var(--ink-2) !important;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   display: grid;
@@ -2056,11 +2063,12 @@ body.dragging .plate {
   color: var(--ink) !important;
 }
 .h-step-val {
-  min-width: 32px;
-  padding: 0 4px;
+  min-width: 28px;
+  padding: 0 3px;
   text-align: center;
   font-size: 11px;
   font-weight: 800 !important;
+  font-variant-numeric: tabular-nums;
   color: var(--ink) !important;
   cursor: pointer;
 }
@@ -2072,19 +2080,21 @@ body.dragging .plate {
 /* 3. Percentage Button */
 .h-pct-btn {
   position: relative;
-  min-width: 52px;
-  height: 25px;
-  border-radius: 7px;
+  min-width: 60px;
+  height: 26px;
+  border-radius: 8px;
   border: 1px solid var(--line) !important;
   background: var(--tile) !important;
   overflow: hidden;
   display: grid;
   place-items: center;
   cursor: pointer;
+  user-select: none;
   transition: all 0.2s ease;
 }
 .h-pct-btn:hover {
   border-color: var(--accent) !important;
+  transform: translateY(-1px);
 }
 .h-pct-btn.is-complete {
   border-color: #10b981 !important;
@@ -2100,13 +2110,63 @@ body.dragging .plate {
   bottom: 0;
   background: color-mix(in srgb, var(--accent) 35%, transparent);
   transition: width 0.3s ease;
+  pointer-events: none;
 }
 .h-pct-text {
   position: relative;
   z-index: 2;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 800 !important;
   color: var(--ink) !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+  padding: 0 4px;
+}
+
+/* 3.1 Duration Progress Button (Single-Click Progression) */
+.h-duration-btn {
+  position: relative;
+  min-width: 68px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--line) !important;
+  background: var(--tile) !important;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.h-duration-btn:hover {
+  border-color: #f59e0b !important;
+  transform: translateY(-1px);
+}
+.h-duration-btn.is-complete {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+}
+.h-duration-btn.is-complete .h-duration-text {
+  color: #059669 !important;
+}
+.h-duration-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: color-mix(in srgb, #f59e0b 28%, transparent);
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+.h-duration-text {
+  position: relative;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+  padding: 0 4px;
 }
 
 /* 4. Rating Stars */

@@ -561,7 +561,7 @@
 
       if (cardEl) {
         const showPomodoro = (state.settings?.showPomodoroShortcut !== false) &&
-                             (state.allSettings?.habits?.showPomodoroShortcut !== false);
+          (state.allSettings?.habits?.showPomodoroShortcut !== false);
         cardEl.style.display = showPomodoro ? 'flex' : 'none';
         if (snap.status === 'running') {
           cardEl.classList.add('is-active-running');
@@ -589,7 +589,7 @@
     }
 
     try {
-      window.widgets.pomodoro.get?.().then(updatePomodoroDesk).catch(() => {});
+      window.widgets.pomodoro.get?.().then(updatePomodoroDesk).catch(() => { });
       window.widgets.pomodoro.onState?.((snap) => {
         updatePomodoroDesk(snap);
       });
@@ -600,7 +600,7 @@
           playChime('victory');
         }
       });
-    } catch (_) {}
+    } catch (_) { }
 
     if (!pomodoroTicker) {
       pomodoroTicker = setInterval(() => {
@@ -1066,7 +1066,7 @@
 
     // Default View (Today checklist vs monthly matrix vs saved view)
     let initialView = null;
-    try { initialView = localStorage.getItem('mirqat_habits_current_view'); } catch (_) {}
+    try { initialView = localStorage.getItem('mirqat_habits_current_view'); } catch (_) { }
     if (initialView && ['checklist', 'mini-bujo', 'mini-sleep'].includes(initialView)) {
       switchView(initialView);
     } else if (s.defaultView === 'week' && state.currentView === 'checklist') {
@@ -1262,7 +1262,7 @@
           osc.stop(tNote + 0.52);
         });
       }
-    } catch {}
+    } catch { }
   }
 
   /* ---------- Particle Confetti Physics Engine ---------- */
@@ -1462,7 +1462,7 @@
         if (window.widgets?.atlas?.getState) {
           try {
             state.atlas = await window.widgets.atlas.getState(lang() === 'en' ? 'en' : 'ar');
-          } catch (_) {}
+          } catch (_) { }
         }
         render();
       }
@@ -2071,7 +2071,7 @@
 
   function switchView(viewName) {
     state.currentView = viewName;
-    try { localStorage.setItem('mirqat_habits_current_view', viewName); } catch (_) {}
+    try { localStorage.setItem('mirqat_habits_current_view', viewName); } catch (_) { }
     $$('#viewPillsRow .view-pill-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.view === viewName);
     });
@@ -2797,8 +2797,8 @@
         actionSlot.appendChild(microBtn);
       }
 
-      if (h.timerMode) {
-        // OpenHabitTracker: Embedded Live Stopwatch Mode
+      if (h.useStopwatch && h.timerMode) {
+        // OpenHabitTracker: Embedded Live Stopwatch Mode (Explicitly chosen by user)
         const timerState = activeStopwatches[h.id];
         const isRunning = Boolean(timerState?.intervalId);
         if (isRunning) card.classList.add('is-timer-running');
@@ -2886,7 +2886,77 @@
           saveStatus(h.id, nextStatus, nextVal);
         };
         actionSlot.appendChild(btn);
-      } else if (h.type === 'number' || h.type === 'duration') {
+      } else if (h.type === 'duration') {
+        const target = Number(h.targetValue) || 30;
+        const step = Number(h.stepValue) || (target >= 60 ? 15 : 10);
+        const durBtn = document.createElement('div');
+        const isDone = status === 'done' || curVal >= target;
+        durBtn.className = `h-duration-btn ${isDone ? 'is-complete checked' : ''}`;
+
+        const unitTxt = lang() === 'en' ? 'm' : 'د';
+        durBtn.title = lang() === 'en'
+          ? `Click: +${step} min (${curVal}/${target} min), Right-click: -${step} min, or click number to enter exact value`
+          : `اضغط: +${digits(step)} دقيقة (${digits(curVal)}/${digits(target)} د)، كليك يمين: -${digits(step)} د، أو اضغط الرقم للكتابة`;
+
+        durBtn.onclick = (e) => {
+          e.stopPropagation();
+          const now = Date.now();
+          if (habitToggleLock.has(h.id) && now - habitToggleLock.get(h.id) < 250) return;
+          habitToggleLock.set(h.id, now);
+
+          let next = curVal + step;
+          if (curVal >= target) {
+            next = 0;
+          } else if (next > target) {
+            next = target;
+          }
+          if (next >= target && curVal < target) {
+            durBtn.classList.add('spring-pop');
+            setTimeout(() => durBtn.classList.remove('spring-pop'), 400);
+            triggerConfetti(e.clientX, e.clientY);
+            playChime('check');
+          }
+          saveStatus(h.id, next >= target ? 'done' : (next > 0 ? 'partial' : 'none'), next);
+        };
+
+        durBtn.oncontextmenu = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const next = Math.max(0, curVal - step);
+          saveStatus(h.id, next >= target ? 'done' : (next > 0 ? 'partial' : 'none'), next);
+        };
+
+        const fill = document.createElement('div');
+        fill.className = 'h-duration-fill';
+        const fillPct = Math.min(100, Math.round((curVal / target) * 100));
+        fill.style.width = `${fillPct}%`;
+        fill.style.background = isDone ? '#10b981' : (h.color || 'var(--accent, #f59e0b)');
+
+        const txt = document.createElement('span');
+        txt.className = 'h-duration-text';
+        txt.textContent = isDone ? `${digits(target)} ${unitTxt} ✓` : `${digits(curVal)}/${digits(target)} ${unitTxt}`;
+        txt.onclick = (e) => {
+          e.stopPropagation();
+          const entered = prompt(
+            lang() === 'en' ? `Enter minutes completed (0-${target}):` : `أدخل عدد الدقائق المنجزة (0-${digits(target)}):`,
+            curVal
+          );
+          if (entered !== null && !isNaN(entered)) {
+            const next = Math.max(0, Number(entered));
+            if (next >= target && curVal < target) {
+              durBtn.classList.add('spring-pop');
+              setTimeout(() => durBtn.classList.remove('spring-pop'), 400);
+              triggerConfetti(e.clientX, e.clientY);
+              playChime('check');
+            }
+            saveStatus(h.id, next >= target ? 'done' : (next > 0 ? 'partial' : 'none'), next);
+          }
+        };
+
+        durBtn.appendChild(fill);
+        durBtn.appendChild(txt);
+        actionSlot.appendChild(durBtn);
+      } else if (h.type === 'number') {
         const stepper = document.createElement('div');
         stepper.className = 'h-stepper';
 
@@ -2895,7 +2965,7 @@
         decBtn.textContent = '−';
         decBtn.onclick = (e) => {
           e.stopPropagation();
-          const step = h.type === 'duration' && target >= 30 ? 15 : 1;
+          const step = Number(h.stepValue) || 1;
           const next = Math.max(0, curVal - step);
           saveStatus(h.id, next >= target ? 'done' : (next > 0 ? 'partial' : 'none'), next);
         };
@@ -2924,7 +2994,7 @@
         incBtn.textContent = '+';
         incBtn.onclick = (e) => {
           e.stopPropagation();
-          const step = h.type === 'duration' && target >= 30 ? 15 : 1;
+          const step = Number(h.stepValue) || 1;
           const next = curVal + step;
           if (next >= target && curVal < target) {
             stepper.classList.add('spring-pop');
@@ -3032,7 +3102,7 @@
             if (window.widgets?.pomodoro?.act) {
               await window.widgets.pomodoro.act({ action: 'start' });
             }
-          } catch {}
+          } catch { }
         };
         actionSlot.appendChild(pomoBtn);
       }
@@ -3257,6 +3327,18 @@
     }
   }
 
+  function updateQaDurationExplanation() {
+    const target = Math.max(1, Number($('#qaTargetInput')?.value || $('#qaDurationTargetSync')?.value) || 30);
+    const step = Math.max(1, Number($('#qaDurationStepInput')?.value) || 10);
+    const expl = $('#qaDurationExplanation');
+    if (expl) {
+      const isEn = lang() === 'en';
+      expl.textContent = isEn
+        ? `💡 Each click will add ${step} min until completion at ${target} min.`
+        : `💡 كل نقرة ستضيف ${digits(step)} دقائق حتى الإكمال عند ${digits(target)} دقيقة.`;
+    }
+  }
+
   function updateQaTypeUI() {
     const isEn = lang() === 'en';
     $$('.qa-type-btn').forEach(b => {
@@ -3274,11 +3356,13 @@
     if (qaSelectedType === 'boolean' || qaSelectedType === 'rating') {
       targetRow.style.display = 'none';
       if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'none';
+      if ($('#qaDurationStepGroup')) $('#qaDurationStepGroup').style.display = 'none';
       if (targetInp) targetInp.value = qaSelectedType === 'rating' ? '5' : '1';
       if (unitInp) { unitInp.value = qaSelectedType === 'rating' ? '⭐' : ''; unitInp.disabled = false; }
     } else if (qaSelectedType === 'percentage') {
       targetRow.style.display = 'grid';
       if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'block';
+      if ($('#qaDurationStepGroup')) $('#qaDurationStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Percentage (%)' : 'النسبة المستهدفة (%)';
       if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
       if (targetInp) {
@@ -3317,6 +3401,7 @@
     } else if (qaSelectedType === 'duration') {
       targetRow.style.display = 'grid';
       if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'none';
+      if ($('#qaDurationStepGroup')) $('#qaDurationStepGroup').style.display = 'block';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Duration' : 'المدة المستهدفة';
       if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
       if (targetInp) {
@@ -3325,6 +3410,8 @@
         if (!targetInp.value || targetInp.value === '1' || targetInp.value === '8' || targetInp.value === '100') targetInp.value = '30';
         targetInp.placeholder = '30';
       }
+      if ($('#qaDurationTargetSync')) $('#qaDurationTargetSync').value = targetInp ? targetInp.value : '30';
+      updateQaDurationExplanation();
       const defMin = isEn ? 'min' : 'دقيقة';
       const defHr = isEn ? 'hours' : 'ساعة';
       if (unitInp) {
@@ -3344,12 +3431,26 @@
           badge.onclick = () => {
             if (unitInp) unitInp.value = badge.dataset.unit;
             if (targetInp) targetInp.value = badge.dataset.val;
+            if ($('#qaDurationTargetSync')) $('#qaDurationTargetSync').value = badge.dataset.val;
+            updateQaDurationExplanation();
           };
         });
       }
+      $$('.qa-dur-badge').forEach(badge => {
+        badge.onclick = () => {
+          if ($('#qaDurationStepInput')) $('#qaDurationStepInput').value = badge.dataset.step;
+          updateQaDurationExplanation();
+        };
+      });
+      $('#qaDurationStepInput')?.addEventListener('input', updateQaDurationExplanation);
+      $('#qaDurationTargetSync')?.addEventListener('input', () => {
+        if ($('#qaTargetInput')) $('#qaTargetInput').value = $('#qaDurationTargetSync').value;
+        updateQaDurationExplanation();
+      });
     } else { // number
       targetRow.style.display = 'grid';
       if ($('#qaPercentageStepGroup')) $('#qaPercentageStepGroup').style.display = 'none';
+      if ($('#qaDurationStepGroup')) $('#qaDurationStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Daily Target' : 'الهدف اليومي';
       if (unitLabel) unitLabel.textContent = isEn ? 'Unit' : 'الوحدة';
       if (targetInp) {
@@ -3401,7 +3502,7 @@
       if (!existingNote && window.widgets?.habits?.getDayNote) {
         existingNote = (await window.widgets.habits.getDayNote(today)) || '';
       }
-    } catch (_) {}
+    } catch (_) { }
 
     if (textarea) {
       textarea.value = existingNote;
@@ -3942,6 +4043,7 @@
       } else if (qaSelectedType === 'duration') {
         targetVal = Math.max(1, targetVal);
         if (!unit) unit = lang() === 'en' ? 'min' : 'دقيقة';
+        stepValue = Math.max(1, Number($('#qaDurationStepInput')?.value) || (targetVal >= 60 ? 15 : 10));
       } else if (qaSelectedType === 'number') {
         targetVal = Math.max(1, targetVal);
         if (!unit) unit = lang() === 'en' ? 'times' : 'مرة';
@@ -3970,7 +4072,7 @@
         difficulty,
         targetValue: targetVal,
         partsCount: qaSelectedType === 'percentage' ? (partsCount || 5) : undefined,
-        stepValue: qaSelectedType === 'percentage' ? (stepValue || 20) : 1,
+        stepValue: (qaSelectedType === 'percentage' || qaSelectedType === 'duration') ? (stepValue || 10) : 1,
         unit,
         unitEn: unit,
         routine,
@@ -4067,7 +4169,7 @@
         try {
           const res = await window.widgets.atlas.getMiroDialogue({ lang: isEn ? 'en' : 'ar', context: { wayfinderName: wfName } });
           dialogue = res?.text;
-        } catch (_) {}
+        } catch (_) { }
       }
       const speechEl = $('#habitsMiniMiroSpeech');
       if (speechEl) {
@@ -4097,7 +4199,7 @@
             const speechEl = $('#habitsMiniMiroSpeech');
             if (speechEl) speechEl.textContent = `"${res.text}"`;
           }
-        } catch (_) {}
+        } catch (_) { }
       }
     });
 

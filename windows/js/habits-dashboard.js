@@ -3190,6 +3190,18 @@
     }
   }
 
+  function updateDurationExplanationDash() {
+    const target = Math.max(1, Number($('#habitInputTarget')?.value || $('#habitInputDurationTargetSync')?.value) || 30);
+    const step = Math.max(1, Number($('#habitInputDurationStep')?.value) || 10);
+    const expl = $('#durationCalcExplanation');
+    if (expl) {
+      const isEn = lang() === 'en';
+      expl.textContent = isEn
+        ? `💡 Each click will add ${step} min until completion at ${target} min.`
+        : `💡 كل ضغطة على العادة ستضيف ${digits(step)} دقائق حتى تكتمل عند ${digits(target)} دقيقة.`;
+    }
+  }
+
   function updateTargetVisibility(type, preserveValues = false) {
     const targetGroup = $('#targetValueGroup');
     const targetLabel = $('#targetValueLabel');
@@ -3203,6 +3215,7 @@
     if (type === 'boolean') {
       targetGroup.style.display = 'none';
       if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
+      if ($('#durationStepGroup')) $('#durationStepGroup').style.display = 'none';
       if (!preserveValues) {
         if (targetNum) targetNum.value = '1';
         if (targetUnit) { targetUnit.value = ''; targetUnit.disabled = false; }
@@ -3211,6 +3224,7 @@
     } else if (type === 'rating') {
       targetGroup.style.display = 'none';
       if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
+      if ($('#durationStepGroup')) $('#durationStepGroup').style.display = 'none';
       if (!preserveValues) {
         if (targetNum) targetNum.value = '5';
         if (targetUnit) { targetUnit.value = '⭐'; targetUnit.disabled = false; }
@@ -3219,6 +3233,7 @@
     } else if (type === 'percentage') {
       targetGroup.style.display = 'block';
       if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'block';
+      if ($('#durationStepGroup')) $('#durationStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Percentage (%)' : 'النسبة المئوية المستهدفة (%)';
       if (targetNum) {
         targetNum.min = '1';
@@ -3261,6 +3276,7 @@
     } else if (type === 'duration') {
       targetGroup.style.display = 'block';
       if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
+      if ($('#durationStepGroup')) $('#durationStepGroup').style.display = 'block';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Duration & Unit' : 'المدة الزمنية المستهدفة والوحدة';
       if (targetNum) {
         targetNum.removeAttribute('max');
@@ -3268,6 +3284,9 @@
         if (!preserveValues && (!targetNum.value || targetNum.value === '1' || targetNum.value === '100')) targetNum.value = '30';
         targetNum.placeholder = '30';
       }
+      if ($('#habitInputDurationTargetSync')) $('#habitInputDurationTargetSync').value = targetNum ? targetNum.value : '30';
+      if (!preserveValues && $('#habitInputDurationStep')) $('#habitInputDurationStep').value = '10';
+      updateDurationExplanationDash();
       const defMin = isEn ? 'min' : 'دقيقة';
       const defHr = isEn ? 'hours' : 'ساعة';
       if (targetUnit) {
@@ -3289,6 +3308,8 @@
           b.onclick = () => {
             if (targetNum) targetNum.value = b.dataset.val;
             if (targetUnit) targetUnit.value = b.dataset.unit;
+            if ($('#habitInputDurationTargetSync')) $('#habitInputDurationTargetSync').value = b.dataset.val;
+            updateDurationExplanationDash();
             updateHabitLivePreview();
           };
         });
@@ -3296,6 +3317,7 @@
     } else { // number
       targetGroup.style.display = 'block';
       if ($('#percentageStepGroup')) $('#percentageStepGroup').style.display = 'none';
+      if ($('#durationStepGroup')) $('#durationStepGroup').style.display = 'none';
       if (targetLabel) targetLabel.textContent = isEn ? 'Target Quantity & Unit' : 'الكمية والعدد المستهدف والوحدة';
       if (targetNum) {
         targetNum.removeAttribute('max');
@@ -3430,6 +3452,11 @@
       if ($('#habitInputParts')) $('#habitInputParts').value = String(pCount);
       if ($('#habitInputStepPct')) $('#habitInputStepPct').value = String(sVal);
       updatePercentageExplanationDash();
+    } else if (tVal === 'duration') {
+      const dStep = Number(h.stepValue) || (Number(h.targetValue) >= 60 ? 15 : 10);
+      if ($('#habitInputDurationStep')) $('#habitInputDurationStep').value = String(dStep);
+      if ($('#habitInputDurationTargetSync')) $('#habitInputDurationTargetSync').value = String(h.targetValue || 30);
+      updateDurationExplanationDash();
     }
 
     // Reveal English Title box if populated
@@ -3770,7 +3797,27 @@
         const step = Math.round((target / parts) * 10) / 10;
         if ($('#habitInputStepPct')) $('#habitInputStepPct').value = step;
         updatePercentageExplanationDash();
+      } else if ($('#habitInputType')?.value === 'duration') {
+        if ($('#habitInputDurationTargetSync')) $('#habitInputDurationTargetSync').value = $('#habitInputTarget')?.value || 30;
+        updateDurationExplanationDash();
       }
+    });
+
+    // Duration Step & Progression event wiring
+    $('#habitInputDurationStep')?.addEventListener('input', () => {
+      updateDurationExplanationDash();
+    });
+
+    $('#habitInputDurationTargetSync')?.addEventListener('input', () => {
+      if ($('#habitInputTarget')) $('#habitInputTarget').value = $('#habitInputDurationTargetSync').value;
+      updateDurationExplanationDash();
+    });
+
+    $$('.dur-preset-badge').forEach(badge => {
+      badge.addEventListener('click', () => {
+        if ($('#habitInputDurationStep')) $('#habitInputDurationStep').value = badge.dataset.step;
+        updateDurationExplanationDash();
+      });
     });
 
     $$('.pct-preset-badge').forEach(badge => {
@@ -4970,6 +5017,7 @@
       } else if (type === 'duration') {
         targetVal = Math.max(1, targetVal);
         if (!unit) unit = lang() === 'en' ? 'min' : 'دقيقة';
+        stepValue = Math.max(1, Number($('#habitInputDurationStep')?.value) || (targetVal >= 60 ? 15 : 10));
       } else if (type === 'number') {
         targetVal = Math.max(1, targetVal);
         if (!unit) unit = lang() === 'en' ? 'times' : 'مرة';
@@ -4998,7 +5046,7 @@
         difficulty,
         targetValue: targetVal,
         partsCount: type === 'percentage' ? (partsCount || 5) : undefined,
-        stepValue: type === 'percentage' ? (stepValue || 20) : 1,
+        stepValue: (type === 'percentage' || type === 'duration') ? (stepValue || 10) : 1,
         unit,
         unitEn: unit,
         icon,
