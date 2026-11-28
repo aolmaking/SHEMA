@@ -8935,8 +8935,13 @@ body.theme-notebook .preview-tile {
 }
 
 @keyframes havenGoldGleam {
-  0% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.25); }
-  100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 6px rgba(255, 255, 255, 0.4); }
+  0% {
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+  }
+
+  100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 6px rgba(255, 255, 255, 0.4);
+  }
 }
 
 .atlas-gold-lbl {
@@ -10704,252 +10709,6 @@ body.theme-notebook .preview-tile {
 }
 
 /* ==========================================================================
-   The Living Atlas: Phase 2 Enhancements Styling
-   ========================================================================== */
-
-/* 1. Dynamic Haven Visual Progression Backdrops */
-.atlas-haven-hero.haven-lanterns-lit {
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.72), 0 0 32px rgba(245, 158, 11, 0.35) !important;
-  border-color: rgba(251, 191, 36, 0.75) !important;
-}
-
-.atlas-haven-hero.haven-observatory-active::before {
-  background: radial-gradient(circle at 18% 30%, rgba(56, 189, 248, 0.25) 0%, transparent 55%),
-    radial-gradient(circle at 82% 25%, rgba(168, 85, 247, 0.22) 0%, transparent 50%),
-    radial-gradient(circle at 85% 70%, rgba(251, 191, 36, 0.15) 0%, transparent 45%) !important;
-}
-
-.atlas-haven-hero.haven-garden-blooming {
-  border-bottom: 2px solid rgba(52, 211, 153, 0.8) !important;
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.72), 0 0 35px rgba(52, 211, 153, 0.25) !important;
-}
-
-.atlas-haven-hero.haven-forge-ignited {
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.72), inset 0 0 25px rgba(244, 63, 94, 0.18), 0 0 35px rgba(244, 63, 94, 0.28) !important;
-}
-
-/* 2. Miro Alcove Quick Action Buttons */
-.miro-quick-actions-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-
-.miro-path-btn,
-.miro-history-btn {
-  background: rgba(15, 23, 42, 0.8) !important;
-  border: 1px solid rgba(56, 189, 248, 0.4) !important;
-  color: #38bdf8 !important;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.miro-path-btn:hover {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(37, 99, 235, 0.3)) !important;
-  border-color: #38bdf8 !important;
-  color: #ffffff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-}
-
-.miro-history-btn {
-  border-color: rgba(245, 158, 11, 0.4) !important;
-  color: #fbbf24 !important;
-}
-
-.miro-history-btn:hover {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.25)) !important;
-  border-color: #fbbf24 !important;
-  color: #ffffff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-}
-
-/* 3. Active Daily Micro-Quest Card */
-.atlas-daily-quest-card {
-  margin-top: 14px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 69, 0.92)) !important;
-  border: 1.5px solid rgba(56, 189, 248, 0.45) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.quest-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.quest-tag {
-  font-size: 11px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(56, 189, 248, 0.18);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
-}
-
-.quest-rewards {
-  font-size: 11.5px;
-  font-weight: 800;
-  color: #fde047;
-}
-
-.quest-title {
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #f8fafc;
-}
-
-.quest-desc {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: #cbd5e1;
-}
-
-.quest-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 4px;
-}
-
-.quest-complete-btn {
-  background: linear-gradient(135deg, #059669, #10b981) !important;
-  border: 1px solid rgba(52, 211, 153, 0.7) !important;
-  color: #ffffff !important;
-  font-weight: 800;
-  font-size: 12px;
-  padding: 7px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.quest-complete-btn:hover {
-  transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 6px 16px rgba(52, 211, 153, 0.5);
-}
-
-.quest-complete-btn.completed {
-  background: rgba(30, 41, 59, 0.8) !important;
-  border-color: rgba(148, 163, 184, 0.4) !important;
-  color: #94a3b8 !important;
-  cursor: default;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* 4. Expandable Wisdom Archive Drawer */
-.atlas-miro-history-drawer {
-  margin-top: 14px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.96) !important;
-  border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.history-drawer-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  font-weight: 800;
-  color: #fbbf24;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(245, 158, 11, 0.25);
-}
-
-.history-close-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0 4px;
-}
-
-.history-close-btn:hover {
-  color: #f8fafc;
-}
-
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: 280px;
-  overflow-y: auto;
-}
-
-.history-entry {
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.history-entry-q {
-  font-size: 11.5px;
-  color: #94a3b8;
-  font-weight: 600;
-}
-
-.history-entry-a {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: #f1f5f9;
-}
-
-.history-entry-meta {
-  font-size: 10.5px;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 2px;
-}
-
-/* 5. Particle FX & Card Radiant Action Success Pulse */
-@keyframes radiantGlowPulse {
-  0% {
-    box-shadow: 0 0 0 rgba(251, 191, 36, 0.7);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(251, 191, 36, 0.9), 0 0 50px rgba(56, 189, 248, 0.5);
-    transform: scale(1.02);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(251, 191, 36, 0);
-    transform: scale(1);
-  }
-}
-
-.card-action-success-fx {
-  animation: radiantGlowPulse 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  border-color: #fde047 !important;
-}
-
-/* ==========================================================================
    Phase 3: Major Trials, 3-Tier Obstacles, Sanctuary & Bazaar Styling
    ========================================================================== */
 
@@ -11247,4 +11006,826 @@ body.theme-notebook .preview-tile {
   cursor: default;
   transform: none !important;
   box-shadow: none !important;
+}
+/* ==========================================================================
+   THE LIVING ATLAS — REALM OF AETHELIA LIVING WORLD STAGE & OVERGROWN VINES
+   ========================================================================== */
+
+/* 1. The Overgrown Living Frame (Creeping Vines & Foliage spilling 12-16px) */
+#dashWindowPlate {
+  overflow: visible !important;
+}
+
+.atlas-living-frame {
+  position: absolute;
+  inset: -14px;
+  pointer-events: none;
+  z-index: 120;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#dashWindowPlate[data-active-tab="atlas"] .atlas-living-frame {
+  opacity: 1;
+}
+
+.atlas-vine-corner {
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.atlas-vine-corner.top-left {
+  top: -14px;
+  left: -14px;
+  animation: vineBreeze 4s infinite ease-in-out;
+}
+
+.atlas-vine-corner.top-right {
+  top: -14px;
+  right: -14px;
+  animation: vineBreeze 4.3s 0.5s infinite ease-in-out;
+}
+
+.atlas-vine-corner.bottom-left {
+  bottom: -14px;
+  left: -14px;
+  animation: vineBreeze 3.8s 0.8s infinite ease-in-out;
+}
+
+.atlas-vine-corner.bottom-right {
+  bottom: -14px;
+  right: -14px;
+  animation: vineBreeze 4.1s 1.2s infinite ease-in-out;
+}
+
+/* Branch & Leaf Sprouting Animations */
+#dashWindowPlate[data-active-tab="atlas"] .vine-branch.main {
+  stroke-dasharray: 450;
+  stroke-dashoffset: 450;
+  animation: vineUncurl 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#dashWindowPlate[data-active-tab="atlas"] .vine-branch.sub {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: vineUncurl 1.4s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#dashWindowPlate[data-active-tab="atlas"] .vine-leaf {
+  transform-origin: center;
+  animation: leafBloom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+#dashWindowPlate[data-active-tab="atlas"] .vine-leaf.outer.l1 { animation-delay: 0.4s; }
+#dashWindowPlate[data-active-tab="atlas"] .vine-leaf.outer.l2 { animation-delay: 0.55s; }
+#dashWindowPlate[data-active-tab="atlas"] .vine-leaf.outer.l3 { animation-delay: 0.7s; }
+#dashWindowPlate[data-active-tab="atlas"] .vine-leaf.outer.l4 { animation-delay: 0.85s; }
+#dashWindowPlate[data-active-tab="atlas"] .vine-leaf.outer.l5 { animation-delay: 1.0s; }
+
+#dashWindowPlate[data-active-tab="atlas"] .vine-berry.pulse {
+  animation: berryPulseGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes vineUncurl {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes leafBloom {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.18); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes vineBreeze {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.2deg); }
+}
+
+@keyframes berryPulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 2px currentColor); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 8px currentColor); transform: scale(1.25); }
+}
+
+/* Perimeter Creeping Leaves */
+.atlas-frame-edge {
+  position: absolute;
+  pointer-events: none;
+  background-repeat: repeat;
+  opacity: 0.85;
+}
+
+.atlas-frame-edge.edge-top {
+  top: -8px;
+  left: 130px;
+  right: 130px;
+  height: 12px;
+  background-image: radial-gradient(circle at 10px 6px, #22c55e 2.5px, transparent 3.5px),
+    radial-gradient(circle at 26px 4px, #4ade80 2px, transparent 3px),
+    radial-gradient(circle at 44px 7px, #16a34a 3px, transparent 4px);
+  background-size: 55px 12px;
+}
+
+.atlas-frame-edge.edge-bottom {
+  bottom: -8px;
+  left: 130px;
+  right: 130px;
+  height: 12px;
+  background-image: radial-gradient(circle at 12px 6px, #15803d 3px, transparent 4px),
+    radial-gradient(circle at 32px 5px, #22c55e 2px, transparent 3px);
+  background-size: 50px 12px;
+}
+
+.atlas-frame-edge.edge-left {
+  left: -8px;
+  top: 130px;
+  bottom: 130px;
+  width: 12px;
+  background-image: radial-gradient(circle at 6px 14px, #22c55e 2.5px, transparent 3.5px),
+    radial-gradient(circle at 5px 38px, #16a34a 3px, transparent 4px);
+  background-size: 12px 55px;
+}
+
+.atlas-frame-edge.edge-right {
+  right: -8px;
+  top: 130px;
+  bottom: 130px;
+  width: 12px;
+  background-image: radial-gradient(circle at 6px 18px, #4ade80 2.5px, transparent 3.5px),
+    radial-gradient(circle at 7px 42px, #15803d 3px, transparent 4px);
+  background-size: 12px 50px;
+}
+
+/* 2. THE LIVING HAVEN DIORAMA STAGE (CINEMATIC WORLD CANVAS) */
+.atlas-living-haven-stage {
+  position: relative;
+  border-radius: 24px;
+  min-height: 380px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px 28px;
+  border: 1.8px solid rgba(251, 191, 36, 0.55) !important;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 45px rgba(56, 189, 248, 0.22) !important;
+  background:
+    linear-gradient(180deg, rgba(7, 11, 22, 0.72) 0%, rgba(10, 16, 30, 0.85) 55%, rgba(6, 10, 18, 0.96) 100%),
+    url('../../assets/brand/living-atlas/16_colossal_ancient_arches_canopy.jpg') center 25%/cover no-repeat !important;
+}
+
+.atlas-stage-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.22) 0%, transparent 60%),
+    radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.16) 0%, transparent 50%),
+    radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 55%);
+  z-index: 0;
+}
+
+/* Radiant God Rays Piercing Ancient Canopy */
+.atlas-god-rays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(132deg, rgba(255, 255, 255, 0.2) 0%, rgba(251, 191, 36, 0.14) 22%, rgba(56, 189, 248, 0.08) 45%, transparent 70%);
+  mask-image: repeating-linear-gradient(132deg, #000 0px, #000 48px, transparent 48px, transparent 86px, #000 86px, #000 150px, transparent 150px, transparent 200px);
+  -webkit-mask-image: repeating-linear-gradient(132deg, #000 0px, #000 48px, transparent 48px, transparent 86px, #000 86px, #000 150px, transparent 150px, transparent 200px);
+  animation: godRaysDrift 9s infinite alternate ease-in-out;
+}
+
+@keyframes godRaysDrift {
+  0% { opacity: 0.45; transform: scale(1) translateY(0); }
+  50% { opacity: 0.85; transform: scale(1.03) translateY(-4px); }
+  100% { opacity: 0.55; transform: scale(1) translateY(0); }
+}
+
+.atlas-spores-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.atlas-stage-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+
+/* 3. ACTORS ROW: WAYFINDER AVATAR, CAMPFIRE & MIRO */
+.atlas-character-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 270px;
+}
+
+.atlas-actors-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+/* Animated Hearth Campfire */
+.atlas-campfire {
+  position: relative;
+  width: 46px;
+  height: 52px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.65));
+}
+
+.campfire-glow {
+  position: absolute;
+  bottom: 0;
+  width: 60px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.75), transparent 70%);
+  filter: blur(4px);
+  animation: campfireGlowPulse 1.8s infinite alternate ease-in-out;
+}
+
+.flame-layer {
+  position: absolute;
+  bottom: 8px;
+  border-radius: 50% 50% 20% 20%;
+  transform-origin: bottom center;
+}
+
+.flame-1 {
+  width: 22px;
+  height: 38px;
+  background: linear-gradient(0deg, #ef4444, #f59e0b, #fef08a);
+  animation: flameFlicker1 0.7s infinite alternate ease-in-out;
+  opacity: 0.95;
+}
+
+.flame-2 {
+  width: 16px;
+  height: 28px;
+  background: linear-gradient(0deg, #f59e0b, #fde047, #ffffff);
+  animation: flameFlicker2 0.5s infinite alternate ease-in-out;
+  opacity: 0.9;
+}
+
+.flame-3 {
+  width: 10px;
+  height: 18px;
+  background: linear-gradient(0deg, #38bdf8, #bae6fd, #ffffff);
+  animation: flameFlicker1 0.35s infinite alternate ease-in-out;
+  opacity: 0.85;
+}
+
+.campfire-wood {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  gap: 2px;
+  font-size: 14px;
+  z-index: 2;
+}
+
+.campfire-spark {
+  position: absolute;
+  font-size: 10px;
+  color: #fef08a;
+  animation: sparkRise 2s infinite ease-out;
+}
+.campfire-spark.s1 { left: 8px; animation-delay: 0.2s; }
+.campfire-spark.s2 { right: 8px; animation-delay: 0.9s; }
+.campfire-spark.s3 { left: 20px; animation-delay: 1.5s; }
+
+@keyframes flameFlicker1 {
+  0% { transform: scale(1) rotate(-3deg); }
+  100% { transform: scale(1.1, 1.25) rotate(4deg); }
+}
+
+@keyframes flameFlicker2 {
+  0% { transform: scale(1.05) rotate(4deg); }
+  100% { transform: scale(0.95, 1.15) rotate(-3deg); }
+}
+
+@keyframes campfireGlowPulse {
+  0% { opacity: 0.6; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes sparkRise {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-38px) translateX(6px) scale(0); opacity: 0; }
+}
+
+/* Wayfinder Character Avatar Box */
+.atlas-wayfinder-avatar-box {
+  position: relative;
+  width: 104px;
+  height: 134px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.7));
+}
+
+.atlas-wayfinder-avatar-box:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.wayfinder-halo {
+  position: absolute;
+  top: 10px;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(251, 191, 36, 0.12) 50%, transparent 70%);
+  pointer-events: none;
+  animation: haloPulse 3s infinite alternate ease-in-out;
+}
+
+@keyframes haloPulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6)); }
+}
+
+/* Wayfinder Breathing & Cloak Animations */
+.wayfinder-character-svg {
+  animation: wayfinderBreathe 3s infinite ease-in-out;
+  transform-origin: bottom center;
+}
+
+.cloak-back {
+  animation: cloakWave 3.5s infinite ease-in-out;
+  transform-origin: top left;
+}
+
+.staff-crystal {
+  animation: staffGlowPulse 2.2s infinite alternate ease-in-out;
+  transform-origin: 78px 18px;
+}
+
+@keyframes wayfinderBreathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.015, 0.985); }
+}
+
+@keyframes cloakWave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(2.8deg); }
+}
+
+@keyframes staffGlowPulse {
+  0% { filter: drop-shadow(0 0 4px #38bdf8); }
+  100% { filter: drop-shadow(0 0 16px #38bdf8) drop-shadow(0 0 8px #fbbf24); }
+}
+
+.atlas-wayfinder-avatar-box.cheer .wayfinder-character-svg {
+  animation: wayfinderJumpCheer 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes wayfinderJumpCheer {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-16px) scale(1.08, 0.92); }
+  75% { transform: translateY(2px) scale(0.95, 1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.wayfinder-emote-bubble {
+  position: absolute;
+  top: -46px;
+  right: -20px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 69, 0.94));
+  border: 1.5px solid #38bdf8;
+  border-radius: 12px;
+  padding: 6px 12px;
+  color: #f1f5f9;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px rgba(56, 189, 248, 0.4);
+  pointer-events: none;
+  z-index: 10;
+  animation: fadeInPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fadeInPop {
+  from { opacity: 0; transform: translateY(8px) scale(0.85); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Miro Starlight Companion Orbit */
+.atlas-miro-avatar-box {
+  width: 72px;
+  height: 72px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: miroHoverFloat 3.2s infinite ease-in-out;
+}
+
+.atlas-miro-avatar-box:hover {
+  transform: scale(1.12) translateY(-4px);
+}
+
+.miro-orbit-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(56, 189, 248, 0.4);
+  animation: ringSpin 8s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes miroHoverFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes ringSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Wayfinder Stone Identity Plaque */
+.atlas-wayfinder-identity-plaque {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 69, 0.92));
+  border: 1.5px solid rgba(251, 191, 36, 0.4);
+  border-radius: 14px;
+  padding: 10px 14px;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.atlas-wf-identity-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wf-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.atlas-wayfinder-name-tag {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #f8fafc;
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(251, 191, 36, 0.6);
+  transition: color 0.2s ease;
+}
+
+.atlas-wayfinder-name-tag:hover {
+  color: #fbbf24;
+}
+
+.wf-edit-icon {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.atlas-level-pill {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(99, 102, 241, 0.25));
+  border: 1px solid rgba(56, 189, 248, 0.6);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+}
+
+.atlas-title-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbbf24;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Luminous Celestial XP Gauge */
+.atlas-xp-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.atlas-xp-bar {
+  height: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.atlas-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #fbbf24);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+}
+
+.atlas-xp-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+/* 4. CENTER: MIRO DIALOGUE & LIVING STORY SCROLL */
+.atlas-diorama-center {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  max-width: 460px;
+}
+
+.atlas-scroll-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 69, 0.92));
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.atlas-scroll-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.atlas-scroll-badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.atlas-scroll-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.atlas-miro-interact-btn,
+.atlas-miro-daily-quest-btn,
+.atlas-miro-history-btn {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #7dd3fc;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.atlas-miro-interact-btn:hover,
+.atlas-miro-daily-quest-btn:hover,
+.atlas-miro-history-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+}
+
+.atlas-miro-speech {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.65;
+  color: #f8fafc;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* 5. RIGHT: HAVEN TREASURES VAULT & 4 AFFINITIES */
+.atlas-treasures-vault {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 260px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(24, 33, 56, 0.92));
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.vault-header {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+}
+
+.atlas-currencies-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.atlas-gold-badge,
+.atlas-mat-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+}
+
+.atlas-gold-badge {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(15, 23, 42, 0.9));
+}
+
+.atlas-gold-badge:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.4);
+}
+
+.atlas-mat-badge.aether { border-color: rgba(56, 189, 248, 0.35); }
+.atlas-mat-badge.manuscript { border-color: rgba(217, 119, 6, 0.35); }
+.atlas-mat-badge.seeds { border-color: rgba(52, 211, 153, 0.35); }
+
+.cur-icon { font-size: 17px; }
+.cur-info { display: flex; flex-direction: column; }
+.cur-val { font-size: 14px; font-weight: 800; color: #f8fafc; line-height: 1.1; }
+.cur-name { font-size: 9.5px; font-weight: 700; color: #94a3b8; }
+
+/* 4 World Affinities Chips */
+.atlas-affinities-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.affinity-chip {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10.5px;
+  gap: 2px;
+}
+
+.affinity-chip.vit { border-color: rgba(52, 211, 153, 0.4); color: #34d399; }
+.affinity-chip.wis { border-color: rgba(217, 119, 6, 0.4); color: #f59e0b; }
+.affinity-chip.ser { border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; }
+.affinity-chip.dis { border-color: rgba(239, 68, 68, 0.4); color: #f87171; }
+
+.aff-lbl { font-size: 9px; opacity: 0.8; }
+
+/* 6. REALM PORTALS SUBNAV BAR */
+.atlas-subnav-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 2px;
+  scrollbar-width: none;
+}
+
+.atlas-subnav-bar::-webkit-scrollbar { display: none; }
+
+.atlas-subnav-btn {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 69, 0.8));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.atlas-subnav-btn:hover {
+  color: #f8fafc;
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.atlas-subnav-btn.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(99, 102, 241, 0.25)) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 7. DYNAMIC PROGRESSION BACKDROPS & TEST SELECTORS */
+.atlas-haven-hero.haven-lanterns-lit,
+.atlas-living-haven-stage.haven-lanterns-lit {
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.82), 0 0 35px rgba(245, 158, 11, 0.4) !important;
+  border-color: rgba(251, 191, 36, 0.8) !important;
+}
+
+.atlas-haven-hero.haven-observatory-active::before,
+.atlas-living-haven-stage.haven-observatory-active::before {
+  background: radial-gradient(circle at 18% 30%, rgba(56, 189, 248, 0.28) 0%, transparent 55%),
+    radial-gradient(circle at 82% 25%, rgba(168, 85, 247, 0.25) 0%, transparent 50%),
+    radial-gradient(circle at 85% 70%, rgba(251, 191, 36, 0.18) 0%, transparent 45%) !important;
+}
+
+.atlas-haven-hero.haven-garden-blooming,
+.atlas-living-haven-stage.haven-garden-blooming {
+  border-bottom: 2.5px solid rgba(52, 211, 153, 0.85) !important;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.82), 0 0 40px rgba(52, 211, 153, 0.3) !important;
+}
+
+.atlas-haven-hero.haven-forge-ignited,
+.atlas-living-haven-stage.haven-forge-ignited {
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.82), inset 0 0 28px rgba(244, 63, 94, 0.22), 0 0 40px rgba(244, 63, 94, 0.32) !important;
+}
+
+@keyframes radiantGlowPulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4)); }
+  50% { filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.7)); }
+}
+
+.card-action-success-fx {
+  animation: cardSuccessFlash 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cardSuccessFlash {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.02); filter: brightness(1.3) drop-shadow(0 0 14px #34d399); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* SUBVIEWS WORLD BACKDROPS */
+.atlas-card.trials-card,
+.atlas-card.obstacles-prog-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(20, 28, 48, 0.92)),
+    url('../../assets/brand/living-atlas/17_giant_stone_face_ruins.jpg') center/cover no-repeat !important;
+}
+
+.atlas-card.sanctuary-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.93), rgba(24, 34, 58, 0.92)),
+    url('../../assets/brand/living-atlas/15_sword_pedestal_godrays.jpg') center/cover no-repeat !important;
+}
+
+.atlas-card.bazaar-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(28, 38, 64, 0.92)),
+    url('../../assets/brand/living-atlas/18_nature_reclaims_sanctuary.jpg') center/cover no-repeat !important;
 }

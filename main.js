@@ -17,7 +17,7 @@ function debugLog(msg) {
   try {
     const p = path.join(app.getPath('userData'), 'app-debug.log');
     fs.appendFileSync(p, `[${new Date().toISOString()}] ${msg}\n`);
-  } catch {}
+  } catch { }
 }
 debugLog('=== App process spawned: ' + process.pid + ' ===');
 
@@ -41,7 +41,7 @@ try {
   app.commandLine.appendSwitch('disable-renderer-backgrounding', 'false');
   app.commandLine.appendSwitch('enable-features', 'BatterySaverMode,CalculateNativeWinOcclusion,ThrottleDisplayNoneAndVisibilityHiddenFrame');
   app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=256');
-} catch {}
+} catch { }
 
 process.on('uncaughtException', (err) => {
   debugLog(`UNCAUGHT EXCEPTION: ${err.stack || err}`);
@@ -1075,7 +1075,7 @@ async function stopOpenWaServer() {
   if (openwaChildProcess) {
     try {
       openwaChildProcess.kill('SIGTERM');
-    } catch {}
+    } catch { }
     openwaChildProcess = null;
   }
   try {
@@ -1085,7 +1085,7 @@ async function stopOpenWaServer() {
     } else {
       execSync('fuser -k 2785/tcp 2>/dev/null || true');
     }
-  } catch {}
+  } catch { }
   return { ok: true, status: 'STOPPED' };
 }
 
@@ -1279,7 +1279,7 @@ function openExternalUrl(url) {
     proc.unref();
   } catch (err) {
     console.error('[browser] spawn Chrome failed, fallback to shell.openExternal:', err.message);
-    shell.openExternal(url).catch(() => {});
+    shell.openExternal(url).catch(() => { });
   }
 }
 
@@ -1371,7 +1371,7 @@ function createWidget(id, opts = {}) {
       existing.show();
       existing.focus();
       if (settings.get('alwaysOnTop')) existing.setAlwaysOnTop(true);
-      try { existing.webContents.send('settings:changed', publicSettings()); } catch {}
+      try { existing.webContents.send('settings:changed', publicSettings()); } catch { }
       return existing;
     }
   }
@@ -1499,9 +1499,9 @@ function destroyWidget(id) {
   // Clear session cache and invoke V8 GC to immediately reclaim memory
   try {
     session.defaultSession?.clearCache?.();
-  } catch {}
+  } catch { }
   if (typeof global.gc === 'function') {
-    try { global.gc(); } catch {}
+    try { global.gc(); } catch { }
   }
 
   syncWidgetServices();
@@ -1773,7 +1773,7 @@ function toggleWidgetMini(win) {
   if (isIcon) {
     // 1. SMART OPEN: Save icon's current position so next minimize returns exactly here!
     patchWidget(id, { iconBounds: b, isMini: false });
-    try { win.webContents.send('widget:prepare-expand'); } catch (_) {}
+    try { win.webContents.send('widget:prepare-expand'); } catch (_) { }
     win.setResizable(true);
     win.setMinimumSize(spec.min[0], spec.min[1]);
     win.setMaximumSize(spec.max[0], spec.max[1]);
@@ -1794,10 +1794,10 @@ function toggleWidgetMini(win) {
     win.focus();
     patchWidget(id, { bounds: next, size: currentSizeKey(id) || targetSize, isMini: false });
     settings.flush();
-    try { win.webContents.send('settings:changed', publicSettings()); } catch (_) {}
+    try { win.webContents.send('settings:changed', publicSettings()); } catch (_) { }
     const settingsWin = windows.get('settings');
     if (settingsWin && !settingsWin.isDestroyed() && settingsWin !== win) {
-      try { settingsWin.webContents.send('settings:changed', publicSettings()); } catch (_) {}
+      try { settingsWin.webContents.send('settings:changed', publicSettings()); } catch (_) { }
     }
     return win.getBounds();
   } else {
@@ -1833,7 +1833,7 @@ function toggleWidgetMini(win) {
       size: 'icon',
     });
 
-    try { win.webContents.send('widget:prepare-mini'); } catch (_) {}
+    try { win.webContents.send('widget:prepare-mini'); } catch (_) { }
     win.setMinimumSize(48, 48);
     win.setMaximumSize(90, 90);
     win.setResizable(false);
@@ -1855,10 +1855,10 @@ function toggleWidgetMini(win) {
     win.setBounds(next);
     patchWidget(id, { bounds: next, iconBounds: next, size: 'icon', isMini: true });
     settings.flush();
-    try { win.webContents.send('settings:changed', publicSettings()); } catch (_) {}
+    try { win.webContents.send('settings:changed', publicSettings()); } catch (_) { }
     const settingsWin = windows.get('settings');
     if (settingsWin && !settingsWin.isDestroyed() && settingsWin !== win) {
-      try { settingsWin.webContents.send('settings:changed', publicSettings()); } catch (_) {}
+      try { settingsWin.webContents.send('settings:changed', publicSettings()); } catch (_) { }
     }
   }
 
@@ -1937,7 +1937,7 @@ function saveFolders(folders) {
   try {
     const { defaultBackupManager } = require('./src/core/backup-manager');
     defaultBackupManager.createSnapshot(paths.settings, settings.data, 'folders', true);
-  } catch (_) {}
+  } catch (_) { }
 }
 
 function getFolderOfWidget(id) {
@@ -2058,7 +2058,7 @@ function createFolderFromHover(sourceId, targetId, targetBounds, sourceBounds) {
   const otherFolderObstacles = [];
   for (const [wId, w] of windows.entries()) {
     if (w && !w.isDestroyed() && w._isFolder) {
-      try { otherFolderObstacles.push(w.getBounds()); } catch (_) {}
+      try { otherFolderObstacles.push(w.getBounds()); } catch (_) { }
     }
   }
   for (const [otherFid, otherF] of Object.entries(folders)) {
@@ -2785,7 +2785,7 @@ function openHabitsDashboardWindow(opts = {}) {
         if (habitsDashboardWin && !habitsDashboardWin.isDestroyed()) {
           habitsDashboardWin.webContents.send('habits:dashboard-opts', opts);
         }
-      } catch (_) {}
+      } catch (_) { }
     });
   }
   habitsDashboardWin.on('closed', () => { habitsDashboardWin = null; });
@@ -2814,7 +2814,7 @@ function broadcast(channel, payload) {
       if (!w.isDestroyed() && w.webContents && !w.webContents.isDestroyed()) {
         w.webContents.send(channel, payload);
       }
-    } catch {}
+    } catch { }
   }
 }
 
@@ -3551,7 +3551,7 @@ function registerGestures() {
         const otherFolderObstacles = [];
         for (const [wId, w] of windows.entries()) {
           if (wId !== id && w && !w.isDestroyed() && w._isFolder) {
-            try { otherFolderObstacles.push(w.getBounds()); } catch (_) {}
+            try { otherFolderObstacles.push(w.getBounds()); } catch (_) { }
           }
         }
         b = geo.avoidCollisions(b, g.area || areaFor(b), otherFolderObstacles, 16);
@@ -3634,7 +3634,7 @@ function watchPower() {
   const { powerMonitor } = require('electron');
   try {
     currentPowerState.onBattery = Boolean(powerMonitor?.isOnBatteryPower?.());
-  } catch {}
+  } catch { }
   evaluateEcoState();
 
   const wake = debounce(() => {
@@ -3686,7 +3686,7 @@ function watchPower() {
     powerMonitor.on('suspend', () => {
       debugLog('[PowerMonitor] System entering sleep/suspend.');
       currentPowerState.suspended = true;
-      try { saveAllWidgetStates(); } catch {}
+      try { saveAllWidgetStates(); } catch { }
       broadcast('system:suspend', Date.now());
     });
     powerMonitor.on('lock-screen', () => {
@@ -3694,7 +3694,7 @@ function watchPower() {
       currentPowerState.locked = true;
       broadcast('system:lock', Date.now());
     });
-  } catch {}
+  } catch { }
 }
 
 /* ==================================================================== *
@@ -3830,7 +3830,7 @@ function registerIpc() {
 
     if ('alwaysOnTop' in patch) applyWindowLevel();
     if ((patch.quranIntervalHours && patch.quranIntervalHours !== before.quranIntervalHours)
-        || ('inspiration' in clean && clean.inspiration !== before.inspiration)) {
+      || ('inspiration' in clean && clean.inspiration !== before.inspiration)) {
       refreshQuran(false);
     }
     if (clean.pomodoro) pomodoro.reconfigure();
@@ -3862,7 +3862,7 @@ function registerIpc() {
       syncWidgetServices();
       if (typeof emailEngine !== 'undefined' && emailEngine && clean.email.user && clean.email.pass) {
         emailEngine.start();
-        emailEngine.check().catch(() => {});
+        emailEngine.check().catch(() => { });
       }
     }
     if ('language' in clean && clean.language !== before.language) {
@@ -3887,7 +3887,7 @@ function registerIpc() {
     try {
       const { defaultBackupManager } = require('./src/core/backup-manager');
       defaultBackupManager.createSnapshot(paths.settings, settings.data, 'pre_reset', true);
-    } catch (_) {}
+    } catch (_) { }
     const keep = settings.get('widgets', {});
     const language = settings.get('language');
     settings.merge({ ...structuredClone(DEFAULTS), language });
@@ -3949,7 +3949,7 @@ function registerIpc() {
         for (const item of storesList) {
           let data = item.store ? item.store.data : null;
           if (!data && fs.existsSync(item.path)) {
-            try { data = JSON.parse(fs.readFileSync(item.path, 'utf8')); } catch (_) {}
+            try { data = JSON.parse(fs.readFileSync(item.path, 'utf8')); } catch (_) { }
           }
           if (data) {
             results[item.name] = defaultBackupManager.createSnapshot(item.path, data, reason || 'manual', true);
@@ -3967,7 +3967,7 @@ function registerIpc() {
       else if (targetStore === 'atlas') data = typeof atlasEngine !== 'undefined' && atlasEngine && atlasEngine.store ? atlasEngine.store.data : null;
       else if (targetStore === 'calendarEvents') data = typeof calendarEventsStore !== 'undefined' ? calendarEventsStore.data : null;
       else if (fs.existsSync(p)) {
-        try { data = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) {}
+        try { data = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) { }
       }
       if (data) {
         return defaultBackupManager.createSnapshot(p, data, reason || 'manual', true);
@@ -4021,7 +4021,7 @@ function registerIpc() {
         if (typeof atlasEngine !== 'undefined' && atlasEngine && atlasEngine.store && atlasEngine.store.store && atlasEngine.store.store.flush) {
           atlasEngine.store.store.flush();
         }
-      } catch (_) {}
+      } catch (_) { }
 
       const win = senderWindow(e);
       const res = await dialog.showSaveDialog(win || null, {
@@ -4073,7 +4073,7 @@ function registerIpc() {
         if (typeof atlasEngine !== 'undefined' && atlasEngine && fs.existsSync(paths.atlas)) {
           broadcast('atlas:updated', await atlasEngine.getDashboardState(settings.get('language') || 'ar'));
         }
-      } catch (_) {}
+      } catch (_) { }
       return { ...result, filePath: res.filePaths[0] };
     } catch (err) {
       return { success: false, error: err.message };
@@ -4094,7 +4094,7 @@ function registerIpc() {
     const targetUrl = url || 'https://myaccount.google.com/';
     const chromeExe = findChromeExecutable();
     if (!chromeExe) {
-      shell.openExternal(targetUrl).catch(() => {});
+      shell.openExternal(targetUrl).catch(() => { });
       return { ok: true, fallback: true };
     }
     const folder = profileFolder || settings.get('browser', {})?.chromeProfile || 'Default';
@@ -4104,7 +4104,7 @@ function registerIpc() {
       proc.unref();
       return { ok: true, profile: folder };
     } catch (err) {
-      shell.openExternal(targetUrl).catch(() => {});
+      shell.openExternal(targetUrl).catch(() => { });
       return { ok: false, error: err.message };
     }
   });
@@ -4639,7 +4639,7 @@ function registerIpc() {
       detachedWin.show();
       detachedWin.focus();
       if (settings.get('alwaysOnTop')) detachedWin.setAlwaysOnTop(true);
-      try { detachedWin.webContents.send('settings:changed', publicSettings()); } catch {}
+      try { detachedWin.webContents.send('settings:changed', publicSettings()); } catch { }
     }
 
     // 3. Check remaining count in folders for dissolution:
@@ -4931,14 +4931,14 @@ function registerIpc() {
       win.setBounds(targetBounds);
       win.show();
       win.focus();
-      try { win.moveTop(); } catch (_) {}
+      try { win.moveTop(); } catch (_) { }
     } else {
       win = createWidget(wid, { immediateShow: true, bounds: targetBounds });
       if (win && !win.isDestroyed()) {
         win.setBounds(targetBounds);
         win.show();
         win.focus();
-        try { win.moveTop(); } catch (_) {}
+        try { win.moveTop(); } catch (_) { }
       }
     }
 
@@ -4951,7 +4951,7 @@ function registerIpc() {
     const todoList = todos ? todos.get('items', []) : [];
     const pendingTodos = Array.isArray(todoList) ? todoList.filter(t => !t.done).length : 0;
     let habitsStreak = 0;
-    try { habitsStreak = habitsManager?.getGamification?.()?.streak || 0; } catch (_) {}
+    try { habitsStreak = habitsManager?.getGamification?.()?.streak || 0; } catch (_) { }
 
     for (const id of Object.keys(WIDGETS)) {
       if (id.startsWith('folder') || id === 'folder') continue;
@@ -5193,7 +5193,7 @@ function registerIpc() {
       if (newItems.some((n) => (n.body && n.body.length > 10) || (n.checklist && n.checklist.length > 0))) {
         fs.writeFileSync(paths.notes + '.backup.json', JSON.stringify({ items: newItems, activeId: payload.activeId }, null, 2), 'utf8');
       }
-    } catch {}
+    } catch { }
     notes.merge({
       items: newItems,
       activeId: payload.activeId ?? null,
@@ -5278,7 +5278,7 @@ function registerIpc() {
       broadcast('settings:changed', publicSettings());
       syncWidgetServices();
       emailEngine.start();
-      emailEngine.check().catch(() => {});
+      emailEngine.check().catch(() => { });
     }
     return res;
   });
@@ -5726,7 +5726,7 @@ function saveAllWidgetStates() {
         defaultBackupManager.createSnapshot(item.path, item.store.data, 'shutdown', true);
       }
     }
-  } catch (_) {}
+  } catch (_) { }
 }
 
 function debounce(fn, ms) {
@@ -5900,7 +5900,7 @@ async function main() {
 
   createTray();
   watchPower();
-  setTimeout(() => { try { getOrCreatePeekWindow(); } catch {} }, 800);
+  setTimeout(() => { try { getOrCreatePeekWindow(); } catch { } }, 800);
 
   for (const ev of ['display-metrics-changed', 'display-added', 'display-removed']) {
     screen.on(ev, debounce(reclampAll, 300));
@@ -5993,8 +5993,8 @@ async function main() {
   }
 
   // Warm the cache a little later so startup stays quick.
-  setTimeout(() => quran.prefetch(settings.data, { count: 10 }).catch(() => {}), 20_000);
-  setTimeout(() => hadith.prefetch(settings.data, { count: 12 }).catch(() => {}), 45_000);
+  setTimeout(() => quran.prefetch(settings.data, { count: 10 }).catch(() => { }), 20_000);
+  setTimeout(() => hadith.prefetch(settings.data, { count: 12 }).catch(() => { }), 45_000);
 }
 
 app.on('second-instance', bringToFront);
@@ -6007,13 +6007,13 @@ app.on('window-all-closed', (e) => {
 app.on('before-quit', () => {
   debugLog('app before-quit event fired');
   quitting = true;
-  try { saveAllWidgetStates(); } catch {}
+  try { saveAllWidgetStates(); } catch { }
   clearTimeout(quranTimer);
   if (classroomSyncIntervalTimer) clearInterval(classroomSyncIntervalTimer);
   globalShortcut.unregisterAll();
-  try { stopOpenWaServer(); } catch {}
-  try { superUrgentMonitor.stop(); } catch {}
-  try { emailEngine.stop(); } catch {}
+  try { stopOpenWaServer(); } catch { }
+  try { superUrgentMonitor.stop(); } catch { }
+  try { emailEngine.stop(); } catch { }
   if (INSTALL_MODE) return;
   settings.flush();
   reminders.dispose();
@@ -6023,14 +6023,14 @@ app.on('before-quit', () => {
   hadith.flush();
   calendarEventsStore.flush();
   calendarEventsManager.stop();
-  try { reliableDispatcher.stop(); } catch {}
-  try { dispatchQueueStore.flush(); } catch {}
+  try { reliableDispatcher.stop(); } catch { }
+  try { dispatchQueueStore.flush(); } catch { }
   pomodoro.dispose();
 });
 
 app.on('will-quit', () => {
   debugLog('app will-quit event fired');
-  try { saveAllWidgetStates(); } catch {}
+  try { saveAllWidgetStates(); } catch { }
 });
 
 app.on('quit', (e, code) => {

@@ -5513,8 +5513,71 @@
   }
 
   /* ==================================================================== *
-   * 8. THE LIVING ATLAS (أطلس العوالم الحيّة) RENDERING
+   * 8. THE LIVING ATLAS (أطلس العوالم الحيّة) RENDERING & WORLD ANIMATIONS
    * ==================================================================== */
+
+  let _sporeAnimationId = null;
+  function initAtlasSporeCanvas() {
+    const canvas = document.getElementById('atlasSporeCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    if (_sporeAnimationId) {
+      cancelAnimationFrame(_sporeAnimationId);
+      _sporeAnimationId = null;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width || 900;
+    canvas.height = rect.height || 340;
+
+    const count = 35;
+    const particles = [];
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2.4 + 1.2,
+        alpha: Math.random() * 0.6 + 0.35,
+        speedY: -(Math.random() * 0.45 + 0.2),
+        speedX: (Math.random() - 0.5) * 0.3,
+        hue: Math.random() > 0.4 ? '56, 189, 248' : '251, 191, 36',
+        osc: Math.random() * Math.PI * 2,
+        oscSpeed: Math.random() * 0.025 + 0.015,
+      });
+    }
+
+    function renderSpores() {
+      if (!document.getElementById('pane-atlas')?.classList.contains('active')) {
+        _sporeAnimationId = null;
+        return;
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        p.osc += p.oscSpeed;
+        p.y += p.speedY;
+        p.x += Math.sin(p.osc) * 0.45 + p.speedX;
+
+        if (p.y < -10) {
+          p.y = canvas.height + 10;
+          p.x = Math.random() * canvas.width;
+        }
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.x > canvas.width + 10) p.x = -10;
+
+        const pulseAlpha = Math.max(0.1, p.alpha + Math.sin(p.osc * 2) * 0.25);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.hue}, ${pulseAlpha})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(${p.hue}, 0.8)`;
+        ctx.fill();
+      }
+      _sporeAnimationId = requestAnimationFrame(renderSpores);
+    }
+    renderSpores();
+  }
 
   async function renderAtlasPane() {
     const isEn = (state.language === 'en');
@@ -6485,6 +6548,97 @@
         }
       };
     }
+
+    // 16. Wayfinder Character Avatar & Interaction
+    const wfBox = $('#atlasWayfinderAvatarBox');
+    const emoteBubble = $('#wayfinderEmoteBubble');
+    if (wfBox) {
+      wfBox.onclick = () => {
+        wfBox.classList.remove('cheer');
+        void wfBox.offsetWidth;
+        wfBox.classList.add('cheer');
+
+        if (emoteBubble) {
+          const quotesAr = [
+            `"مع كل خطوة صادقة، ينير الأطلس وتتراجع العتمة!"`,
+            `"الملاذ يزدهر بصبرك واستمرارك يا ${wf.name || 'مستكشف'}!"`,
+            `"خطوة صغيرة اليوم تصنع مجداً كبيراً غداً!"`,
+            `"المستكشف مستعد دائماً، ولا مكان لليأس في ملاذنا!"`,
+            `"الاستمرار الهادئ يفكك أكبر العقبات!"`
+          ];
+          const quotesEn = [
+            `"With every true step, the Weave lights up!"`,
+            `"The Haven blossoms with your patience and grit, ${wf.name || 'Wayfinder'}!"`,
+            `"A small step today builds a great sanctuary tomorrow!"`,
+            `"The Wayfinder is always ready; despair has no home here!"`
+          ];
+          const list = isEn ? quotesEn : quotesAr;
+          const chosenQuote = list[Math.floor(Math.random() * list.length)];
+          emoteBubble.textContent = chosenQuote;
+          emoteBubble.style.display = 'block';
+
+          clearTimeout(wfBox._emoteTimer);
+          wfBox._emoteTimer = setTimeout(() => {
+            if (emoteBubble) emoteBubble.style.display = 'none';
+          }, 4000);
+        }
+      };
+    }
+
+    // Hero Scroll Miro Buttons
+    const heroQuestBtn = $('#atlasMiroDailyQuestBtn');
+    if (heroQuestBtn) {
+      heroQuestBtn.onclick = () => {
+        const questCard = $('#atlasMiroDailyQuestCard');
+        if (questCard) {
+          const isHidden = questCard.style.display === 'none';
+          questCard.style.display = isHidden ? 'block' : 'none';
+          if (isHidden && window.widgets?.atlas?.generateDailyQuest) {
+            window.widgets.atlas.generateDailyQuest(state.language || 'ar').then(res => {
+              if (res?.quest) {
+                const qTitle = $('#atlasQuestTitle'); if (qTitle) qTitle.textContent = res.quest.title;
+                const qDesc = $('#atlasQuestDesc'); if (qDesc) qDesc.textContent = res.quest.desc;
+              }
+            }).catch(e => console.warn('[Atlas] Daily quest failed:', e));
+          }
+        }
+      };
+    }
+
+    const heroHistoryBtn = $('#atlasMiroHistoryBtn');
+    if (heroHistoryBtn) {
+      heroHistoryBtn.onclick = () => {
+        const drawer = $('#atlasMiroHistoryDrawer');
+        if (drawer) {
+          const isHidden = drawer.style.display === 'none';
+          drawer.style.display = isHidden ? 'block' : 'none';
+          if (isHidden && window.widgets?.atlas?.getMiroHistory) {
+            window.widgets.atlas.getMiroHistory().then(history => {
+              const listEl = $('#atlasMiroHistoryList');
+              if (listEl && Array.isArray(history)) {
+                if (history.length === 0) {
+                  listEl.innerHTML = `<div style="padding: 12px; color: var(--text-muted); font-size: 11px;">${isEn ? 'No previous consultations recorded.' : 'لا توجد استشارات سابقة مسجلة.'}</div>`;
+                } else {
+                  listEl.innerHTML = history.map(h => `
+                    <div class="history-item">
+                      <div class="h-meta">
+                        <span class="h-mode">${h.modeKey || 'استشارة'}</span>
+                        <span class="h-time">${new Date(h.timestamp).toLocaleDateString()}</span>
+                      </div>
+                      ${h.userQuestion ? `<div class="h-q">"${h.userQuestion}"</div>` : ''}
+                      <div class="h-a">"${h.response}"</div>
+                    </div>
+                  `).join('');
+                }
+              }
+            }).catch(e => console.warn('[Atlas] History failed:', e));
+          }
+        }
+      };
+    }
+
+    // Initialize Living Spores Particle Animation
+    initAtlasSporeCanvas();
   }
 
   /* ---------- Boot via Mirqat UI Framework ---------- */

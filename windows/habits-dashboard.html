@@ -12,6 +12,91 @@
 
 <body>
   <div class="dash-window plate window-plate" id="dashWindowPlate" data-drag>
+    <!-- THE LIVING OVERGROWN VINES FRAME (Spills 12-16px beyond dashboard boundaries) -->
+    <div class="atlas-living-frame" id="atlasLivingFrame" aria-hidden="true">
+      <!-- Top-Left Corner Cluster -->
+      <svg class="atlas-vine-corner top-left" viewBox="-24 -24 160 160" width="160" height="160" fill="none">
+        <path class="vine-branch main" d="M-14,-14 C12,-6 40,4 78,5 C110,6 136,3 158,1" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+        <path class="vine-branch main" d="M-14,-14 C-6,12 4,40 5,78 C6,110 3,136 1,158" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+        <path class="vine-branch sub" d="M-16,-16 C-22,-4 -18,18 -8,35 C-2,48 2,64 4,88" stroke="#854d0e" stroke-width="2.8" stroke-linecap="round"/>
+        <path class="vine-branch sub" d="M-16,-16 C-4,-22 18,-18 35,-8 C48,-2 64,2 88,4" stroke="#854d0e" stroke-width="2.8" stroke-linecap="round"/>
+        <!-- Spilling Beyond Outer Border Leaves -->
+        <path class="vine-leaf outer l1" d="M-18,-12 C-26,-6 -24,8 -14,12 C-7,13 -9,-3 -18,-12 Z" fill="#15803d" stroke="#14532d" stroke-width="1.2"/>
+        <path class="vine-leaf outer l2" d="M-12,-18 C-6,-26 8,-24 12,-14 C13,-7 -3,-9 -12,-18 Z" fill="#22c55e" stroke="#15803d" stroke-width="1.2"/>
+        <path class="vine-leaf outer l3" d="M-22,-22 C-16,-28 -4,-24 -6,-15 C-8,-9 -16,-14 -22,-22 Z" fill="#4ade80" stroke="#166534" stroke-width="1.2"/>
+        <path class="vine-leaf outer l4" d="M-22,6 C-28,14 -22,24 -12,22 C-6,18 -10,8 -22,6 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+        <path class="vine-leaf outer l5" d="M6,-22 C14,-28 24,-22 22,-12 C18,-6 8,-10 6,-22 Z" fill="#4ade80" stroke="#15803d" stroke-width="1"/>
+        <!-- Inner Stem Leaves -->
+        <path class="vine-leaf in" d="M22,3 C18,-7 30,-14 40,-7 C46,-2 37,5 22,3 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+        <path class="vine-leaf in" d="M56,5 C52,-4 65,-11 74,-4 C80,2 71,7 56,5 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+        <path class="vine-leaf in" d="M96,4 C92,-6 106,-12 116,-5 C122,1 112,6 96,4 Z" fill="#4ade80" stroke="#166534" stroke-width="1"/>
+        <path class="vine-leaf in" d="M132,3 C128,-5 140,-10 148,-4 C153,1 146,6 132,3 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+        <path class="vine-leaf in" d="M3,22 C-7,18 -14,30 -7,40 C-2,46 5,37 3,22 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+        <path class="vine-leaf in" d="M5,56 C-4,52 -11,65 -4,74 C2,80 7,71 5,56 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+        <path class="vine-leaf in" d="M4,96 C-6,92 -12,106 -5,116 C1,122 6,112 4,96 Z" fill="#4ade80" stroke="#166534" stroke-width="1"/>
+        <path class="vine-leaf in" d="M3,132 C-5,128 -10,140 -4,148 C1,153 6,146 3,132 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+        <!-- Starlight Berries & Blossoms -->
+        <circle class="vine-berry cyan pulse" cx="-17" cy="-7" r="4" fill="#38bdf8"/>
+        <circle class="vine-berry gold pulse" cx="-7" cy="-17" r="3.6" fill="#fbbf24"/>
+        <circle class="vine-berry pink" cx="42" cy="-2" r="3.2" fill="#f472b6"/>
+        <circle class="vine-berry cyan" cx="-2" cy="42" r="3.2" fill="#38bdf8"/>
+        <circle class="vine-berry gold" cx="88" cy="2" r="3.4" fill="#fbbf24"/>
+        <circle class="vine-berry gold" cx="2" cy="88" r="3.4" fill="#fbbf24"/>
+        <circle class="vine-berry cyan" cx="126" cy="1" r="3" fill="#38bdf8"/>
+        <circle class="vine-berry pink" cx="1" cy="126" r="3" fill="#f472b6"/>
+      </svg>
+
+      <!-- Top-Right Corner Cluster -->
+      <svg class="atlas-vine-corner top-right" viewBox="-24 -24 160 160" width="160" height="160" fill="none">
+        <g transform="scale(-1, 1) translate(-112, 0)">
+          <path class="vine-branch main" d="M-14,-14 C12,-6 40,4 78,5 C110,6 136,3 158,1" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="vine-branch main" d="M-14,-14 C-6,12 4,40 5,78 C6,110 3,136 1,158" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="vine-branch sub" d="M-16,-16 C-22,-4 -18,18 -8,35 C-2,48 2,64 4,88" stroke="#854d0e" stroke-width="2.8" stroke-linecap="round"/>
+          <path class="vine-branch sub" d="M-16,-16 C-4,-22 18,-18 35,-8 C48,-2 64,2 88,4" stroke="#854d0e" stroke-width="2.8" stroke-linecap="round"/>
+          <path class="vine-leaf outer l1" d="M-18,-12 C-26,-6 -24,8 -14,12 C-7,13 -9,-3 -18,-12 Z" fill="#15803d" stroke="#14532d" stroke-width="1.2"/>
+          <path class="vine-leaf outer l2" d="M-12,-18 C-6,-26 8,-24 12,-14 C13,-7 -3,-9 -12,-18 Z" fill="#22c55e" stroke="#15803d" stroke-width="1.2"/>
+          <path class="vine-leaf outer l3" d="M-22,-22 C-16,-28 -4,-24 -6,-15 C-8,-9 -16,-14 -22,-22 Z" fill="#4ade80" stroke="#166534" stroke-width="1.2"/>
+          <path class="vine-leaf in" d="M22,3 C18,-7 30,-14 40,-7 C46,-2 37,5 22,3 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+          <path class="vine-leaf in" d="M56,5 C52,-4 65,-11 74,-4 C80,2 71,7 56,5 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+          <path class="vine-leaf in" d="M3,22 C-7,18 -14,30 -7,40 C-2,46 5,37 3,22 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+          <circle class="vine-berry cyan pulse" cx="-17" cy="-7" r="4" fill="#38bdf8"/>
+          <circle class="vine-berry gold pulse" cx="-7" cy="-17" r="3.6" fill="#fbbf24"/>
+        </g>
+      </svg>
+
+      <!-- Bottom-Left Corner Cluster -->
+      <svg class="atlas-vine-corner bottom-left" viewBox="-24 -24 160 160" width="160" height="160" fill="none">
+        <g transform="scale(1, -1) translate(0, -112)">
+          <path class="vine-branch main" d="M-14,-14 C12,-6 40,4 78,5 C110,6 136,3 158,1" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="vine-branch main" d="M-14,-14 C-6,12 4,40 5,78 C6,110 3,136 1,158" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="vine-leaf outer l1" d="M-18,-12 C-26,-6 -24,8 -14,12 C-7,13 -9,-3 -18,-12 Z" fill="#15803d" stroke="#14532d" stroke-width="1.2"/>
+          <path class="vine-leaf outer l2" d="M-12,-18 C-6,-26 8,-24 12,-14 C13,-7 -3,-9 -12,-18 Z" fill="#22c55e" stroke="#15803d" stroke-width="1.2"/>
+          <path class="vine-leaf in" d="M22,3 C18,-7 30,-14 40,-7 C46,-2 37,5 22,3 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+          <path class="vine-leaf in" d="M3,22 C-7,18 -14,30 -7,40 C-2,46 5,37 3,22 Z" fill="#16a34a" stroke="#14532d" stroke-width="1"/>
+          <circle class="vine-berry cyan pulse" cx="-17" cy="-7" r="4" fill="#38bdf8"/>
+          <circle class="vine-berry gold pulse" cx="-7" cy="-17" r="3.6" fill="#fbbf24"/>
+        </g>
+      </svg>
+
+      <!-- Bottom-Right Corner Cluster -->
+      <svg class="atlas-vine-corner bottom-right" viewBox="-24 -24 160 160" width="160" height="160" fill="none">
+        <g transform="scale(-1, -1) translate(-112, -112)">
+          <path class="vine-branch main" d="M-14,-14 C12,-6 40,4 78,5 C110,6 136,3 158,1" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="vine-branch main" d="M-14,-14 C-6,12 4,40 5,78 C6,110 3,136 1,158" stroke="#603813" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="vine-leaf outer l1" d="M-18,-12 C-26,-6 -24,8 -14,12 C-7,13 -9,-3 -18,-12 Z" fill="#15803d" stroke="#14532d" stroke-width="1.2"/>
+          <path class="vine-leaf outer l2" d="M-12,-18 C-6,-26 8,-24 12,-14 C13,-7 -3,-9 -12,-18 Z" fill="#22c55e" stroke="#15803d" stroke-width="1.2"/>
+          <path class="vine-leaf in" d="M22,3 C18,-7 30,-14 40,-7 C46,-2 37,5 22,3 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+          <circle class="vine-berry gold pulse" cx="-17" cy="-7" r="4" fill="#fbbf24"/>
+          <circle class="vine-berry cyan pulse" cx="-7" cy="-17" r="3.6" fill="#38bdf8"/>
+        </g>
+      </svg>
+
+      <!-- Perimeter Running Tendrils -->
+      <div class="atlas-frame-edge edge-top"></div>
+      <div class="atlas-frame-edge edge-bottom"></div>
+      <div class="atlas-frame-edge edge-left"></div>
+      <div class="atlas-frame-edge edge-right"></div>
+    </div>
     <!-- Top Header Bar -->
     <header class="dash-header" data-drag>
       <div class="dash-header-left">
@@ -1829,81 +1914,228 @@
       <!-- 7. THE LIVING ATLAS (أطلس العوالم الحيّة) TAB -->
       <section class="dash-pane" id="pane-atlas">
         <!-- Haven Hero Banner -->
-        <div class="atlas-haven-hero">
-          <div class="atlas-miro-hub">
-            <div class="atlas-miro-avatar-box" id="atlasMiroAvatarBox"
-              title="ميرو: رفيق الدرب من طائر الحبر ونور النجوم"></div>
-            <div class="atlas-miro-bubble-wrap">
-              <div class="atlas-miro-speech" id="atlasMiroSpeech">"أهلاً بك في الملاذ الأول... خطواتك الصادقة تضيء
-                النسيج وتطرد العتمة."</div>
-              <button type="button" class="atlas-miro-interact-btn" id="atlasMiroInteractBtn">✨ استشر ميرو (Ask
-                Miro)</button>
-            </div>
-          </div>
+                <!-- 1. THE LIVING HAVEN DIORAMA STAGE (عالم الملاذ الحي) -->
+        <div class="atlas-living-haven-stage" id="atlasLivingHavenStage">
+          <!-- Background Atmospheric Canopy & Ancient Arches -->
+          <div class="atlas-stage-bg"></div>
+          <!-- Shimmering God Rays -->
+          <div class="atlas-god-rays"></div>
+          <!-- Live Fireflies & Spores Particle Canvas -->
+          <canvas class="atlas-spores-canvas" id="atlasSporeCanvas" width="900" height="340"></canvas>
 
-          <div class="atlas-wayfinder-status">
-            <div class="atlas-wf-header">
-              <div class="atlas-wf-rank">
-                <span class="atlas-wayfinder-name-tag" id="atlasWayfinderName"
-                  title="اسم مستكشف الدرب (انقر للتعديل)">مستكشف الدرب</span>
-                <span class="atlas-level-pill" id="atlasWayfinderLevel">Level 1</span>
-                <span class="atlas-title-text" id="atlasWayfinderTitle">غارس الخطوة الأولى</span>
+          <!-- Foreground: Sanctuary Stone Terrace & Interactive Actors -->
+          <div class="atlas-stage-content">
+            <!-- Left: Wayfinder Character & Campfire Alcove -->
+            <div class="atlas-character-zone">
+              <div class="atlas-actors-row">
+                <!-- The Animated Campfire Hearth -->
+                <div class="atlas-campfire" id="atlasCampfire" title="موقد الملاذ الدافئ (The Haven Hearth)">
+    <div class="campfire-glow"></div>
+    <div class="flame-layer flame-1"></div>
+    <div class="flame-layer flame-2"></div>
+    <div class="flame-layer flame-3"></div>
+    <div class="campfire-wood">
+      <span class="wood-log log-1">🪵</span>
+      <span class="wood-log log-2">🪵</span>
+    </div>
+    <div class="campfire-spark s1">✦</div>
+    <div class="campfire-spark s2">✦</div>
+    <div class="campfire-spark s3">✦</div>
+  </div>
+
+                <!-- The Animated Wayfinder Adventurer Avatar -->
+                <div class="atlas-wayfinder-avatar-box" id="atlasWayfinderAvatarBox" title="مستكشف الدرب (انقر للتفاعل وإلقاء التحية)">
+                  <div class="wayfinder-halo"></div>
+                  <svg class="wayfinder-character-svg" viewBox="0 0 100 130" width="100" height="130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Shadow on Flagstone -->
+    <ellipse cx="50" cy="122" rx="34" ry="7" fill="rgba(0,0,0,0.55)" filter="blur(3px)"/>
+
+    <!-- Walking Staff with Luminous Crystal -->
+    <g class="staff-group">
+      <!-- Wood Staff -->
+      <line x1="78" y1="20" x2="84" y2="124" stroke="#854d0e" stroke-width="4" stroke-linecap="round"/>
+      <line x1="77" y1="20" x2="83" y2="124" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+      <!-- Ancient Leather Wraps -->
+      <line x1="78" y1="52" x2="80" y2="62" stroke="#451a03" stroke-width="5"/>
+      <line x1="79" y1="54" x2="81" y2="60" stroke="#d97706" stroke-width="2"/>
+      <!-- Glowing Star Crystal Head -->
+      <g class="staff-crystal" id="wayfinderStaffCrystal">
+        <polygon points="78,8 86,18 78,28 70,18" fill="#38bdf8" stroke="#bae6fd" stroke-width="1.5"/>
+        <polygon points="78,11 83,18 78,25 73,18" fill="#e0f2fe"/>
+        <circle cx="78" cy="18" r="10" fill="url(#crystalGlowGrad)" opacity="0.85"/>
+      </g>
+    </g>
+
+    <!-- Cloak Back (Animated Flutter) -->
+    <path class="cloak-back" d="M30,38 C22,60 18,92 14,115 C26,118 48,116 68,114 C66,90 64,58 58,38 Z" fill="#14532d"/>
+    <path class="cloak-back-shadow" d="M22,70 C18,90 15,108 14,115 C24,118 36,117 44,116 C38,98 32,78 28,68 Z" fill="#052e16" opacity="0.6"/>
+
+    <!-- Adventurer Boots & Legs -->
+    <rect x="36" y="94" width="9" height="22" rx="4" fill="#3f2e21"/>
+    <rect x="52" y="94" width="9" height="22" rx="4" fill="#2b1f16"/>
+    <!-- Boots with Gold Buckles -->
+    <path d="M34,112 L46,112 L48,122 L32,122 Z" fill="#1c1917"/>
+    <path d="M50,112 L62,112 L64,122 L48,122 Z" fill="#0c0a09"/>
+    <rect x="37" y="113" width="5" height="3" fill="#fbbf24"/>
+    <rect x="53" y="113" width="5" height="3" fill="#fbbf24"/>
+
+    <!-- Adventurer Tunic & Belt -->
+    <path class="adventurer-body" d="M32,42 C32,38 62,38 64,42 L66,88 C66,92 30,92 30,88 Z" fill="#15803d"/>
+    <!-- Traveler Tunic Fold & Seams -->
+    <path d="M48,42 L48,80" stroke="#166534" stroke-width="2"/>
+    <path d="M40,50 L48,60 L56,50" stroke="#86efac" stroke-width="1.8" fill="none"/>
+    <!-- Leather Belt & Pouches -->
+    <rect x="30" y="76" width="37" height="8" rx="2" fill="#78350f"/>
+    <rect x="44" y="74" width="9" height="12" rx="2" fill="#fbbf24"/>
+    <rect x="46" y="76" width="5" height="8" rx="1" fill="#451a03"/>
+    <!-- Traveler Belt Pouch / Scroll Bag -->
+    <rect x="32" y="79" width="10" height="12" rx="2.5" fill="#451a03" stroke="#92400e" stroke-width="1"/>
+    <circle cx="37" cy="85" r="1.5" fill="#fbbf24"/>
+    <rect x="58" y="79" width="8" height="14" rx="2" fill="#365314" stroke="#4d7c0f" stroke-width="1"/>
+
+    <!-- Cloak Mantle / Cowl Foreground -->
+    <path class="cloak-cowl" d="M26,38 C28,32 68,32 70,38 C72,50 68,70 66,74 C58,68 38,68 30,74 C28,70 24,50 26,38 Z" fill="#16a34a"/>
+    <path d="M36,38 C42,48 54,48 60,38" stroke="#4ade80" stroke-width="1.5" fill="none"/>
+    <!-- Golden Crest Brooch Pin -->
+    <circle cx="48" cy="46" r="4.5" fill="#fbbf24" stroke="#fef08a" stroke-width="1.5"/>
+    <polygon points="48,43 50,46 48,49 46,46" fill="#15803d"/>
+
+    <!-- Head & Hood -->
+    <path class="wayfinder-hood" d="M34,26 C34,10 62,10 62,26 C62,38 34,38 34,26 Z" fill="#166534"/>
+    <!-- Face in Shadow with Determined Eyes -->
+    <ellipse cx="48" cy="27" rx="9" ry="8" fill="#fbcfe8"/>
+    <path d="M40,24 C44,20 52,20 56,24 C56,27 40,27 40,24 Z" fill="#0f172a"/>
+    <!-- Glowing Wayfinder Gaze -->
+    <circle cx="45" cy="26" r="1.5" fill="#38bdf8"/>
+    <circle cx="51" cy="26" r="1.5" fill="#38bdf8"/>
+
+    <!-- Arms & Gauntlets -->
+    <!-- Left Arm -->
+    <path d="M26,42 C22,55 24,70 28,78" stroke="#15803d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="25" y="72" width="7" height="9" rx="2" fill="#78350f"/>
+    <!-- Right Arm holding Staff -->
+    <path d="M66,42 C72,52 76,64 78,72" stroke="#15803d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="74" y="68" width="7" height="9" rx="2" fill="#78350f"/>
+
+    <!-- Defs for Crystal Glow Gradients -->
+    <defs>
+      <radialGradient id="crystalGlowGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+        <stop offset="60%" stop-color="#38bdf8" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+  </svg>
+                  <div class="wayfinder-emote-bubble" id="wayfinderEmoteBubble" style="display: none;"></div>
+                </div>
+
+                <!-- The Miro Starlight Spirit Companion -->
+                <div class="atlas-miro-avatar-box" id="atlasMiroAvatarBox" title="الرفيق ميرو: كائن نور النجوم وطائر الحبر (انقر لاستشارته)">
+                  <div class="atlas-miro-spirit-img"></div>
+                  <div class="atlas-miro-starlight-sparkle">✨</div>
+                  <div class="miro-orbit-ring"></div>
+                </div>
               </div>
-              <div class="atlas-header-currencies">
-                <div class="atlas-gold-badge" title="ذهب الملاذ المكتسب من إتمام العادات">🪙 <span
-                    id="atlasHavenGold">0</span> <span class="atlas-gold-lbl" data-i18n="atlas.havenGold">ذهب الملاذ</span></div>
-                <div class="atlas-materials-badges">
-                  <span class="atlas-mat-badge aether" title="بلورات الطاقة: لترميم المنشآت والجسور">💎 <span
-                      id="atlasAetherCount">0</span></span>
-                  <span class="atlas-mat-badge manuscript" title="قصاصات المخطوطات: لحفظ الخرائط والتوثيق">📜 <span
-                      id="atlasManuscriptCount">0</span></span>
-                  <span class="atlas-mat-badge seeds" title="بذور النور: لحديقة السكينة والاستشفاء">🌱 <span
-                      id="atlasSeedsCount">0</span></span>
+
+              <!-- Wayfinder Stone Identity Tablet -->
+              <div class="atlas-wayfinder-identity-plaque">
+                <div class="atlas-wf-identity-top">
+                  <div class="wf-name-wrap">
+                    <span class="atlas-wayfinder-name-tag" id="atlasWayfinderName" title="اسم مستكشف الدرب (انقر للتعديل)">مستكشف الدرب</span>
+                    <span class="wf-edit-icon" title="تعديل الاسم">✏️</span>
+                  </div>
+                  <span class="atlas-level-pill" id="atlasWayfinderLevel">Level 1</span>
+                </div>
+                <div class="atlas-title-text" id="atlasWayfinderTitle">غارس الخطوة الأولى</div>
+
+                <!-- XP Track with Celestial Luminous Fill -->
+                <div class="atlas-xp-wrap">
+                  <div class="atlas-xp-bar">
+                    <div class="atlas-xp-fill" id="atlasXpFill" style="width: 0%"></div>
+                  </div>
+                  <div class="atlas-xp-meta">
+                    <span>XP: <strong id="atlasXpCurrent">0</strong> / <span id="atlasXpRequired">300</span></span>
+                    <span class="atlas-xp-pct" id="atlasXpPct">0%</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- XP Track -->
-            <div class="atlas-xp-wrap">
-              <div class="atlas-xp-bar">
-                <div class="atlas-xp-fill" id="atlasXpFill" style="width: 0%"></div>
+            <!-- Center: Miro Dialogue & Living Story Scroll -->
+            <div class="atlas-diorama-center">
+              <div class="atlas-scroll-card">
+                <div class="atlas-scroll-header">
+                  <div class="atlas-scroll-badge">🕊️ رفيق الدرب ميرو (Miro)</div>
+                  <div class="atlas-scroll-actions">
+                    <button type="button" class="atlas-miro-interact-btn" id="atlasMiroInteractBtn">✨ استشر ميرو (Ask Miro)</button>
+                    <button type="button" class="atlas-miro-daily-quest-btn" id="atlasMiroDailyQuestBtn">🧭 مسار اليوم</button>
+                    <button type="button" class="atlas-miro-history-btn" id="atlasMiroHistoryBtn" title="أرشيف حكمة ميرو">📜 الأرشيف</button>
+                  </div>
+                </div>
+                <div class="atlas-miro-speech" id="atlasMiroSpeech">"أهلاً بك في الملاذ الأول... خطواتك الصادقة تضيء النسيج وتطرد العتمة."</div>
               </div>
-              <div class="atlas-xp-meta">
-                <span>XP: <strong id="atlasXpCurrent">0</strong> / <span id="atlasXpRequired">300</span></span>
-                <span class="atlas-xp-pct" id="atlasXpPct">0%</span>
+
+              <!-- Foreshadowing Whispers Banner (If Active) -->
+              <div class="atlas-foreshadowing-banner" id="atlasForeshadowingBanner" style="display: none;">
+                <span class="foreshadow-icon">🔮</span>
+                <div class="foreshadow-text" id="atlasForeshadowingText"></div>
               </div>
             </div>
 
-            <!-- The 4 World Affinities -->
-            <div class="atlas-affinities-row">
-              <div class="affinity-chip vit" title="الحيوية (Vitality)">🌱 <span class="aff-lbl">VIT:</span> <strong
-                  id="atlasVitScore">0</strong></div>
-              <div class="affinity-chip wis" title="الحكمة (Wisdom)">📜 <span class="aff-lbl">WIS:</span> <strong
-                  id="atlasWisScore">0</strong></div>
-              <div class="affinity-chip ser" title="السكينة (Serenity)">✨ <span class="aff-lbl">SER:</span> <strong
-                  id="atlasSerScore">0</strong></div>
-              <div class="affinity-chip dis" title="الانضباط (Discipline)">⚔️ <span class="aff-lbl">DIS:</span> <strong
-                  id="atlasDisScore">0</strong></div>
+            <!-- Right: Haven Treasures Vault & 4 Affinities Pedestals -->
+            <div class="atlas-treasures-vault">
+              <div class="vault-header">خزانة الملاذ والعملات الحية</div>
+              <div class="atlas-currencies-grid">
+                <div class="atlas-gold-badge" title="ذهب الملاذ المكتسب من إتمام العادات">
+                  <span class="cur-icon">🪙</span>
+                  <div class="cur-info">
+                    <span class="cur-val" id="atlasHavenGold">0</span>
+                    <span class="cur-name" data-i18n="atlas.havenGold">ذهب الملاذ</span>
+                  </div>
+                </div>
+                <div class="atlas-mat-badge aether" title="بلورات الطاقة: لترميم المنشآت والجسور">
+                  <span class="cur-icon">💎</span>
+                  <div class="cur-info">
+                    <span class="cur-val" id="atlasAetherCount">0</span>
+                    <span class="cur-name">بلورات الطاقة</span>
+                  </div>
+                </div>
+                <div class="atlas-mat-badge manuscript" title="قصاصات المخطوطات: لحفظ الخرائط والتوثيق">
+                  <span class="cur-icon">📜</span>
+                  <div class="cur-info">
+                    <span class="cur-val" id="atlasManuscriptCount">0</span>
+                    <span class="cur-name">المخطوطات</span>
+                  </div>
+                </div>
+                <div class="atlas-mat-badge seeds" title="بذور النور: لحديقة السكينة والاستشفاء">
+                  <span class="cur-icon">🌱</span>
+                  <div class="cur-info">
+                    <span class="cur-val" id="atlasSeedsCount">0</span>
+                    <span class="cur-name">بذور النور</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- The 4 World Affinities Gemstones -->
+              <div class="atlas-affinities-row">
+                <div class="affinity-chip vit" title="الحيوية (Vitality)">🌱 <span class="aff-lbl">VIT:</span> <strong id="atlasVitScore">0</strong></div>
+                <div class="affinity-chip wis" title="الحكمة (Wisdom)">📜 <span class="aff-lbl">WIS:</span> <strong id="atlasWisScore">0</strong></div>
+                <div class="affinity-chip ser" title="السكينة (Serenity)">✨ <span class="aff-lbl">SER:</span> <strong id="atlasSerScore">0</strong></div>
+                <div class="affinity-chip dis" title="الانضباط (Discipline)">⚔️ <span class="aff-lbl">DIS:</span> <strong id="atlasDisScore">0</strong></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Atlas Sub-Navigation Bar -->
+        <!-- 2. REALM PORTALS SUB-NAVIGATION BAR (بوابات الأقاليم) -->
         <div class="atlas-subnav-bar">
-          <button type="button" class="atlas-subnav-btn active" id="atlasBtnTabMap" data-atlas-view="map">🗺️
-            <span>الخريطة والملاذ</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabSkills" data-atlas-view="skills">🧭
-            <span>أسطرلاب المهارات</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabWorkshop" data-atlas-view="workshop">🛠️
-            <span>ورشة الترميم</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabTrials" data-atlas-view="trials">⚔️
-            <span>المحاكمات والعقبات</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜
-            <span>سجل الأطلس</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق
-              المكافآت</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو
-              والخصوصية</span></button>
+          <button type="button" class="atlas-subnav-btn active" id="atlasBtnTabMap" data-atlas-view="map">🗺️ <span>خريطة النسيج والملاذ</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabTrials" data-atlas-view="trials">⚔️ <span>المحاكمات والعقبات والصرح</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabSkills" data-atlas-view="skills">🧭 <span>أسطرلاب المهارات</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabWorkshop" data-atlas-view="workshop">🛠️ <span>ورشة الترميم</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق المكافآت</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜 <span>سجل وقائع الأطلس</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو والخصوصية</span></button>
         </div>
 
         <!-- Foreshadowing Whispers (If Active) -->
@@ -2190,14 +2422,15 @@
 
             <!-- Interactive Direct Question to Miro -->
             <div class="miro-ask-ai-row" id="atlasMiroAskAiRow">
-              <input type="text" class="miro-ask-ai-input" id="atlasMiroAskInput" placeholder="اكتب سؤالاً أو خاطرة لميرو (مثال: أشعر بتردد قبل قراءة ورد اليوم...)" autocomplete="off">
+              <input type="text" class="miro-ask-ai-input" id="atlasMiroAskInput"
+                placeholder="اكتب سؤالاً أو خاطرة لميرو (مثال: أشعر بتردد قبل قراءة ورد اليوم...)" autocomplete="off">
               <button type="button" class="miro-ask-ai-btn" id="atlasMiroAskBtn">✨ اسأل ميرو</button>
             </div>
 
             <!-- Daily Micro-Quest & Wisdom Archive Quick Actions -->
             <div class="miro-quick-actions-row">
-              <button type="button" class="miro-path-btn" id="atlasMiroDailyQuestBtn">🧭 مسار اليوم المقترح (Micro-Quest)</button>
-              <button type="button" class="miro-history-btn" id="atlasMiroHistoryBtn">📜 سجل استشارات ميرو</button>
+              <button type="button" class="miro-path-btn" id="atlasMiroSubDailyQuestBtn">🧭 مسار اليوم المقترح (Micro-Quest)</button>
+              <button type="button" class="miro-history-btn" id="atlasMiroSubHistoryBtn">📜 سجل استشارات ميرو</button>
             </div>
 
             <!-- Active Daily Micro-Quest Card -->
