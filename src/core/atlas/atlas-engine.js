@@ -455,6 +455,31 @@ class AtlasEngine extends EventEmitter {
   }
 
   /**
+   * Helper to archive recent Miro consultations (up to 10 entries)
+   */
+  _saveConsultationToHistory(consultation, modeKey, userQuestion) {
+    if (!this.store.data.miro) this.store.data.miro = {};
+    if (!Array.isArray(this.store.data.miro.consultationHistory)) {
+      this.store.data.miro.consultationHistory = [];
+    }
+    const entry = {
+      id: 'cons_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+      modeKey,
+      titleAr: consultation.titleAr || 'مشورة ميرو',
+      titleEn: consultation.titleEn || 'Miro Counsel',
+      dialogue: consultation.dialogue,
+      userQuestion: userQuestion ? userQuestion.trim() : '',
+      isAiGenerated: Boolean(consultation.isAiGenerated),
+      timestamp: new Date().toISOString()
+    };
+    this.store.data.miro.consultationHistory.unshift(entry);
+    if (this.store.data.miro.consultationHistory.length > 10) {
+      this.store.data.miro.consultationHistory.length = 10;
+    }
+    this.store.save();
+  }
+
+  /**
    * Miro Multi-Modal Interactive Consultation
    * AI-powered when Gemini API is enabled in settings, with graceful deterministic fallback.
    * Returns consultation synchronously when AI is not configured, or a Promise when AI is active.
@@ -479,17 +504,137 @@ class AtlasEngine extends EventEmitter {
           consultation.dialogue = aiRes.text;
           consultation.isAiGenerated = true;
         }
+        this._saveConsultationToHistory(consultation, modeKey, userQuestion);
         this.emit('atlas:miro-consulted', consultation);
         return consultation;
       }).catch(err => {
         consultation.aiError = err.message;
+        this._saveConsultationToHistory(consultation, modeKey, userQuestion);
         this.emit('atlas:miro-consulted', consultation);
         return consultation;
       });
     }
 
+    this._saveConsultationToHistory(consultation, modeKey, userQuestion);
     this.emit('atlas:miro-consulted', consultation);
     return consultation;
+  }
+
+  /**
+   * Returns recent Miro consultations archive
+   */
+  getMiroConsultationHistory() {
+    return this.store.data.miro?.consultationHistory || [];
+  }
+
+  /**
+   * Generates or retrieves Miro's Daily Micro-Quest
+   */
+  async generateDailyQuest(lang = 'ar') {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const existing = this.store.data.miro?.dailyQuest;
+    if (existing && existing.date === todayStr && !existing.completed) {
+      return existing;
+    }
+
+    // Pick an active habit from HabitsManager
+    let targetHabit = null;
+    if (this._habitsManager) {
+      const allHabits = typeof this._habitsManager.getAllHabits === 'function'
+        ? this._habitsManager.getAllHabits()
+        : (this._habitsManager.habits || []);
+      const active = allHabits.filter(h => !h.archived);
+      if (active.length > 0) {
+        targetHabit = active[Math.floor(Math.random() * active.length)];
+      }
+    }
+
+    const isEn = (lang === 'en');
+    const habitName = targetHabit?.name || (isEn ? 'Daily Practice' : 'الممارسة اليومية');
+    const habitId = targetHabit?.id || 'general';
+
+    const quest = {
+      id: 'quest_' + Date.now(),
+      date: todayStr,
+      habitId,
+      habitName,
+      titleAr: `مسار اليوم: إيقاد شعلة "${habitName}"`,
+      titleEn: `Path of the Day: Rekindle "${habitName}"`,
+      descriptionAr: `خصص دقيقتين فقط (قاعدة البدء السهل) للتركيز على هذه العادة وحفظ تدفق الزخم بلا أي إجهاد.`,
+      descriptionEn: `Dedicate just 2 minutes (low activation energy) to this habit to preserve momentum without strain.`,
+      rewardGold: 15,
+      rewardShards: 5,
+      completed: false,
+      isAiGenerated: false,
+    };
+
+    const settings = (typeof this._getSettings === 'function') ? this._getSettings() : null;
+    const atlasConf = settings?.atlas || {};
+    if (atlasConf.aiEnabled && atlasConf.apiKey && atlasConf.apiKey.trim()) {
+      try {
+        const { generateDailyQuestWithAi } = require('./atlas-ai');
+        const wayfinderState = this.store.data.wayfinder || {};
+        const aiRes = await generateDailyQuestWithAi({
+          apiKey: atlasConf.apiKey.trim(),
+          model: atlasConf.model || 'gemini-1.5-flash',
+          habit: targetHabit,
+          wayfinderState,
+          lang,
+        });
+        if (aiRes && aiRes.ok && aiRes.text) {
+          if (isEn) {
+            quest.descriptionEn = aiRes.text;
+          } else {
+            quest.descriptionAr = aiRes.text;
+          }
+          quest.isAiGenerated = true;
+        }
+      } catch (err) {
+        // Fall back gracefully to deterministic text
+      }
+    }
+
+    if (!this.store.data.miro) this.store.data.miro = {};
+    this.store.data.miro.dailyQuest = quest;
+    this.store.save();
+    this.emit('atlas:updated', this.getDashboardState());
+    return quest;
+  }
+
+  /**
+   * Completes Miro's Daily Micro-Quest and claims rewards
+   */
+  completeDailyQuest() {
+    const quest = this.store.data.miro?.dailyQuest;
+    if (!quest || quest.completed) {
+      return { ok: false, error: 'No active quest to complete' };
+    }
+
+    quest.completed = true;
+    quest.completedAt = new Date().toISOString();
+
+    // Award rewards: 25 XP, 15 Gold, 5 Shards
+    this.store.addXpAndGold(25, quest.rewardGold || 15);
+    if (quest.rewardShards > 0) {
+      this.store.addLivingMaterials({ aetherShards: quest.rewardShards });
+    }
+
+    // Record chronicle
+    const chronicle = AtlasNarrativeEngine.generateChronicleEntry('quest_completed', {
+      titleAr: quest.titleAr,
+      titleEn: quest.titleEn,
+      rewardGold: quest.rewardGold,
+      rewardShards: quest.rewardShards,
+    }, 'ar');
+    if (!Array.isArray(this.store.data.chronicleEntries)) this.store.data.chronicleEntries = [];
+    this.store.data.chronicleEntries.push(chronicle);
+    this.store.save();
+
+    this.miro.setState(MIRO_STATES.CELEBRATING);
+    this.emit('atlas:daily-quest-completed', { quest, chronicle });
+    this.emit('atlas:updated', this.getDashboardState());
+
+    return { ok: true, quest, chronicle };
   }
 
   /**
@@ -651,6 +796,8 @@ class AtlasEngine extends EventEmitter {
         dialogue: this.miro.lastDialogue || this.miro.getDialogueForState(this.miro.state, { lang, wayfinderName: wf.name }),
         svgSprite: MiroCompanion.renderSvgSprite({ glow: this.miro.glowIntensity }),
         consultationModes: MIRO_CONSULTATION_MODES,
+        consultationHistory: this.store.data.miro?.consultationHistory || [],
+        dailyQuest: this.store.data.miro?.dailyQuest || null,
       },
       activeChapter: wf.currentChapter || 1,
       unlockedMilestones: [...unlockedClueIds],

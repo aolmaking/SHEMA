@@ -5610,6 +5610,16 @@
     const goldLbl = $('.atlas-gold-lbl');
     if (goldLbl) goldLbl.textContent = isEn ? 'Haven Gold' : 'ذهب الملاذ';
 
+    // Dynamic Haven Visual Evolution based on completed projects
+    const heroEl = $('.atlas-haven-hero');
+    if (heroEl) {
+      const completed = atlasState.completedProjects || [];
+      heroEl.classList.toggle('haven-lanterns-lit', completed.includes('REKINDLE_HAVEN_LANTERNS'));
+      heroEl.classList.toggle('haven-observatory-active', completed.includes('RESTORE_CELESTIAL_OBSERVATORY'));
+      heroEl.classList.toggle('haven-garden-blooming', completed.includes('PLANT_HARMONY_GARDEN'));
+      heroEl.classList.toggle('haven-forge-ignited', completed.includes('ERECT_WISDOM_FORGE'));
+    }
+
     // Living Materials Counters
     const mats = wf.livingMaterials || {};
     const aetherEl = $('#atlasAetherCount'); if (aetherEl) aetherEl.textContent = String(mats.aetherShards || 0);
@@ -5883,11 +5893,15 @@
             craftBtn.disabled = true;
             try {
               if (window.widgets?.atlas?.craftProject) {
+                card.classList.add('card-action-success-fx');
                 const res = await window.widgets.atlas.craftProject(project.id);
-                if (res?.ok) renderAtlasPane();
+                if (res?.ok) {
+                  setTimeout(() => renderAtlasPane(), 350);
+                }
               }
             } catch (err) {
               console.error('[Atlas] Crafting failed:', err);
+              craftBtn.disabled = false;
             }
           };
         }
@@ -5963,6 +5977,137 @@
           e.preventDefault();
           handleAsk();
         }
+      };
+    }
+
+    // Daily Micro-Quest (مسار اليوم المقترح) Wiring
+    const questCard = $('#atlasMiroDailyQuestCard');
+    const questTitle = $('#atlasQuestTitle');
+    const questDesc = $('#atlasQuestDesc');
+    const questCompleteBtn = $('#atlasMiroCompleteQuestBtn');
+    const questGenerateBtn = $('#atlasMiroDailyQuestBtn');
+
+    const updateQuestCard = (quest) => {
+      if (!questCard) return;
+      if (!quest) {
+        questCard.style.display = 'none';
+        return;
+      }
+      questCard.style.display = 'flex';
+      if (questTitle) questTitle.textContent = isEn ? quest.titleEn : quest.titleAr;
+      if (questDesc) questDesc.textContent = isEn ? quest.descriptionEn : quest.descriptionAr;
+      if (questCompleteBtn) {
+        if (quest.completed) {
+          questCompleteBtn.textContent = isEn ? '✓ Completed Today' : '✓ منجز لليوم';
+          questCompleteBtn.classList.add('completed');
+          questCompleteBtn.disabled = true;
+        } else {
+          questCompleteBtn.textContent = isEn ? '✨ Complete Daily Path' : '✨ إنجاز مسار اليوم';
+          questCompleteBtn.classList.remove('completed');
+          questCompleteBtn.disabled = false;
+        }
+      }
+    };
+
+    if (atlasState.miro?.dailyQuest) {
+      updateQuestCard(atlasState.miro.dailyQuest);
+    } else if (questCard) {
+      questCard.style.display = 'none';
+    }
+
+    if (questGenerateBtn) {
+      questGenerateBtn.onclick = async () => {
+        questGenerateBtn.disabled = true;
+        try {
+          if (window.widgets?.atlas?.generateDailyQuest) {
+            const quest = await window.widgets.atlas.generateDailyQuest(state.language || 'ar');
+            if (quest) {
+              updateQuestCard(quest);
+              questCard.classList.add('card-action-success-fx');
+              setTimeout(() => questCard.classList.remove('card-action-success-fx'), 1000);
+            }
+          }
+        } catch (err) {
+          console.error('[Atlas] Daily quest generation failed:', err);
+        } finally {
+          questGenerateBtn.disabled = false;
+        }
+      };
+    }
+
+    if (questCompleteBtn) {
+      questCompleteBtn.onclick = async () => {
+        questCompleteBtn.disabled = true;
+        try {
+          if (window.widgets?.atlas?.completeDailyQuest) {
+            const res = await window.widgets.atlas.completeDailyQuest();
+            if (res?.ok) {
+              questCard.classList.add('card-action-success-fx');
+              if (speechEl) speechEl.textContent = isEn ? '"Bravo! You fulfilled the daily path and preserved momentum."' : '"رائع! أتممت مسار اليوم وحفظت تدفق الزخم بامتياز."';
+              setTimeout(() => renderAtlasPane(), 400);
+            }
+          }
+        } catch (err) {
+          console.error('[Atlas] Complete daily quest failed:', err);
+          questCompleteBtn.disabled = false;
+        }
+      };
+    }
+
+    // Wisdom Archive (سجل استشارات ميرو) Drawer Wiring
+    const historyBtn = $('#atlasMiroHistoryBtn');
+    const historyDrawer = $('#atlasMiroHistoryDrawer');
+    const historyCloseBtn = $('#atlasMiroHistoryCloseBtn');
+    const historyList = $('#atlasMiroHistoryList');
+
+    const renderHistoryDrawer = async () => {
+      if (!historyList) return;
+      historyList.innerHTML = '';
+      let history = atlasState.miro?.consultationHistory || [];
+      if (window.widgets?.atlas?.getMiroHistory) {
+        try {
+          const freshHistory = await window.widgets.atlas.getMiroHistory();
+          if (Array.isArray(freshHistory)) history = freshHistory;
+        } catch (_) {}
+      }
+
+      if (history.length === 0) {
+        historyList.innerHTML = `
+          <div style="font-size: 12px; color: #94a3b8; text-align: center; padding: 16px;">
+            ${isEn ? 'No consultations archived yet. Ask Miro anything anytime.' : 'لم تُسجل استشارات بعد... اسأل ميرو أو استشره في أي وقت.'}
+          </div>
+        `;
+        return;
+      }
+
+      history.forEach(item => {
+        const entryEl = document.createElement('div');
+        entryEl.className = 'history-entry';
+        const timeStr = item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+        entryEl.innerHTML = `
+          ${item.userQuestion ? `<div class="history-entry-q">❓ ${item.userQuestion}</div>` : ''}
+          <div class="history-entry-a">✨ "${item.dialogue}"</div>
+          <div class="history-entry-meta">
+            <span>🏷️ ${isEn ? (item.titleEn || item.modeKey) : (item.titleAr || item.modeKey)}</span>
+            ${item.isAiGenerated ? '<span style="color: #38bdf8;">• ✨ AI</span>' : ''}
+            <span>• ⏰ ${timeStr}</span>
+          </div>
+        `;
+        historyList.appendChild(entryEl);
+      });
+    };
+
+    if (historyBtn && historyDrawer) {
+      historyBtn.onclick = () => {
+        const isHidden = historyDrawer.style.display === 'none';
+        historyDrawer.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) renderHistoryDrawer();
+      };
+    }
+
+    if (historyCloseBtn && historyDrawer) {
+      historyCloseBtn.onclick = () => {
+        historyDrawer.style.display = 'none';
       };
     }
 

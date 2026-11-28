@@ -6803,6 +6803,8 @@ body.theme-minimal-light .plate.tile-plate[data-app-icon="1"],
 }
 
 .atlas-mini-gold-pill,
+.atlas-mini-shards-pill,
+.atlas-mini-scraps-pill,
 .atlas-mini-seeds-pill {
   font-size: 10px;
   font-weight: 800;
@@ -6825,6 +6827,28 @@ body.theme-minimal-light .plate.tile-plate[data-app-icon="1"],
 .atlas-mini-gold-pill:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+}
+
+.atlas-mini-shards-pill {
+  color: #38bdf8;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(14, 165, 233, 0.3));
+  border: 1px solid rgba(56, 189, 248, 0.55);
+}
+
+.atlas-mini-shards-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+}
+
+.atlas-mini-scraps-pill {
+  color: #fbbf24;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.28));
+  border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+.atlas-mini-scraps-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
 }
 
 .atlas-mini-seeds-pill {

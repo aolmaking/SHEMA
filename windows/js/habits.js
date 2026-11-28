@@ -3164,9 +3164,15 @@
     const titleEl = $('#habitsMiniTitle');
     if (titleEl) titleEl.textContent = isEn ? (wayfinder.titleEn || wayfinder.title || 'Wayfinder') : (wayfinder.title || 'سائر الدرب');
 
-    // Haven Gold & Seeds
+    // Haven Gold & Living Materials
     const goldEl = $('#habitsMiniGoldVal');
     if (goldEl) goldEl.textContent = digits(wayfinder.havenGold || 0);
+
+    const shardsEl = $('#habitsMiniShardsVal');
+    if (shardsEl) shardsEl.textContent = digits(wayfinder.livingMaterials?.aetherShards || 0);
+
+    const scrapsEl = $('#habitsMiniScrapsVal');
+    if (scrapsEl) scrapsEl.textContent = digits(wayfinder.livingMaterials?.manuscriptScraps || 0);
 
     const seedsEl = $('#habitsMiniSeedsVal');
     if (seedsEl) seedsEl.textContent = digits(wayfinder.livingMaterials?.seedsOfLight || 0);

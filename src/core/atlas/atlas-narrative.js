@@ -216,6 +216,20 @@ class AtlasNarrativeEngine {
       };
     }
 
+    if (type === 'quest_completed') {
+      const title = isEn ? (payload.titleEn || payload.title) : (payload.titleAr || payload.title);
+      return {
+        id: `chronicle-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        timestamp,
+        category: 'daily_quest',
+        icon: '🧭',
+        title: isEn ? `Daily Path Fulfilled: ${title}` : `إنجاز مسار اليوم: ${title}`,
+        text: isEn
+          ? `Wayfinder completed Miro's daily focus step, earning ${payload.rewardGold || 15} Haven Gold and ${payload.rewardShards || 5} Energy Shards.`
+          : `أتم المستكشف خطوة التركيز الصغرى التي اقترحها ميرو، حاصداً ${payload.rewardGold || 15} من ذهب الملاذ و${payload.rewardShards || 5} من بلورات الطاقة لحفظ الزخم.`,
+      };
+    }
+
     if (type === 'reward_redeemed') {
       const title = isEn ? (payload.titleEn || payload.title) : (payload.titleAr || payload.title);
       return {

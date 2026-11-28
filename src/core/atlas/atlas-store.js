@@ -80,6 +80,8 @@ function getDefaultAtlasState() {
       presenceMode: 'adaptive', // 'adaptive' | 'quiet' | 'guide_focused'
       observedPatterns: [],
       userApprovedNotes: [],
+      consultationHistory: [], // Recent consultations archive (up to 10 entries)
+      dailyQuest: null,        // Micro-Quest of the Day
     },
     // Narrative Store: Milestones, Mystery Graph & Chronicles
     narrativeState: {
@@ -128,6 +130,8 @@ class AtlasStore {
     if (!d.obstaclesState) d.obstaclesState = { tiers: {}, dormantRelics: [] };
     if (!d.trials) d.trials = { progress: {}, completed: [] };
     if (!d.miro) d.miro = defaults.miro;
+    if (!Array.isArray(d.miro.consultationHistory)) d.miro.consultationHistory = [];
+    if (typeof d.miro.dailyQuest === 'undefined') d.miro.dailyQuest = null;
     if (!d.narrativeState) d.narrativeState = defaults.narrativeState;
     if (!Array.isArray(d.chronicleEntries)) d.chronicleEntries = [];
     if (!Array.isArray(d.customRewards)) d.customRewards = [];

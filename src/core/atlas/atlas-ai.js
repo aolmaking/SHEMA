@@ -225,10 +225,38 @@ Offer a thoughtful, grounded response (max 3-4 sentences) as Miro blending habit
   }
 }
 
+/**
+ * Generates an inspiring daily micro-quest formulated by Miro.
+ */
+async function generateDailyQuestWithAi({ apiKey, model = 'gemini-1.5-flash', habit, wayfinderState, lang = 'ar' } = {}) {
+  const isEn = (lang === 'en');
+  const habitName = habit?.name || (isEn ? 'Daily Practice' : 'الممارسة اليومية');
+  const habitCategory = habit?.category || 'productivity';
+  const userPrompt = isEn ?
+    `Habit: "${habitName}" (Category: ${habitCategory}). Wayfinder Level: ${wayfinderState?.level || 1}.
+Formulate an inspiring Micro-Quest of the Day (2 sentences) focusing on lowering activation energy (2-minute rule) to preserve momentum without guilt or pressure. Do not use fantasy buzzwords like "aether".` :
+    `العادة المستهدفة: "${habitName}" (التصنيف: ${habitCategory}). رتبة المستكشف: المستوى ${wayfinderState?.level || 1}.
+صغ "مسار اليوم الصغير" (Micro-Quest) في جملتين ملهمتين تركزان على خفض طاقة التفعيل (قاعدة الدقيقتين لحفظ الزخم والبدء السهل دون أي تكلف أو شعور بالذنب). التزم باللغة العربية الفصيحة الطبيعية دون أي كلمة مثل "الأثير".`;
+
+  try {
+    const res = await callGeminiApi({
+      apiKey,
+      model,
+      systemInstruction: ATLAS_AI_SYSTEM_PROMPT,
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      generationConfig: { maxOutputTokens: 180, temperature: 0.7 }
+    });
+    return { ok: true, text: res.text };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 module.exports = {
   ATLAS_AI_SYSTEM_PROMPT,
   callGeminiApi,
   testGeminiConnection,
   generateMiroCompanionReflection,
-  consultMiroWithAi
+  consultMiroWithAi,
+  generateDailyQuestWithAi
 };

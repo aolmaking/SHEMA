@@ -2162,6 +2162,36 @@
               <input type="text" class="miro-ask-ai-input" id="atlasMiroAskInput" placeholder="اكتب سؤالاً أو خاطرة لميرو (مثال: أشعر بتردد قبل قراءة ورد اليوم...)" autocomplete="off">
               <button type="button" class="miro-ask-ai-btn" id="atlasMiroAskBtn">✨ اسأل ميرو</button>
             </div>
+
+            <!-- Daily Micro-Quest & Wisdom Archive Quick Actions -->
+            <div class="miro-quick-actions-row">
+              <button type="button" class="miro-path-btn" id="atlasMiroDailyQuestBtn">🧭 مسار اليوم المقترح (Micro-Quest)</button>
+              <button type="button" class="miro-history-btn" id="atlasMiroHistoryBtn">📜 سجل استشارات ميرو</button>
+            </div>
+
+            <!-- Active Daily Micro-Quest Card -->
+            <div class="atlas-daily-quest-card" id="atlasMiroDailyQuestCard" style="display: none;">
+              <div class="quest-head">
+                <span class="quest-tag">🧭 مسار اليوم</span>
+                <span class="quest-rewards">🪙 +15 ذهب &bull; 💎 +5 بلورات طاقة</span>
+              </div>
+              <div class="quest-title" id="atlasQuestTitle">مسار اليوم المقترح</div>
+              <div class="quest-desc" id="atlasQuestDesc">خصص دقيقتين فقط للبدء وحفظ تدفق الزخم.</div>
+              <div class="quest-actions">
+                <button type="button" class="quest-complete-btn" id="atlasMiroCompleteQuestBtn">✨ إنجاز مسار اليوم</button>
+              </div>
+            </div>
+
+            <!-- Expandable Wisdom Archive Drawer -->
+            <div class="atlas-miro-history-drawer" id="atlasMiroHistoryDrawer" style="display: none;">
+              <div class="history-drawer-head">
+                <span>📜 سجل استشارات ميرو المحفوظة</span>
+                <button type="button" class="history-close-btn" id="atlasMiroHistoryCloseBtn">&times;</button>
+              </div>
+              <div class="history-list" id="atlasMiroHistoryList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
           </div>
 
           <!-- Miro Context Memory & Privacy Sovereignty Panel -->

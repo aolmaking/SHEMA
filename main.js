@@ -5631,6 +5631,9 @@ function registerIpc() {
   ipcMain.handle('atlas:get-miro-dialogue', (_e, { state, context } = {}) => atlasEngine.miro.getDialogueForState(state, context));
   ipcMain.handle('atlas:craft-project', (_e, projectId) => atlasEngine.craftProject(projectId));
   ipcMain.handle('atlas:consult-miro', (_e, { modeKey, lang, userQuestion } = {}) => atlasEngine.consultMiro(modeKey, lang || settings.get('language') || 'ar', userQuestion || ''));
+  ipcMain.handle('atlas:get-miro-history', (_e) => atlasEngine.getMiroConsultationHistory());
+  ipcMain.handle('atlas:generate-daily-quest', (_e, lang) => atlasEngine.generateDailyQuest(lang || settings.get('language') || 'ar'));
+  ipcMain.handle('atlas:complete-daily-quest', (_e) => atlasEngine.completeDailyQuest());
   ipcMain.handle('atlas:advance-obstacle', (_e, { obstacleKey, strategyKey } = {}) => atlasEngine.advanceObstacleTier(obstacleKey, strategyKey));
   ipcMain.handle('atlas:complete-trial', (_e, trialId) => atlasEngine.completeTrial(trialId));
   ipcMain.handle('atlas:redeem-reward', (_e, rewardId) => atlasEngine.redeemReward(rewardId));
