@@ -11942,3 +11942,1092 @@ body.theme-notebook .preview-tile {
   border: 1.8px solid rgba(251, 191, 36, 0.6) !important;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(56, 189, 248, 0.3) !important;
 }
+
+
+/* ==================================================================== *
+ * THE LIVING ATLAS VERSION 2: MASTER TACTICAL RPG ROGUELIKE STYLES
+ * (Inspired by Artworks 20 through 34: HUD, Deck, Hero, Inventory, Golems)
+ * ==================================================================== */
+
+/* ── 1. Top RPG Game HUD (Slay-the-Spire Style) ── */
+.atlas-game-hud {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1.8px solid rgba(251, 191, 36, 0.45);
+  border-radius: 14px;
+  padding: 10px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.hud-stat-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 5px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hud-stat-group .hud-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.4));
+}
+
+.hud-bar-wrap {
+  width: 110px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-bar-fill.hp-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+  border-radius: 8px;
+  transition: width 0.4s ease;
+}
+
+.hud-bar-text {
+  position: relative;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px #000;
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+.hud-stat-group.energy-group .hud-icon {
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
+}
+
+.hud-orbs-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.energy-orb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #334155;
+  border: 1.5px solid #475569;
+  transition: all 0.3s ease;
+}
+
+.energy-orb.active {
+  background: radial-gradient(circle at 35% 35%, #7dd3fc, #0284c7);
+  border-color: #bae6fd;
+  box-shadow: 0 0 8px #38bdf8, 0 0 14px rgba(56, 189, 248, 0.6);
+  animation: orbPulse 2s infinite alternate;
+}
+
+@keyframes orbPulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.1); filter: brightness(1.25); }
+}
+
+.hud-orb-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-right: 4px;
+}
+
+.hud-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 5px 11px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.hud-badge .hud-mini-icon {
+  font-size: 15px;
+}
+
+.hud-badge-title {
+  color: #cbd5e1;
+}
+
+.hud-badge-val {
+  color: #fbbf24;
+  font-weight: 800;
+}
+
+.hud-relics-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 4px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.relic-pill {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  cursor: help;
+  transition: all 0.25s ease;
+  opacity: 0.45;
+  filter: grayscale(0.8);
+}
+
+.relic-pill.active {
+  opacity: 1;
+  filter: grayscale(0);
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.6);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
+}
+
+.relic-pill.active:hover {
+  transform: translateY(-2px) scale(1.15);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+}
+
+/* ── 2. Tactical Action Cards Stage & Deck ── */
+.atlas-tactical-stage {
+  background: radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1.8px solid rgba(251, 191, 36, 0.5);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 22px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.tactical-stage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stage-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stage-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+}
+
+.stage-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.stage-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.tactical-actions-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deck-counter-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+}
+
+.btn-refresh-deck {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: #fbbf24;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-refresh-deck:hover {
+  background: rgba(251, 191, 36, 0.3);
+  transform: translateY(-1px);
+}
+
+.tactical-columns-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr 220px;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 1100px) {
+  .tactical-columns-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 3. Tactical Hero Adventurer Card ── */
+.tactical-hero-card {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1.5px solid rgba(251, 191, 36, 0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.hero-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-class-tag {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.hero-level-tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid #fbbf24;
+  color: #fbbf24;
+}
+
+.hero-avatar-spot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hero-mini-pedestal {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #38bdf8 0%, #0369a1 70%);
+  border: 2px solid #bae6fd;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-mini-sprite {
+  width: 28px;
+  height: 28px;
+  background: url('../../assets/brand/living-atlas/14_arco_mossy_entrance_wayfinder.jpg') center/cover;
+  border-radius: 50%;
+  border: 1px solid #fff;
+}
+
+.hero-core-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.hero-core-stats .stat-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hero-buffs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.buff-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #86efac;
+}
+
+.hero-journey-log {
+  background: #020617;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+.hero-journey-log .log-head {
+  font-weight: 800;
+  color: #94a3b8;
+  margin-bottom: 5px;
+  font-size: 10px;
+}
+
+.hero-journey-log .log-entries {
+  max-height: 105px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.log-entry.sys {
+  color: #38bdf8;
+}
+
+.log-entry.action {
+  color: #4ade80;
+}
+
+.log-entry.reward {
+  color: #facc15;
+}
+
+/* ── 4. Playable Action Cards Deck (Center) ── */
+.tactical-deck-zone {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.action-card {
+  background: linear-gradient(180deg, #fef3c7 0%, #fae8b0 100%);
+  color: #1c1917;
+  border: 2px solid #b45309;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 14px 28px rgba(245, 158, 11, 0.35), 0 0 12px rgba(251, 191, 36, 0.4);
+  border-color: #f59e0b;
+}
+
+.card-energy-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #38bdf8, #0284c7);
+  border: 1.5px solid #bae6fd;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+}
+
+.card-archetype-tag {
+  align-self: flex-end;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #d97706;
+  color: #fff;
+}
+
+.card-archetype-tag.strike { background: #dc2626; }
+.card-archetype-tag.defend { background: #2563eb; }
+.card-archetype-tag.channel { background: #7c3aed; }
+.card-archetype-tag.nourish { background: #16a34a; }
+
+.card-art-box {
+  height: 52px;
+  margin: 6px 0;
+  background: rgba(180, 83, 9, 0.12);
+  border-radius: 8px;
+  border: 1px dashed rgba(180, 83, 9, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.card-body {
+  margin-bottom: 8px;
+}
+
+.card-habit-title {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #451a03;
+  margin-bottom: 2px;
+}
+
+.card-habit-meta {
+  font-size: 10px;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.card-rewards-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 8px;
+}
+
+.btn-card-execute {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(22, 163, 74, 0.4);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-card-execute:hover {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.6);
+  transform: translateY(-1px);
+}
+
+.action-cards-empty {
+  grid-column: 1 / -1;
+  background: rgba(15, 23, 42, 0.6);
+  border: 2px dashed rgba(34, 197, 94, 0.4);
+  border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  color: #86efac;
+}
+
+.action-cards-empty .empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.action-cards-empty .empty-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.action-cards-empty .empty-sub {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 4px;
+}
+
+/* ── 5. Equipment Inventory Card (Right) ── */
+.tactical-inventory-card {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1.5px solid rgba(251, 191, 36, 0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.inv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.inv-slots-count {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.inv-equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.inv-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 5px 8px;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.inv-slot:hover {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.5);
+  transform: translateY(-1px);
+}
+
+.inv-slot .slot-icon {
+  font-size: 14px;
+}
+
+.inv-slot .slot-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.btn-inv-bazaar {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-inv-bazaar:hover {
+  background: rgba(251, 191, 36, 0.3);
+}
+
+/* ── 6. Dotted Roguelike Journey Route Track ── */
+.tactical-journey-path-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.path-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 12px;
+}
+
+.path-prog-tag {
+  font-size: 11px;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.journey-nodes-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0 10px;
+}
+
+.journey-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.journey-node .node-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 2px solid #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.journey-node.completed .node-marker {
+  background: radial-gradient(circle, #22c55e, #15803d);
+  border-color: #86efac;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+}
+
+.journey-node.active .node-marker {
+  background: radial-gradient(circle, #38bdf8, #0369a1);
+  border-color: #bae6fd;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+  animation: nodeGlow 1.8s infinite alternate;
+}
+
+@keyframes nodeGlow {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.15); filter: brightness(1.3); }
+}
+
+.journey-node .node-name {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.journey-node.completed .node-name {
+  color: #86efac;
+}
+
+.journey-node.active .node-name {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+.track-connector {
+  flex: 1;
+  height: 4px;
+  background: #334155;
+  border-radius: 2px;
+  margin: 0 -2px;
+  position: relative;
+  top: -12px;
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.track-connector.filled {
+  background: linear-gradient(90deg, #22c55e, #38bdf8);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+/* ── 7. Haven Companions (Sir Pip & Sage Toad) ── */
+.atlas-companion-pip,
+.atlas-companion-toad {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+  user-select: none;
+}
+
+.atlas-companion-pip:hover,
+.atlas-companion-toad:hover {
+  transform: translateY(-4px) scale(1.08);
+}
+
+.pip-character-sprite {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 20px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.pip-crown {
+  font-size: 12px;
+  position: absolute;
+  top: -8px;
+}
+
+.toad-character-sprite {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 22px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.toad-hat {
+  font-size: 14px;
+  position: absolute;
+  top: -10px;
+}
+
+.pip-dialogue-bubble,
+.toad-dialogue-bubble {
+  position: absolute;
+  bottom: 110%;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.5px solid #fbbf24;
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: #f8fafc;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.45;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  z-index: 20;
+  animation: fadeInBubble 0.25s ease forwards;
+}
+
+@keyframes fadeInBubble {
+  from { opacity: 0; transform: translate(50%, 8px); }
+  to { opacity: 1; transform: translate(50%, 0); }
+}
+
+/* ── 8. Cylindrical Territory Rolled Scrolls ── */
+.atlas-territory-scrolls-bar {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.scrolls-bar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scrolls-icon { font-size: 16px; }
+.scrolls-title { font-size: 13px; font-weight: 800; color: #f8fafc; }
+.scrolls-hint { font-size: 11px; color: #94a3b8; }
+
+.territory-scrolls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.cylindrical-scroll {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cylindrical-scroll:hover {
+  transform: translateY(-3px);
+}
+
+.scroll-pin {
+  width: 8px;
+  height: 48px;
+  background: linear-gradient(180deg, #78350f, #451a03);
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.scroll-body {
+  flex: 1;
+  height: 44px;
+  background: linear-gradient(180deg, #fef3c7 0%, #d97706 50%, #78350f 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.cylindrical-scroll.active .scroll-body {
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.7), inset 0 2px 4px rgba(255,255,255,0.6);
+  border: 1px solid #fbbf24;
+}
+
+.scroll-strap {
+  width: 24px;
+  height: 100%;
+  background: #451a03;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid #78350f;
+  border-right: 1px solid #78350f;
+}
+
+.compass-buckle {
+  font-size: 13px;
+  filter: drop-shadow(0 0 3px #fbbf24);
+}
+
+.scroll-parchment-preview {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.scroll-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1c1917;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.scroll-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #451a03;
+}
+
+/* ── 9. Pixel Grimoire / Open Book UI ── */
+.atlas-grimoire-book {
+  background: #1e293b;
+  border: 2px solid #854d0e;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.grimoire-tome {
+  display: grid;
+  grid-template-columns: 1fr 12px 1fr;
+  background: #fefce8;
+  border-radius: 8px;
+  box-shadow: inset 0 0 30px rgba(180, 83, 9, 0.25);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #d97706;
+}
+
+@media (max-width: 900px) {
+  .grimoire-tome {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grimoire-ribbon {
+  position: absolute;
+  top: 0;
+  width: 14px;
+  height: 80px;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  z-index: 5;
+}
+
+.grimoire-ribbon.red-ribbon {
+  right: 48%;
+  background: linear-gradient(180deg, #dc2626, #991b1b);
+}
+
+.grimoire-ribbon.gold-ribbon {
+  right: 52%;
+  background: linear-gradient(180deg, #f59e0b, #b45309);
+}
+
+.grimoire-spine {
+  background: linear-gradient(90deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5), rgba(0,0,0,0.2));
+  height: 100%;
+}
+
+.grimoire-page {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #1c1917;
+}
+
+.grimoire-page .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1.5px solid rgba(180, 83, 9, 0.3);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.grimoire-page .page-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #92400e;
+}
+
+.grimoire-page .page-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #451a03;
+}
+
+.grimoire-lore-intro {
+  font-size: 11.5px;
+  font-style: italic;
+  color: #78350f;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.grimoire-entry-line {
+  font-size: 11px;
+  color: #292524;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.grimoire-miro-quote {
+  background: rgba(251, 191, 36, 0.15);
+  border-right: 3px solid #d97706;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-style: italic;
+  color: #78350f;
+  margin-bottom: 12px;
+}
+
+.grimoire-lore-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lore-fact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11px;
+  color: #44403c;
+  line-height: 1.45;
+}
+
+.grimoire-page .page-footer {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #a8a29e;
+}
+
+/* ── 10. Living Stone Golems (Kedo Spirits) ── */
+.kedo-golem-spirit {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border: 1.5px solid #475569;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kedo-golem-spirit:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: #86efac;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.4);
+}
+
+.kedo-golem-sprite {
+  font-size: 28px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+.kedo-golem-name {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.kedo-golem-status {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #86efac;
+}
+

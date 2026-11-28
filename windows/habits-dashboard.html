@@ -1915,7 +1915,53 @@
       <section class="dash-pane" id="pane-atlas">
         <!-- Haven Hero Banner -->
                 <!-- 1. THE LIVING HAVEN DIORAMA STAGE (عالم الملاذ الحي) -->
-        <div class="atlas-living-haven-stage" id="atlasLivingHavenStage">
+        
+        <!-- ── THE LIVING ATLAS VERSION 2: TOP RPG GAME HUD (Slay-the-Spire / Roguelike Style) ── -->
+        <div class="atlas-game-hud" id="atlasGameHud">
+          <div class="hud-stat-group hp-group" title="الصحة الحيوية (Vitality Health): مستمدة من عادات الصحة والنشاط">
+            <span class="hud-icon">❤️</span>
+            <div class="hud-bar-wrap">
+              <div class="hud-bar-fill hp-fill" id="atlasHudHpFill" style="width: 100%;"></div>
+              <span class="hud-bar-text" id="atlasHudHpText">50 / 50</span>
+            </div>
+          </div>
+
+          <div class="hud-stat-group energy-group" title="طاقة التركيز والانضباط (Focus Energy): رصيد الأفعال اليومية">
+            <span class="hud-icon">⚡</span>
+            <div class="hud-orbs-wrap" id="atlasHudEnergyOrbs">
+              <span class="energy-orb active"></span>
+              <span class="energy-orb active"></span>
+              <span class="energy-orb active"></span>
+            </div>
+            <span class="hud-orb-text" id="atlasHudEnergyText">3 / 3</span>
+          </div>
+
+          <div class="hud-badge floor-badge" title="الفصل الحالي في عالم الأطلس">
+            <span class="hud-mini-icon">🏰</span>
+            <span class="hud-badge-title" id="atlasHudFloorText">الملاذ الأول (Floor 1)</span>
+          </div>
+
+          <div class="hud-badge gold-badge" title="ذهب الملاذ الحي المكتسب من الالتزام">
+            <span class="hud-mini-icon">🪙</span>
+            <span class="hud-badge-val" id="atlasHudGoldVal">0</span>
+          </div>
+
+          <div class="hud-badge key-badge" title="مفاتيح أسرار وخزائن الأطلس">
+            <span class="hud-mini-icon">🗝️</span>
+            <span class="hud-badge-val" id="atlasHudKeyVal">1</span>
+          </div>
+
+          <!-- Active Relics Strip (6 Medallions) -->
+          <div class="hud-relics-strip" id="atlasHudRelicsStrip" title="الآثار والبركات النشطة">
+            <span class="relic-pill active" title="موقد الملاذ: يمنح دفء البدايات و+10% ثبات">🪵</span>
+            <span class="relic-pill active" title="ورقة السكينة: تخفف التردد وتقلل طاقة التفعيل">🌿</span>
+            <span class="relic-pill active" title="بلورة الطاقة: تحفظ الزخم عند إتمام 3 عادات">💎</span>
+            <span class="relic-pill active" title="خاتم الاستمرار: يضاعف الذهب عند السلاسل المتصلة">💍</span>
+            <span class="relic-pill" title="درع الصمود: يحمي من جلد الذات">🛡️</span>
+            <span class="relic-pill" title="مخطوطة الحكمة: تفتح استشارات ميرو الذكية">📜</span>
+          </div>
+        </div>
+<div class="atlas-living-haven-stage" id="atlasLivingHavenStage">
           <!-- Background Atmospheric Canopy & Ancient Arches -->
           <div class="atlas-stage-bg"></div>
           <!-- Shimmering God Rays -->
@@ -1944,6 +1990,29 @@
   </div>
 
                 <!-- The Animated Wayfinder Adventurer Avatar -->
+                
+                <!-- Sir Pip the Brave Bird Knight Companion (Artwork 29) -->
+                <div class="atlas-companion-pip" id="atlasCompanionSirPip" title="السير بيب (Sir Pip): الفارس الصغير بسيف الصخرة (انقر للشجاعة)">
+                  <div class="pip-halo"></div>
+                  <div class="pip-character-sprite">
+                    <span class="pip-crown">👑</span>
+                    <span class="pip-bird">🐦</span>
+                    <span class="pip-sword" title="سيف الصخرة العظيم">🗡️</span>
+                  </div>
+                  <div class="pip-dialogue-bubble" id="pipDialogueBubble" style="display: none;"></div>
+                </div>
+
+                <!-- The Woodland Sage Toad Companion (Artwork 21) -->
+                <div class="atlas-companion-toad" id="atlasCompanionSageToad" title="حكيم الغابة (Woodland Sage Toad): ضفدع المشورة والأناة (انقر للحكمة)">
+                  <div class="toad-halo"></div>
+                  <div class="toad-character-sprite">
+                    <span class="toad-hat">🧙‍♂️</span>
+                    <span class="toad-body">🐸</span>
+                    <span class="toad-staff">🪵</span>
+                  </div>
+                  <div class="toad-dialogue-bubble" id="toadDialogueBubble" style="display: none;"></div>
+                </div>
+                
                 <div class="atlas-wayfinder-avatar-box" id="atlasWayfinderAvatarBox" title="مستكشف الدرب (انقر للتفاعل وإلقاء التحية)">
                   <div class="wayfinder-halo"></div>
                   <svg class="wayfinder-character-svg" viewBox="0 0 100 130" width="100" height="130" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2127,6 +2196,124 @@
           </div>
         </div>
 
+        
+        <!-- ── THE LIVING ATLAS VERSION 2: TACTICAL RPG ACTION STAGE ── -->
+        <div class="atlas-tactical-stage" id="atlasTacticalStage">
+          <div class="tactical-stage-header">
+            <div class="stage-title-wrap">
+              <span class="stage-icon">⚔️</span>
+              <div>
+                <h3 class="stage-title">مسرح أفعال اليوم وخريطة المسار (Tactical Action Deck & Path)</h3>
+                <div class="stage-sub">عاداتك اليومية مجسدة كبطاقات لعب ساحرة؛ أنجز أفعالك لتطرد العتمة وتتقدم في مسار الرحلة</div>
+              </div>
+            </div>
+            <div class="tactical-actions-meta">
+              <span class="deck-counter-badge" id="atlasCardsCounter">0 بطاقة نشطة اليوم</span>
+              <button type="button" class="btn-refresh-deck" id="atlasRefreshDeckBtn" title="تحديث بطاقات العادات">🔄 تحديث</button>
+            </div>
+          </div>
+
+          <div class="tactical-columns-grid">
+            <!-- Left: Hero Adventurer Status & Combat Log -->
+            <div class="tactical-hero-card">
+              <div class="hero-card-head">
+                <span class="hero-class-tag">🧭 مستكشف الدرب</span>
+                <span class="hero-level-tag" id="atlasHeroLevelTag">Lv. 1</span>
+              </div>
+              <div class="hero-avatar-spot">
+                <div class="hero-mini-pedestal">
+                  <div class="hero-mini-sprite"></div>
+                </div>
+                <div class="hero-core-stats">
+                  <div class="stat-row"><span class="s-lbl">❤️ الحيوية:</span> <strong id="atlasStatHp">50/50</strong></div>
+                  <div class="stat-row"><span class="s-lbl">⚡ الطاقة:</span> <strong id="atlasStatEnergy">3/3</strong></div>
+                  <div class="stat-row"><span class="s-lbl">🛡️ الحصانة:</span> <strong id="atlasStatShield">0 Block</strong></div>
+                  <div class="stat-row"><span class="s-lbl">⚔️ الإرادة:</span> <strong id="atlasStatWill">8 ATK</strong></div>
+                </div>
+              </div>
+
+              <!-- Active Status Buffs -->
+              <div class="hero-buffs-list">
+                <div class="buff-chip" title="تجدد مستمر من سلسلة الأيام">🌿 تجدد حيوي (Regen)</div>
+                <div class="buff-chip" title="حصانة ضد التسويف">🛡️ درع العادة (Focus)</div>
+                <div class="buff-chip" title="وضوح ذهني">✨ بصيرة النور (Insight)</div>
+              </div>
+
+              <!-- Live Monospace Journey / Combat Log -->
+              <div class="hero-journey-log">
+                <div class="log-head">📜 سجل المسار والأثر الحقيقي:</div>
+                <div class="log-entries" id="atlasJourneyLogEntries">
+                  <div class="log-entry sys">🌟 مرحباً بك في مسرح الأفعال... بطاقاتك جاهزة للإنجاز.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center: Playable RPG Action Cards Deck -->
+            <div class="tactical-deck-zone">
+              <div class="action-cards-grid" id="atlasActionCardsGrid">
+                <!-- Action cards populated dynamically from today's habits -->
+              </div>
+            </div>
+
+            <!-- Right: Equipment Inventory & Quick Relics -->
+            <div class="tactical-inventory-card">
+              <div class="inv-head">
+                <span>🎒 عتاد ومخزن المستكشف</span>
+                <span class="inv-slots-count" id="atlasInvSlotsCount">10 / 10</span>
+              </div>
+              <div class="inv-equipment-grid">
+                <div class="inv-slot" title="سلاح الإرادة"><span class="slot-icon">🗡️</span><span class="slot-lbl">سيف الخطوة</span></div>
+                <div class="inv-slot" title="درع الحصانة"><span class="slot-icon">🛡️</span><span class="slot-lbl">درع الصمود</span></div>
+                <div class="inv-slot" title="عباءة الترحال"><span class="slot-icon">🧥</span><span class="slot-lbl">عباءة الغابة</span></div>
+                <div class="inv-slot" title="خاتم السكينة"><span class="slot-icon">💍</span><span class="slot-lbl">خاتم السكينة</span></div>
+                <div class="inv-slot" title="حذاء المسير"><span class="slot-icon">👢</span><span class="slot-lbl">حذاء الاستمرار</span></div>
+                <div class="inv-slot" title="قارورة النشاط"><span class="slot-icon">🧪</span><span class="slot-lbl">إكسير البداية</span></div>
+                <div class="inv-slot" title="مخطوطة النسيج"><span class="slot-icon">📜</span><span class="slot-lbl">خريطة الدرب</span></div>
+                <div class="inv-slot" title="بلورة النور"><span class="slot-icon">💎</span><span class="slot-lbl">بلورة الطاقة</span></div>
+                <div class="inv-slot" title="مفتاح الأطلس"><span class="slot-icon">🗝️</span><span class="slot-lbl">مفتاح السر</span></div>
+                <div class="inv-slot" title="صرة الذهب"><span class="slot-icon">💰</span><span class="slot-lbl">ذهب الملاذ</span></div>
+              </div>
+              <div class="inv-quick-action">
+                <button type="button" class="btn-inv-bazaar" id="atlasOpenBazaarQuickBtn">🎁 زيارة سوق الملاذ (Bazaar)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Isometric Journey Route Path -->
+          <div class="tactical-journey-path-card">
+            <div class="path-card-head">
+              <span>🗺️ مسار خريطة اليوم (Today's Exploration Trail):</span>
+              <span class="path-prog-tag" id="atlasPathProgressTag">0 / 5 محطات مكتملة</span>
+            </div>
+            <div class="journey-nodes-track" id="atlasJourneyNodesTrack">
+              <div class="journey-node start completed" data-step="1">
+                <div class="node-marker">⛺</div>
+                <span class="node-name">موقد البداية</span>
+              </div>
+              <div class="track-connector"></div>
+              <div class="journey-node trial" data-step="2">
+                <div class="node-marker">⚔️</div>
+                <span class="node-name">محاكمة الصباح</span>
+              </div>
+              <div class="track-connector"></div>
+              <div class="journey-node chest" data-step="3">
+                <div class="node-marker">🎁</div>
+                <span class="node-name">كنز الظهيرة</span>
+              </div>
+              <div class="track-connector"></div>
+              <div class="journey-node sanctuary" data-step="4">
+                <div class="node-marker">🏛️</div>
+                <span class="node-name">محراب السكينة</span>
+              </div>
+              <div class="track-connector"></div>
+              <div class="journey-node boss" data-step="5">
+                <div class="node-marker">👑</div>
+                <span class="node-name">ختام اليوم والانتصار</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 2. REALM PORTALS SUB-NAVIGATION BAR (بوابات الأقاليم) -->
         <div class="atlas-subnav-bar">
           <button type="button" class="atlas-subnav-btn active" id="atlasBtnTabMap" data-atlas-view="map">🗺️ <span>خريطة النسيج والملاذ</span></button>
@@ -2136,7 +2323,7 @@
           <button type="button" class="atlas-subnav-btn" id="atlasBtnTabBazaar" data-atlas-view="bazaar">🎁 <span>سوق المكافآت</span></button>
           <button type="button" class="atlas-subnav-btn" id="atlasBtnTabChronicles" data-atlas-view="chronicles">📜 <span>سجل وقائع الأطلس</span></button>
           <button type="button" class="atlas-subnav-btn" id="atlasBtnTabMiro" data-atlas-view="miro">✨ <span>مجلس ميرو والخصوصية</span></button>
-          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabGallery" data-atlas-view="gallery">🖼️ <span>أرشيف الصور المرجعية (19 لوحة)</span></button>
+          <button type="button" class="atlas-subnav-btn" id="atlasBtnTabGallery" data-atlas-view="gallery">🖼️ <span>أرشيف الصور المرجعية (34 لوحة)</span></button>
         </div>
 
         <!-- Foreshadowing Whispers (If Active) -->
@@ -2148,6 +2335,73 @@
         <!-- SUB-VIEW 1: Living Map & Haven Facilities -->
         <div class="atlas-subview active" id="atlasSubViewMap">
           <!-- Two Column Content: Parchment Map & Haven Facilities -->
+          
+          <!-- Cylindrical Territory Rolled Scrolls (Artwork 22) -->
+          <div class="atlas-territory-scrolls-bar" id="atlasTerritoryScrolls">
+            <div class="scrolls-bar-header">
+              <span class="scrolls-icon">📜</span>
+              <span class="scrolls-title">لفائف الأقاليم الأسطوانية (Rolled Territory Scrolls):</span>
+              <span class="scrolls-hint">اختر لفافة الإقليم لفتح معالمه وتفاصيل خريطته</span>
+            </div>
+            <div class="territory-scrolls-grid">
+              <div class="cylindrical-scroll active" data-territory="haven" title="لفافة الملاذ الأول والأطلال الخضراء">
+                <div class="scroll-pin left"></div>
+                <div class="scroll-body haven-scroll">
+                  <div class="scroll-strap">
+                    <span class="compass-buckle">🧭</span>
+                  </div>
+                  <div class="scroll-parchment-preview">
+                    <span class="scroll-name">الملاذ الأول &bull; Haven</span>
+                    <span class="scroll-tag">آمن &bull; Safe Ground</span>
+                  </div>
+                </div>
+                <div class="scroll-pin right"></div>
+              </div>
+
+              <div class="cylindrical-scroll" data-territory="whispering_woods" title="لفافة غابات الهمس والينابيع العذبة">
+                <div class="scroll-pin left"></div>
+                <div class="scroll-body woods-scroll">
+                  <div class="scroll-strap">
+                    <span class="compass-buckle">🌲</span>
+                  </div>
+                  <div class="scroll-parchment-preview">
+                    <span class="scroll-name">غابات الهمس &bull; Whispering Woods</span>
+                    <span class="scroll-tag">المستوى 2 &bull; Level 2</span>
+                  </div>
+                </div>
+                <div class="scroll-pin right"></div>
+              </div>
+
+              <div class="cylindrical-scroll" data-territory="ironfrost_peaks" title="لفافة قمم الصقيع ومسارات الإرادة الحديدية">
+                <div class="scroll-pin left"></div>
+                <div class="scroll-body peaks-scroll">
+                  <div class="scroll-strap">
+                    <span class="compass-buckle">🏔️</span>
+                  </div>
+                  <div class="scroll-parchment-preview">
+                    <span class="scroll-name">قمم الصقيع &bull; Ironfrost Peaks</span>
+                    <span class="scroll-tag">المستوى 4 &bull; Level 4</span>
+                  </div>
+                </div>
+                <div class="scroll-pin right"></div>
+              </div>
+
+              <div class="cylindrical-scroll" data-territory="sunken_spires" title="لفافة الأبراج الغارقة والأفق السماوي">
+                <div class="scroll-pin left"></div>
+                <div class="scroll-body spires-scroll">
+                  <div class="scroll-strap">
+                    <span class="compass-buckle">🌊</span>
+                  </div>
+                  <div class="scroll-parchment-preview">
+                    <span class="scroll-name">الأبراج الغارقة &bull; Sunken Spires</span>
+                    <span class="scroll-tag">المستوى 6 &bull; Level 6</span>
+                  </div>
+                </div>
+                <div class="scroll-pin right"></div>
+              </div>
+            </div>
+          </div>
+
           <div class="atlas-content-grid">
             <!-- Left: Living Parchment Interactive Map -->
             <div class="atlas-card map-card">
@@ -2350,6 +2604,67 @@
                 </div>
               </div>
             </div>
+            
+          <!-- Pixel Grimoire & Open Tome UI (Artwork 30) -->
+          <div class="atlas-grimoire-book" id="atlasGrimoireBook">
+            <div class="grimoire-tome">
+              <div class="grimoire-ribbon red-ribbon" title="علامة سجل الأيام"></div>
+              <div class="grimoire-ribbon gold-ribbon" title="علامة حكمة ميرو والرفاق"></div>
+              
+              <!-- Left Page: The Chronicles of Deeds -->
+              <div class="grimoire-page left-page">
+                <div class="page-header">
+                  <span class="page-badge">📖 سجل الرحلة</span>
+                  <span class="page-title">وقائع الخطوات والانتصارات</span>
+                </div>
+                <div class="page-body">
+                  <div class="grimoire-lore-intro">
+                    "في هذا السفر يُخط كل سعيٍ صادق.. لا يضيع جهدٌ، ولا يُنسى ثبات."
+                  </div>
+                  <div class="grimoire-entries-summary" id="atlasGrimoireEntriesSummary">
+                    <div class="grimoire-entry-line">🌟 بداية فصول الأطلس وتأسيس الملاذ الأول.</div>
+                  </div>
+                </div>
+                <div class="page-footer">
+                  <span class="page-num" id="atlasGrimoireLeftPageNum">صـ 1</span>
+                </div>
+              </div>
+
+              <!-- Spine Divider -->
+              <div class="grimoire-spine"></div>
+
+              <!-- Right Page: Companions Lore & Miro's Field Notes -->
+              <div class="grimoire-page right-page">
+                <div class="page-header">
+                  <span class="page-badge">🕊️ رفيق الدرب</span>
+                  <span class="page-title">بصائر النسيج وملاحظات ميرو</span>
+                </div>
+                <div class="page-body">
+                  <div class="grimoire-miro-quote" id="atlasGrimoireMiroQuote">
+                    "المستكشف الحقيقي لا يتعجل الوصول، بل يستمتع بإيقاع الخطوة."
+                  </div>
+                  <div class="grimoire-lore-facts">
+                    <div class="lore-fact-item">
+                      <span class="fact-icon">🪵</span>
+                      <div class="fact-text"><strong>موقد الملاذ:</strong> يشع بدفء البدايات ويهدئ التوتر عند كل استراحة.</div>
+                    </div>
+                    <div class="lore-fact-item">
+                      <span class="fact-icon">🐦</span>
+                      <div class="fact-text"><strong>السير بيب:</strong> الفارس الصغير يذكرك أن الشجاعة لا تتطلب حجماً عملاقاً، بل إرادة حية.</div>
+                    </div>
+                    <div class="lore-fact-item">
+                      <span class="fact-icon">🐸</span>
+                      <div class="fact-text"><strong>حكيم الغابة:</strong> يعلمك أن التروي والصبر يهزمان أعقد سلاسل التسويف.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="page-footer">
+                  <span class="page-num" id="atlasGrimoireRightPageNum">صـ 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
             <div class="atlas-chronicles-list" id="atlasChroniclesList">
               <!-- Rendered dynamically -->
             </div>
@@ -2504,10 +2819,10 @@
                 <span class="atlas-card-icon">🖼️</span>
                 <div>
                   <h3 class="atlas-card-title">أرشيف الصور المرجعية الرسمية للأطلس (Official Art Reference Gallery)</h3>
-                  <div class="atlas-card-sub">اللوحات الـ 19 المعتمدة كمرجعية بصرية حصرية ودائمة لعالم الأطلس ومستكشف الدرب والملاذ</div>
+                  <div class="atlas-card-sub">اللوحات الـ 34 المعتمدة كمرجعية بصرية حصرية ودائمة لعالم الأطلس ومستكشف الدرب والملاذ</div>
                 </div>
               </div>
-              <span class="badge-mini" id="atlasGalleryCountBadge">19 لوحة مرجعية</span>
+              <span class="badge-mini" id="atlasGalleryCountBadge">34 لوحة مرجعية</span>
             </div>
             <div class="atlas-gallery-grid" id="atlasGalleryGrid">
               <!-- Rendered dynamically -->

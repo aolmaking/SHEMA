@@ -5513,9 +5513,15 @@
   }
 
   /* ==================================================================== *
-   * 8. THE LIVING ATLAS (أطلس العوالم الحيّة) RENDERING & WORLD ANIMATIONS
+   * 8. THE LIVING ATLAS (أطلس العوالم الحيّة) RENDERING
    * ==================================================================== */
 
+  
+  /* ==================================================================== *
+   * THE LIVING ATLAS VERSION 2: MASTER ROGUELIKE & RPG ENGINE LOGIC
+   * ==================================================================== */
+
+  // 1. Spore Canvas Animation
   let _sporeAnimationId = null;
   function initAtlasSporeCanvas() {
     const canvas = document.getElementById('atlasSporeCanvas');
@@ -5579,6 +5585,647 @@
     renderSpores();
   }
 
+  // 2. Render Top RPG Game HUD
+  function renderAtlasGameHud(atlasState, habits = []) {
+    const goldValEl = $('#atlasHudGoldVal');
+    const gold = atlasState?.currencies?.havenGold ?? atlasState?.wayfinder?.havenGold ?? 0;
+    if (goldValEl) goldValEl.textContent = gold;
+
+    const floorEl = $('#atlasHudFloorText');
+    const wfLevel = atlasState?.wayfinder?.level || 1;
+    if (floorEl) {
+      floorEl.textContent = wfLevel === 1 ? 'الملاذ الأول (Floor 1)' : `الملاذ (Floor ${wfLevel})`;
+    }
+
+    // Health/Vitality Calculation based on today's habit completion
+    const todayStr = getTodayISO();
+    const activeHabits = (habits || []).filter(h => !h.archived);
+    let completedCount = 0;
+    activeHabits.forEach(h => {
+      if (h.history && h.history[todayStr] && h.history[todayStr].completed) {
+        completedCount++;
+      }
+    });
+
+    const totalCount = activeHabits.length || 1;
+    const completionPct = Math.round((completedCount / totalCount) * 100);
+
+    const hpFillEl = $('#atlasHudHpFill');
+    const hpTextEl = $('#atlasHudHpText');
+    const hpVal = Math.max(20, Math.min(50, 20 + Math.round(completionPct * 0.3)));
+    if (hpFillEl) hpFillEl.style.width = `${(hpVal / 50) * 100}%`;
+    if (hpTextEl) hpTextEl.textContent = `${hpVal} / 50`;
+
+    const statHpEl = $('#atlasStatHp');
+    if (statHpEl) statHpEl.textContent = `${hpVal}/50`;
+
+    const heroLevelEl = $('#atlasHeroLevelTag');
+    if (heroLevelEl) heroLevelEl.textContent = `Lv. ${wfLevel}`;
+
+    const statWillEl = $('#atlasStatWill');
+    if (statWillEl) statWillEl.textContent = `${6 + wfLevel * 2} ATK`;
+
+    const statShieldEl = $('#atlasStatShield');
+    if (statShieldEl) statShieldEl.textContent = `${completedCount * 3} Block`;
+  }
+
+  // 3. Render Tactical Action Cards Deck & Journey Route
+  function renderAtlasTacticalStage(atlasState, habits = []) {
+    const deckGrid = $('#atlasActionCardsGrid');
+    const counterBadge = $('#atlasCardsCounter');
+    const logEntries = $('#atlasJourneyLogEntries');
+    if (!deckGrid) return;
+
+    deckGrid.innerHTML = '';
+    const todayStr = getTodayISO();
+    const activeHabits = (habits || []).filter(h => !h.archived);
+
+    // Determine pending habits for today
+    const pendingHabits = activeHabits.filter(h => {
+      const rec = h.history && h.history[todayStr];
+      return !(rec && rec.completed);
+    });
+
+    if (counterBadge) {
+      counterBadge.textContent = `${pendingHabits.length} بطاقة نشطة اليوم`;
+    }
+
+    if (pendingHabits.length === 0) {
+      deckGrid.innerHTML = `
+        <div class="action-cards-empty">
+          <div class="empty-icon">🏆</div>
+          <div class="empty-title">تم تطهير رقعة اليوم بالكامل!</div>
+          <div class="empty-sub">الملاذ ينعم بالأمان والسكينة؛ أنجزت جميع عاداتك وأضاءت النجوم دروب الرحلة.</div>
+        </div>
+      `;
+    } else {
+      pendingHabits.forEach((habit, idx) => {
+        const card = document.createElement('div');
+        card.className = 'action-card';
+
+        // Categorize habit archetype
+        let archetype = 'strike';
+        let archetypeName = '⚔️ ضربة إرادة (Strike)';
+        let cardIcon = '⚔️';
+        const cat = (habit.category || habit.routine || '').toLowerCase();
+        if (cat.includes('health') || cat.includes('صحة') || cat.includes('رياضة')) {
+          archetype = 'nourish';
+          archetypeName = '🌿 غذاء وحيوية (Nourish)';
+          cardIcon = '🌱';
+        } else if (cat.includes('focus') || cat.includes('deep') || cat.includes('عمل') || cat.includes('تركيز')) {
+          archetype = 'channel';
+          archetypeName = '✨ تركيز عميق (Channel)';
+          cardIcon = '⚡';
+        } else if (cat.includes('evening') || cat.includes('مساء') || cat.includes('نوم') || cat.includes('شكر')) {
+          archetype = 'defend';
+          archetypeName = '🛡️ حماية وثبات (Defend)';
+          cardIcon = '🛡️';
+        }
+
+        card.innerHTML = `
+          <span class="card-energy-badge" title="طاقة التفعيل">1⚡</span>
+          <span class="card-archetype-tag ${archetype}">${archetypeName}</span>
+          <div class="card-art-box">${cardIcon}</div>
+          <div class="card-body">
+            <div class="card-habit-title">${habit.title || 'عادة بلا عنوان'}</div>
+            <div class="card-habit-meta">${habit.routine ? `روتين: ${habit.routine}` : 'عادة يومية'}</div>
+          </div>
+          <div class="card-rewards-line">
+            <span>🪙 +5 ذهب</span>
+            <span>✨ +15 XP</span>
+            <span>🌿 +1 تتابع</span>
+          </div>
+          <button type="button" class="btn-card-execute" data-habit-id="${habit.id}">
+            ⚡ تنفيذ الفعل (Execute)
+          </button>
+        `;
+
+        const execBtn = card.querySelector('.btn-card-execute');
+        if (execBtn) {
+          execBtn.onclick = async (e) => {
+            e.stopPropagation();
+            execBtn.disabled = true;
+            execBtn.textContent = '⏳ جاري التنفيذ...';
+
+            // Complete habit
+            await toggleHabitDay(habit.id, todayStr);
+
+            // Append to journey log
+            if (logEntries) {
+              const entry = document.createElement('div');
+              entry.className = 'log-entry action';
+              entry.textContent = `⚔️ أنجزت "${habit.title}"! +15 خبرة، +5 ذهب الملاذ.`;
+              logEntries.appendChild(entry);
+              logEntries.scrollTop = logEntries.scrollHeight;
+            }
+
+            // Animate card victory
+            card.style.transform = 'scale(0.92) rotate(-3deg)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+              renderAtlasPane();
+            }, 300);
+          };
+        }
+
+        deckGrid.appendChild(card);
+      });
+    }
+
+    // Update Journey Path Track Nodes
+    const completedCount = activeHabits.length - pendingHabits.length;
+    const progressPct = activeHabits.length ? (completedCount / activeHabits.length) : 0;
+    const pathProgTag = $('#atlasPathProgressTag');
+    if (pathProgTag) {
+      pathProgTag.textContent = `${completedCount} / ${activeHabits.length} محطات منجزة`;
+    }
+
+    const nodes = document.querySelectorAll('.journey-node');
+    const connectors = document.querySelectorAll('.track-connector');
+    nodes.forEach((node, idx) => {
+      const stepReq = (idx + 1) / nodes.length;
+      if (progressPct >= stepReq) {
+        node.classList.add('completed');
+        node.classList.remove('active');
+      } else if (progressPct >= (idx / nodes.length)) {
+        node.classList.add('active');
+        node.classList.remove('completed');
+      } else {
+        node.classList.remove('completed', 'active');
+      }
+    });
+
+    connectors.forEach((conn, idx) => {
+      const req = (idx + 1) / connectors.length;
+      if (progressPct >= req) {
+        conn.classList.add('filled');
+      } else {
+        conn.classList.remove('filled');
+      }
+    });
+  }
+
+  // 4. Companions & Mentors Dialogues
+  function initAtlasCompanions(wf = {}, isEn = false) {
+    // Sir Pip the Bird Knight (Artwork 29)
+    const pipEl = $('#atlasCompanionSirPip');
+    const pipBubble = $('#pipDialogueBubble');
+    if (pipEl && pipBubble) {
+      pipEl.onclick = () => {
+        const quotesAr = [
+          `"ضربة واحدة صادقة كفيلة بدحر أكبر تردد يا ${wf.name || 'بطل'}!"`,
+          `"سيفي وسيفك واحد في ساحة الثبات.. لا تستصغر خطوتك أبداً!"`,
+          `"الشجاعة ليست غياب الخوف، بل التقدم خطوة رغم التردد!"`,
+          `"تاج العزيمة لا يُمنح، بل يُصقل بالاستمرار اليومي!"`
+        ];
+        const quotesEn = [
+          `"A single true strike fells the tallest hesitation, ${wf.name || 'Hero'}!"`,
+          `"My blade stands with yours in the arena of grit!"`,
+          `"Courage is taking the step despite the doubt!"`
+        ];
+        const list = isEn ? quotesEn : quotesAr;
+        pipBubble.textContent = list[Math.floor(Math.random() * list.length)];
+        pipBubble.style.display = 'block';
+        clearTimeout(pipEl._timer);
+        pipEl._timer = setTimeout(() => { pipBubble.style.display = 'none'; }, 3800);
+      };
+    }
+
+    // Woodland Sage Toad (Artwork 21)
+    const toadEl = $('#atlasCompanionSageToad');
+    const toadBubble = $('#toadDialogueBubble');
+    if (toadEl && toadBubble) {
+      toadEl.onclick = () => {
+        const quotesAr = [
+          `"الهدوء جذر القوة، والمداومة تصنع الجبال الشامخة يا سالك الدرب."`,
+          `"لا تتعجل نضج الثمار؛ كل عادة بذرة تسقيها بالصبر."`,
+          `"خفف حملك وابدأ بما تيسر اليوم.. القليل الدائم يفيض بالبركة."`,
+          `"حكماء النسيج لم يولدوا أقوياء، بل ساروا بهوادة حتى بلغوا."`
+        ];
+        const quotesEn = [
+          `"Calmness is the root of strength; consistency shapes mountains."`,
+          `"Do not rush the fruit; each habit is a seed tended by patience."`,
+          `"Lighten your load and take what is easy today."`
+        ];
+        const list = isEn ? quotesEn : quotesAr;
+        toadBubble.textContent = list[Math.floor(Math.random() * list.length)];
+        toadBubble.style.display = 'block';
+        clearTimeout(toadEl._timer);
+        toadEl._timer = setTimeout(() => { toadBubble.style.display = 'none'; }, 3800);
+      };
+    }
+
+    // Wayfinder Avatar Emote Bubble
+    const wfBox = $('#atlasWayfinderAvatarBox');
+    const emoteBubble = $('#wayfinderEmoteBubble');
+    if (wfBox && emoteBubble) {
+      wfBox.onclick = () => {
+        wfBox.classList.remove('cheer');
+        void wfBox.offsetWidth;
+        wfBox.classList.add('cheer');
+
+        const quotesAr = [
+          `"مع كل خطوة صادقة، ينير الأطلس وتتراجع العتمة!"`,
+          `"الملاذ يزدهر بصبرك واستمرارك يا ${wf.name || 'مستكشف'}!"`,
+          `"خطوة صغيرة اليوم تصنع مجداً كبيراً غداً!"`,
+          `"المستكشف مستعد دائماً، ولا مكان لليأس في ملاذنا!"`,
+          `"الاستمرار الهادئ يفكك أكبر العقبات!"`
+        ];
+        const quotesEn = [
+          `"With every true step, the Weave lights up!"`,
+          `"The Haven blossoms with your patience and grit, ${wf.name || 'Wayfinder'}!"`,
+          `"A small step today builds a great sanctuary tomorrow!"`,
+          `"The Wayfinder is always ready; despair has no home here!"`
+        ];
+        const list = isEn ? quotesEn : quotesAr;
+        emoteBubble.textContent = list[Math.floor(Math.random() * list.length)];
+        emoteBubble.style.display = 'block';
+        clearTimeout(wfBox._emoteTimer);
+        wfBox._emoteTimer = setTimeout(() => { emoteBubble.style.display = 'none'; }, 4000);
+      };
+    }
+  }
+
+  // 5. Cylindrical Territory Map Scrolls Interactivity
+  function initAtlasTerritoryScrolls(isEn = false) {
+    const scrolls = document.querySelectorAll('.cylindrical-scroll');
+    scrolls.forEach(scroll => {
+      scroll.onclick = () => {
+        scrolls.forEach(s => s.classList.remove('active'));
+        scroll.classList.add('active');
+        const territory = scroll.dataset.territory;
+        console.log(`[Atlas] Switched to territory scroll: ${territory}`);
+      };
+    });
+  }
+
+  // 6. Pixel Grimoire / Open Book UI Rendering
+  function renderAtlasGrimoire(atlasState, isEn = false) {
+    const quoteEl = $('#atlasGrimoireMiroQuote');
+    if (quoteEl && atlasState?.miro?.dialogue) {
+      quoteEl.textContent = `"${atlasState.miro.dialogue}"`;
+    }
+  }
+
+  // 7. Living Stone Golems (Kedo Spirits) in Sanctuary
+  function renderAtlasGolems(isEn = false) {
+    const relicsGrid = $('#atlasSanctuaryRelicsGrid');
+    if (!relicsGrid) return;
+
+    // Check if golems already rendered
+    if (relicsGrid.querySelector('.kedo-golem-spirit')) return;
+
+    const golemNames = [
+      'حارس النور الرخامي', 'عفريت الطحلب الوادع', 'صخرة السكينة الكبرى', 'بلورة الغابة الخضراء',
+      'حارس موقد الملاذ', 'روح النبع الرقراق', 'صخرة العزيمة العتيقة', 'كائن الأغصان المتسلقة',
+      'روح البوابة الحجرية', 'حارس الدروب الترابية', 'بلورة الصفاء الذهني', 'عفريت الأوراق الذهبية',
+      'صانع الجسور الصخرية', 'حارس الآثار الخاملة', 'روح النسيم العابر', 'عملاق الملاذ النائم'
+    ];
+
+    const golemIcons = ['🗿', '🪨', '🌿', '💎', '🏺', '🪴', '🔮', '✨', '🍃', '🪵', '🕯️', '🛡️', '⚔️', '🧭', '📜', '👑'];
+
+    golemNames.forEach((name, i) => {
+      const golem = document.createElement('div');
+      golem.className = 'kedo-golem-spirit';
+      golem.innerHTML = `
+        <span class="kedo-golem-sprite">${golemIcons[i % golemIcons.length]}</span>
+        <span class="kedo-golem-name">${name}</span>
+        <span class="kedo-golem-status">🌱 ${i < 4 ? 'مستيقظ وحارس' : 'ساكن يتأمل'}</span>
+      `;
+
+      golem.onclick = () => {
+        golem.style.transform = 'scale(1.2) rotate(4deg)';
+        setTimeout(() => { golem.style.transform = ''; }, 250);
+      };
+
+      relicsGrid.appendChild(golem);
+    });
+  }
+
+  // 8. The Official 34-Artwork Reference Gallery
+  const ATLAS_REFERENCE_ARTWORKS = [
+    {
+      num: '01',
+      file: '01_world_panorama_floating_islands.jpg',
+      titleAr: 'The Grand Living Atlas Panorama (بانوراما الأطلس الحي الكبرى)',
+      titleEn: 'The Grand Living Atlas Panorama & Floating Islands',
+      tag: 'البانوراما العامة لعالم الأطلس',
+      desc: 'البانوراما العامة لعالم الأطلس والجزر العائمة ومقياس التقدم الكلي؛ المرجع الأساسي لهوية الأفق المفتوح والتناغم البيئي.'
+    },
+    {
+      num: '02',
+      file: '02_living_map_parchment_aethelia.jpg',
+      titleAr: 'The Lands of Aethelia — Core Map (خريطة قارة إيثيليا الأساسية)',
+      titleEn: 'The Lands of Aethelia Interactive Map',
+      tag: 'خريطة النسيج والملاذ التفاعلية',
+      desc: 'خريطة قارة إيثيليا التفاعلية بأسلوب الرق الأثري المشع؛ توضح تموضع الملاذ الأول والأقاليم الأربعة المترابطة.'
+    },
+    {
+      num: '03',
+      file: '03_the_crossroads_stone_bridges.jpg',
+      titleAr: 'The Crossroads (مفترق الطرق والجسور الحجرية العتيقة)',
+      titleEn: 'The Crossroads & Ancient Stone Bridges',
+      tag: 'ترابط الروتينات وتكديس العادات',
+      desc: 'مفترق الطرق والجسور الحجرية المعلقة؛ يجسد تكديس العادات اليومية وتكامل المسارات السلوكية في مكان واحد.'
+    },
+    {
+      num: '04',
+      file: '04_storybook_map_forest_runes.jpg',
+      titleAr: 'The Forest Region Map & Rune Trails (خريطة دروب الغابة والرقع الساحرة)',
+      titleEn: 'Storybook Forest Map & Luminous Runes',
+      tag: 'خرائط الأقاليم الفرعية',
+      desc: 'خريطة مرسومة يدوياً بأسلوب القصص المصورة العتيقة؛ مسارات ممهدة بالأحجار ونقاط استراحة متناثرة بين الأشجار.'
+    },
+    {
+      num: '05',
+      file: '05_verdant_ruins_mossy_path.jpg',
+      titleAr: 'The Verdant Ruins (أطلال الغابة العتيقة ومسار الطحالب)',
+      titleEn: 'Verdant Ruins & The Mossy Path',
+      tag: 'تفكيك ركام البدايات والتردد',
+      desc: 'المرجع البصري للأطلال المكسوة بالطحالب؛ ترمز إلى البدايات الهادئة وتجاوز الركام السلوكي القديم بسلام.'
+    },
+    {
+      num: '06',
+      file: '06_the_wayfinder_pilgrim_journey.jpg',
+      titleAr: 'The Wayfinder & The Glowing Wisps (رحلة المستكشف وأنوار الدرب)',
+      titleEn: 'The Wayfinder Pilgrim Journey',
+      tag: 'رحلة المستكشف ومسار النور',
+      desc: 'المستكشف يتقدم عبر المرج الأخضر متتبعاً ومضات النور؛ يمثل الحركة اليومية الصادقة نحو الأهداف الحقيقية.'
+    },
+    {
+      num: '07',
+      file: '07_cartographer_study_haven_library.jpg',
+      titleAr: 'The Cartographer\'s Hall (قاعة الخرائط ومكتبة الملاذ العريقة)',
+      titleEn: 'The Cartographer\'s Study & Haven Library',
+      tag: 'بيئة التركيز والتوثيق والهدوء',
+      desc: 'المكتبة العريقة ذات الأرفف الخشبية الشاهقة وخرائط النجوم؛ بيئة التركيز العميق وتدوين الاستبصارات اليومية.'
+    },
+    {
+      num: '08',
+      file: '08_world_tree_radiant_city.jpg',
+      titleAr: 'The World Tree & Radiant Haven (شجرة العالم الكبرى والملاذ المشع)',
+      titleEn: 'The World Tree & The Radiant City',
+      tag: 'مرحلة الاستقرار والتمكين الكبرى',
+      desc: 'شجرة العالم الكبرى المظلة على الوادي الذهبي؛ تمثل بلوغ العادات مرحلة الاستقرار التلقائي التام.'
+    },
+    {
+      num: '09',
+      file: '09_astrolabe_skill_tree_medallion.jpg',
+      titleAr: 'The Astrolabe Skill Tree (أسطرلاب المهارات وميدالية الكفاءات)',
+      titleEn: 'The Celestial Astrolabe Behavioral Skill Tree',
+      tag: 'أسطرلاب المهارات السلوكية',
+      desc: 'أسطرلاب نحاسي فلكي ذو حلقات دوارة؛ المرجع البصري والروحي لشجرة المهارات السلوكية غير المدفوعة.'
+    },
+    {
+      num: '10',
+      file: '10_shadow_confrontation_ink_wash.jpg',
+      titleAr: 'Encountering the Great Shadow (مواجهة الظلال الكبرى دون لوم)',
+      titleEn: 'Confronting the Colossal Shadow Spirit',
+      tag: 'تفكيك المقاومة والأنماط المعيقة',
+      desc: 'مواجهة سلمية واعية بين المستكشف والكيان الظلي العملاق بأسلوب الحبر المائي؛ تفكيك المقاومة بالاحتواء لا بالقتال.'
+    },
+    {
+      num: '11',
+      file: '11_enchanted_archway_waymark.jpg',
+      titleAr: 'The Living Waymark (علامة الطريق الحية وقوس البداية)',
+      titleEn: 'The Enchanted Archway & Living Waymark',
+      tag: 'علامات الإنجاز ونقاط التثبيت',
+      desc: 'قوس صخري نابت عليه الفروع يتوسطه كائن النور؛ رمز لنقاط التثبيت والعلامات السلوكية المحفزة.'
+    },
+    {
+      num: '12',
+      file: '12_woodland_echoes_shadow_spirits.jpg',
+      titleAr: 'The Woodland Echoes (أصداء الغابة والتعافي الذاتي الواعي)',
+      titleEn: 'Woodland Echoes & Shadow Spirits',
+      tag: 'الاستشفاء وتصحيح المسار',
+      desc: 'المستكشف يتأمل بهدوء في أعماق الغابة مع أرواح الظل اللطيفة؛ فلسفة التقبل الذاتي واستئناف المسير دون جلد للذات.'
+    },
+    {
+      num: '13',
+      file: '13_miro_starlight_spirit_official.jpg',
+      titleAr: 'Miro Official Reference (طائر الحبر ونور النجوم — الرفيق ميرو)',
+      titleEn: 'Miro the Starlight Spirit Companion',
+      tag: 'الرفيق ميرو وطائر الحبر المضيء',
+      desc: 'المرجع البصري الرسمي والمعتمد حصرياً لشخصية الرفيق ميرو: كائن النور وطائر الحبر المشع ذو الهالة النجمية.'
+    },
+    {
+      num: '14',
+      file: '14_arco_mossy_entrance_wayfinder.jpg',
+      titleAr: 'Arco Ancient Temple & Wayfinder (معبد أركو العتيق والمستكشف)',
+      titleEn: 'Arco Ancient Temple & Pixel Wayfinder Character',
+      tag: 'تجسيد شخصية المستكشف البكسلية',
+      desc: 'المرجع البصري الأساسي لتجسيد شخصية المستكشف البكسلي القائم أمام معبد الغابة العتيق المكسو بالطحالب مع اليراعات السحرية.'
+    },
+    {
+      num: '15',
+      file: '15_sword_pedestal_godrays.jpg',
+      titleAr: 'Sword on Stone Pedestal with God Rays (سيف الصرح وحزم النور)',
+      titleEn: 'Sword on Stone Pedestal with Sunbeams',
+      tag: 'أشعة الشمس الإلهية ومحراب النصب',
+      desc: 'المرجع الأساسي لأشعة الشمس الإلهية المتلألئة (God Rays) المتدفقة عبر غصون الغابة؛ صرح النُّصُب ومحراب التثبيت والاستقرار.'
+    },
+    {
+      num: '16',
+      file: '16_colossal_ancient_arches_canopy.jpg',
+      titleAr: 'Colossal Ancient Arches & Canopy (الأقواس الحجرية والمظلة الكبرى)',
+      titleEn: 'Colossal Ancient Arches & Forest Canopy',
+      tag: 'بانوراما مسرح الملاذ الحي',
+      desc: 'الخلفية البانورامية الرئيسية لمسرح الملاذ الحي: أقواس معمارية مهيبة تعانق الأشجار العملاقة وضوء الصباح الضبابي.'
+    },
+    {
+      num: '17',
+      file: '17_giant_stone_face_ruins.jpg',
+      titleAr: 'Colossal Stone Face Sanctuary (وجه الصرح الحجري العملاق)',
+      titleEn: 'Colossal Stone Face in the Overgrown Ruins',
+      tag: 'أطلال المحاكمات والعقبات الكبرى',
+      desc: 'المرجع البصري لصرح المحاكمات والعقبات الكبرى: وجه صخري عملاق نابت عليه الأعشاب واللبلاب يواجهه المستكشف بهيبة وسلام.'
+    },
+    {
+      num: '18',
+      file: '18_nature_reclaims_sanctuary.jpg',
+      titleAr: 'Nature Reclaims Architecture (الطبيعة تستعيد العمارة القديمة)',
+      titleEn: 'Nature Reclaiming Train Station & Architecture',
+      tag: 'سوق غنائم الملاذ والاستشفاء',
+      desc: 'المرجع البصري لسوق غنائم الملاذ ومحطات السكينة: عمارة عتيقة مكسوة بالأوراق الخضراء تتغلغل فيها شمس الصباح الحيوية.'
+    },
+    {
+      num: '19',
+      file: '19_overgrown_creeping_vines_border.png',
+      titleAr: 'Overgrown Creeping Vines & Border Foliage (الإطار النباتي الزاحف)',
+      titleEn: 'Creeping Pixel Vines & Border Foliage',
+      tag: 'الإطار الزاحف خارج حدود النافذة',
+      desc: 'المرجع الدقيق والحصري لأنيميشن الفروع النباتية والأوراق والبراعم الزاحفة على حواف النافذة الفائضة خارج الحدود بعدة مليمترات.'
+    },
+    {
+      num: '20',
+      file: '20_rpg_roguelike_master_layout_slay_the_spire.jpg',
+      titleAr: 'Tactical Roguelike Master Layout (الهيكل التكتيكي العام للعبة)',
+      titleEn: 'Master Tactical Roguelike RPG Layout (Slay the Spire Style)',
+      tag: 'مسرح المعركة والأفعال وشريط الـ HUD',
+      desc: 'المرجع الشامل للإصدار الثاني: شريط الـ HUD العلوي (صحة، طاقة، ذهب، مفاتيح، رتب)، بطاقة البطل التكتيكية، شبكة بطاقات الأفعال، ومخزن العتاد ومسار العقد.'
+    },
+    {
+      num: '21',
+      file: '21_woodland_sage_toad_turnaround_sheet.jpg',
+      titleAr: 'Woodland Sage & Mentor (حكيم الغابة ومعلم الدرب)',
+      titleEn: 'Woodland Sage Toad Turnaround Sheet & Character Design',
+      tag: 'معلم ومستشار الملاذ عند الموقد',
+      desc: 'المرجع الكامل لشخصية الضفدع الحكيم بالقبعة الحمراء والعباءة وعصا الترحال؛ حكيم المشورة والهدوء في الملاذ.'
+    },
+    {
+      num: '22',
+      file: '22_rolled_cylindrical_maps_territory_scrolls.jpg',
+      titleAr: 'Rolled Cylindrical Territory Scrolls (لفائف الأقاليم الأسطوانية)',
+      titleEn: 'Cylindrical Rolled Territory Map Scrolls with Brass Buckles',
+      tag: 'محدد الأقاليم والفصول السردية',
+      desc: 'لفائف الخرائط الأسطوانية بالأحزمة الجلدية وبوصلات النحاس؛ نظام تفاعلي لاختيار خريطة الإقليم واستعراض فصول الرحلة.'
+    },
+    {
+      num: '23',
+      file: '23_rpg_iconography_sheet_items_relics.jpg',
+      titleAr: 'RPG Items & Relics Iconography (دليل أيقونات المقتنيات)',
+      titleEn: 'Master RPG Items, Relics & Equipment Iconography Sheet',
+      tag: 'مخزن العتاد والمقتنيات السحرية',
+      desc: 'دليل الأيقونات الموحدة للحقيبة والعتاد: فوانيس، قوارير أكسير، مفاتيح، خناجر، بوصلات، خرائط، كتب سحرية، ودروع.'
+    },
+    {
+      num: '24',
+      file: '24_isometric_floating_land_dioramas.jpg',
+      titleAr: 'Isometric Floating Territory Dioramas (ديوراما الأقاليم العائمة)',
+      titleEn: 'Isometric Floating Land Dioramas & Micro-Environments',
+      tag: 'منصات التضاريس الإيزومترية',
+      desc: 'منصات التضاريس العائمة بنظام البلاطات الإيزومترية: أطلال حجرية، أكواخ، بوابات عتيقة، ومسارات ممهدة بالأحجار المتدرجة.'
+    },
+    {
+      num: '25',
+      file: '25_adventure_quest_pinned_parchment_map.jpg',
+      titleAr: 'Adventure Quest Pinned Parchment Board (لوحة المهام المثبتة)',
+      titleEn: 'Pinned Parchment Adventure Board & Dotted Route',
+      tag: 'لوحة المهام ومسار العقد المنقط',
+      desc: 'لوحة المهام الخشبية بالخريطة المثبتة بالدبابيس والأختام الشمعية ومسار النقاط الاستكشافية المتتالية لمهام اليوم.'
+    },
+    {
+      num: '26',
+      file: '26_isometric_village_haven_settlement.jpg',
+      titleAr: 'Isometric Village Settlement (مستوطنة وقرية الملاذ)',
+      titleEn: 'Isometric Haven Settlement & Low-Poly Village Diorama',
+      tag: 'تطور مرافق وقرية الملاذ الحي',
+      desc: 'بيوت ومباني قرية الملاذ الإيزومترية مع الأشجار المكعبة؛ تمثل المستوى المتقدم لتطور منشآت ومرافق الملاذ مع إنجازات اللاعب.'
+    },
+    {
+      num: '27',
+      file: '27_miro_shadow_spirit_poses_character_sheet.jpg',
+      titleAr: 'Miro Spirit Stances & Character Sheet (وضعيات الرفيق ميرو الست)',
+      titleEn: 'Miro Starlight Spirit 6 Character Stances & Poses',
+      tag: 'الوضعيات التعبيرية الست للرفيق ميرو',
+      desc: 'المرجع الرسمي لوضعيات ميرو الست: وضعية التأمل، الطيران المشع، الفضول والاستكشاف، الاستتار والتحصين، الاحتفال، والسكينة الهادئة.'
+    },
+    {
+      num: '28',
+      file: '28_hand_drawn_rpg_relics_equipment_sheet.jpg',
+      titleAr: 'Hand-Drawn RPG Equipment & Relics (مقتنيات ودروع الأطلس اليدوية)',
+      titleEn: 'Hand-Drawn RPG Relics, Shields & Equipment Lineup',
+      tag: 'خزانة الدروع والمقتنيات اليدوية',
+      desc: 'المقتنيات اليدوية الرقيقة: الدروع الخشبية المطوقة بالنحاس، المخطوطات المقفلة، الأجرام البلورية، الفؤوس، وقوارير الشفاء.'
+    },
+    {
+      num: '29',
+      file: '29_bird_knight_with_greatsword_companion.jpg',
+      titleAr: 'Sir Pip the Brave Bird Knight (الفارس الصغير بسيف الصخرة)',
+      titleEn: 'Sir Pip the Brave Bird Knight Companion with Greatsword',
+      tag: 'رفيق الدرب الشجاع ومحفز الخطوة الأولى',
+      desc: 'المرجع المعتمد لشخصية السير بيب (Sir Pip): الفارس الصغير بعباءته الصوفية وتاجه وسيفه الصخري العملاق؛ رمز الإقدام وتحدي التردد.'
+    },
+    {
+      num: '30',
+      file: '30_pixel_art_grimoire_open_book_ui.jpg',
+      titleAr: 'Pixel Art Grimoire & Open Tome (كتاب الأطلس المفتوح)',
+      titleEn: 'Pixel Art Open Grimoire UI with Leather Bookmark Ribbons',
+      tag: 'سجل الأطلس واليوميات بأسلوب الكتاب المفتوح',
+      desc: 'واجهة الكتاب الأثري المفتوح بالشارات الجلدية والأشرطة الملونة؛ المرجع الرئيسي لسجل الأطلس، اليوميات، وحكمة ميرو.'
+    },
+    {
+      num: '31',
+      file: '31_isometric_grid_world_wayfinder_pedestal.jpg',
+      titleAr: 'Isometric Grid World with Wayfinder Pedestal (منصة المستكشف الشبكية)',
+      titleEn: 'Isometric Grid World & Moving Wayfinder Character Pedestal',
+      tag: 'حركة المستكشف على شبكة العالم',
+      desc: 'خريطة الشبكة الإيزومترية ذات القلاع والأبراج مع منصة المستكشف الدائرية المتحركة؛ محاكاة نقلة اللاعب بين الأقاليم.'
+    },
+    {
+      num: '32',
+      file: '32_living_stone_golems_kedo_spirits.jpg',
+      titleAr: 'Living Stone Spirits & Kedo Golems (عفاريت الحجارة الحية)',
+      titleEn: '16 Living Stone Golems & Mossy Kedo Spirits of the Haven',
+      tag: 'عفاريت الحجارة الحية في الصرح والملاذ',
+      desc: 'كائنات حجرية رقيقة تنبت عليها الطحالب والبلورات؛ تسكن صرح الملاذ وتتفاعل مع الآثار الخاملة والمحاكمات المكتملة.'
+    },
+    {
+      num: '33',
+      file: '33_traveler_pilgrims_haven_fellows_lineup.jpg',
+      titleAr: 'Haven Fellow Pilgrims Lineup (موكب رفاق وحكماء الملاذ)',
+      titleEn: 'Lineup of 24 Diverse RPG Pilgrim Travelers & Haven Companions',
+      tag: 'موكب الرفاق والزوار حول موقد الملاذ',
+      desc: 'تشكيلة من 24 شخصية ومسافر أسطوري من شعوب مختلفة؛ يزورون موقد الملاذ ليشاركونك الحكمة والقصص والبركات.'
+    },
+    {
+      num: '34',
+      file: '34_master_rpg_ui_kit_parchments_seals.jpg',
+      titleAr: 'Master RPG UI Kit with Wax Seals (حقيبة أدوات واجهات الـ RPG)',
+      titleEn: 'Master RPG UI Kit: Parchment Cards, Wax Seals, Buttons & Gauges',
+      tag: 'حقيبة أدوات واجهات الـ RPG الكاملة',
+      desc: 'الأختام الشمعية، الأشرطة الخشبية، بطاقات الرق المهترئة، مؤشرات الطاقة الجوهرية، والأزرار؛ مرجع تفاصيل الواجهات الحية.'
+    }
+  ];
+
+  function renderAtlasGallery() {
+    const grid = document.getElementById('atlasGalleryGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const countBadge = document.getElementById('atlasGalleryCountBadge');
+    if (countBadge) countBadge.textContent = `${ATLAS_REFERENCE_ARTWORKS.length} لوحة مرجعية`;
+
+    ATLAS_REFERENCE_ARTWORKS.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'atlas-gallery-item';
+      card.innerHTML = `
+        <div class="gallery-thumb-wrap">
+          <img class="gallery-thumb-img" src="../../assets/brand/living-atlas/${item.file}" alt="${item.titleAr}" loading="lazy">
+          <span class="gallery-num-badge">#${item.num}</span>
+        </div>
+        <div class="gallery-meta">
+          <div class="gallery-title-ar">${item.titleAr}</div>
+          <div class="gallery-title-en">${item.titleEn}</div>
+          <div class="gallery-desc">${item.desc}</div>
+          <span class="gallery-role-tag">${item.tag}</span>
+        </div>
+      `;
+
+      card.onclick = () => {
+        const modal = document.getElementById('atlasGalleryLightboxModal');
+        const img = document.getElementById('atlasLightboxImg');
+        const title = document.getElementById('atlasLightboxTitle');
+        const desc = document.getElementById('atlasLightboxDesc');
+        if (modal && img) {
+          img.src = `../../assets/brand/living-atlas/${item.file}`;
+          if (title) title.textContent = `[${item.num}] ${item.titleAr}`;
+          if (desc) desc.innerHTML = `<strong>${item.tag}</strong><br>${item.desc}`;
+          modal.hidden = false;
+        }
+      };
+
+      grid.appendChild(card);
+    });
+
+    const closeBtn = document.getElementById('atlasLightboxCloseBtn');
+    const modal = document.getElementById('atlasGalleryLightboxModal');
+    if (closeBtn && modal) {
+      closeBtn.onclick = () => { modal.hidden = true; };
+      modal.onclick = (e) => { if (e.target === modal) modal.hidden = true; };
+    }
+  }
+
   async function renderAtlasPane() {
     const isEn = (state.language === 'en');
     let atlasState = null;
@@ -5601,6 +6248,26 @@
     }
 
     const wf = atlasState.wayfinder || {};
+
+    // V2: Render Game HUD, Tactical Deck, Companions, Scrolls & Gallery
+    initAtlasSporeCanvas();
+    renderAtlasGameHud(atlasState, state.habits);
+    renderAtlasTacticalStage(atlasState, state.habits);
+    initAtlasCompanions(wf, isEn);
+    initAtlasTerritoryScrolls(isEn);
+    renderAtlasGrimoire(atlasState, isEn);
+    renderAtlasGolems(isEn);
+    renderAtlasGallery();
+
+    const refreshDeckBtn = $('#atlasRefreshDeckBtn');
+    if (refreshDeckBtn) {
+      refreshDeckBtn.onclick = () => renderAtlasTacticalStage(atlasState, state.habits);
+    }
+    const bazaarQuickBtn = $('#atlasOpenBazaarQuickBtn');
+    if (bazaarQuickBtn) {
+      bazaarQuickBtn.onclick = () => switchTab('atlas');
+    }
+
     const miro = atlasState.miro || {};
 
     // 1. Wayfinder Header & Sovereign Name
@@ -6136,7 +6803,7 @@
         try {
           const freshHistory = await window.widgets.atlas.getMiroHistory();
           if (Array.isArray(freshHistory)) history = freshHistory;
-        } catch (_) {}
+        } catch (_) { }
       }
 
       if (history.length === 0) {
@@ -6549,98 +7216,6 @@
         }
       };
     }
-
-    // 16. Wayfinder Character Avatar & Interaction
-    const wfBox = $('#atlasWayfinderAvatarBox');
-    const emoteBubble = $('#wayfinderEmoteBubble');
-    if (wfBox) {
-      wfBox.onclick = () => {
-        wfBox.classList.remove('cheer');
-        void wfBox.offsetWidth;
-        wfBox.classList.add('cheer');
-
-        if (emoteBubble) {
-          const quotesAr = [
-            `"مع كل خطوة صادقة، ينير الأطلس وتتراجع العتمة!"`,
-            `"الملاذ يزدهر بصبرك واستمرارك يا ${wf.name || 'مستكشف'}!"`,
-            `"خطوة صغيرة اليوم تصنع مجداً كبيراً غداً!"`,
-            `"المستكشف مستعد دائماً، ولا مكان لليأس في ملاذنا!"`,
-            `"الاستمرار الهادئ يفكك أكبر العقبات!"`
-          ];
-          const quotesEn = [
-            `"With every true step, the Weave lights up!"`,
-            `"The Haven blossoms with your patience and grit, ${wf.name || 'Wayfinder'}!"`,
-            `"A small step today builds a great sanctuary tomorrow!"`,
-            `"The Wayfinder is always ready; despair has no home here!"`
-          ];
-          const list = isEn ? quotesEn : quotesAr;
-          const chosenQuote = list[Math.floor(Math.random() * list.length)];
-          emoteBubble.textContent = chosenQuote;
-          emoteBubble.style.display = 'block';
-
-          clearTimeout(wfBox._emoteTimer);
-          wfBox._emoteTimer = setTimeout(() => {
-            if (emoteBubble) emoteBubble.style.display = 'none';
-          }, 4000);
-        }
-      };
-    }
-
-    // Hero Scroll Miro Buttons
-    const heroQuestBtn = $('#atlasMiroDailyQuestBtn');
-    if (heroQuestBtn) {
-      heroQuestBtn.onclick = () => {
-        const questCard = $('#atlasMiroDailyQuestCard');
-        if (questCard) {
-          const isHidden = questCard.style.display === 'none';
-          questCard.style.display = isHidden ? 'block' : 'none';
-          if (isHidden && window.widgets?.atlas?.generateDailyQuest) {
-            window.widgets.atlas.generateDailyQuest(state.language || 'ar').then(res => {
-              if (res?.quest) {
-                const qTitle = $('#atlasQuestTitle'); if (qTitle) qTitle.textContent = res.quest.title;
-                const qDesc = $('#atlasQuestDesc'); if (qDesc) qDesc.textContent = res.quest.desc;
-              }
-            }).catch(e => console.warn('[Atlas] Daily quest failed:', e));
-          }
-        }
-      };
-    }
-
-    const heroHistoryBtn = $('#atlasMiroHistoryBtn');
-    if (heroHistoryBtn) {
-      heroHistoryBtn.onclick = () => {
-        const drawer = $('#atlasMiroHistoryDrawer');
-        if (drawer) {
-          const isHidden = drawer.style.display === 'none';
-          drawer.style.display = isHidden ? 'block' : 'none';
-          if (isHidden && window.widgets?.atlas?.getMiroHistory) {
-            window.widgets.atlas.getMiroHistory().then(history => {
-              const listEl = $('#atlasMiroHistoryList');
-              if (listEl && Array.isArray(history)) {
-                if (history.length === 0) {
-                  listEl.innerHTML = `<div style="padding: 12px; color: var(--text-muted); font-size: 11px;">${isEn ? 'No previous consultations recorded.' : 'لا توجد استشارات سابقة مسجلة.'}</div>`;
-                } else {
-                  listEl.innerHTML = history.map(h => `
-                    <div class="history-item">
-                      <div class="h-meta">
-                        <span class="h-mode">${h.modeKey || 'استشارة'}</span>
-                        <span class="h-time">${new Date(h.timestamp).toLocaleDateString()}</span>
-                      </div>
-                      ${h.userQuestion ? `<div class="h-q">"${h.userQuestion}"</div>` : ''}
-                      <div class="h-a">"${h.response}"</div>
-                    </div>
-                  `).join('');
-                }
-              }
-            }).catch(e => console.warn('[Atlas] History failed:', e));
-          }
-        }
-      };
-    }
-
-    // Initialize Living Spores Particle Animation
-    initAtlasSporeCanvas();
-    renderAtlasGallery();
   }
 
   /* ---------- Boot via Mirqat UI Framework ---------- */
@@ -6669,208 +7244,4 @@
     if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(updateDashTabIndicator);
     window.addEventListener('resize', updateDashTabIndicator);
   });
-
-  /* ==================================================================== *
-   * 17. OFFICIAL REFERENCE ARTWORKS GALLERY (الصور الـ 19 المعتمدة)
-   * ==================================================================== */
-  const ATLAS_REFERENCE_ARTWORKS = [
-    {
-      num: '01',
-      file: '01_world_panorama_floating_islands.jpg',
-      titleAr: 'The Grand Living Atlas Panorama (بانوراما العالم الكبرى)',
-      titleEn: 'The Grand World Panorama & Floating Islands',
-      tag: 'بانوراما العالم والمقياس الكلي',
-      desc: 'البانوراما العامة لعالم الأطلس: جزر عائمة، شلالات سماوية، أفق جبلي شاسع، ومنطاد الاستكشاف. يمثل مقياس التقدم الكلي للرحلة.'
-    },
-    {
-      num: '02',
-      file: '02_living_map_parchment_aethelia.jpg',
-      titleAr: 'The Lands of Aethelia — Core Map (خريطة قارة إيثيليا)',
-      titleEn: 'The Living Parchment Map of Aethelia',
-      tag: 'خريطة النسيج التفاعلية',
-      desc: 'الخريطة التفاعلية الأساسية: رق جلدي عتيق مع إضاءات نسيجية سحرية تشع من المسارات والمدن وبوصلة أسطرلاب مرصعة بالجواهر.'
-    },
-    {
-      num: '03',
-      file: '03_the_crossroads_stone_bridges.jpg',
-      titleAr: 'The Crossroads (مفترق الطرق الحجري)',
-      titleEn: 'The Crossroads & Ancient Stone Bridges',
-      tag: 'تكديس العادات وترابط الروتينات',
-      desc: 'ملتقى المسارات الحجرية والجسور الأثرية والشلالات المنسابة بين القباب العتيقة؛ يمثل ترابط الروتينات وتكديس العادات الواقعية.'
-    },
-    {
-      num: '04',
-      file: '04_storybook_map_forest_runes.jpg',
-      titleAr: 'The Forest Region Map & Rune Trails (خريطة دروب الغابة)',
-      titleEn: 'Hand-Drawn Storybook Forest Trails',
-      tag: 'الرسم القصصي اليدوي',
-      desc: 'خريطة إقليمية بأسلوب الرسم القصصي اليدوي: دروب بحروف ومسارات مشعة بين الأشجار العريقة ومحطات الاستراحة.'
-    },
-    {
-      num: '05',
-      file: '05_verdant_ruins_mossy_path.jpg',
-      titleAr: 'The Verdant Ruins (أطلال الغابة العتيقة)',
-      titleEn: 'Mossy Paths of the Verdant Ruins',
-      tag: 'مسارات النمو والبدايات',
-      desc: 'الممرات الحجرية المغطاة بالطحالب وجذور الأشجار الضخمة؛ تمثل مسارات النمو والجسد ومواجهة ركام البدايات.'
-    },
-    {
-      num: '06',
-      file: '06_the_wayfinder_pilgrim_journey.jpg',
-      titleAr: 'The Wayfinder & The Glowing Wisps (رحلة المستكشف ومسار النور)',
-      titleEn: 'The Wayfinder Pilgrim Following Wisps',
-      tag: 'شخصية المستكشف والرحلة',
-      desc: 'شخصية المستكشف بحقيبة السفر وعصا الترحال، يتبع أضواء النسيج الهادية نحو الأفق المفتوح.'
-    },
-    {
-      num: '07',
-      file: '07_cartographer_study_haven_library.jpg',
-      titleAr: "The Cartographer's Hall (قاعة الخرائط ومكتبة الملاذ)",
-      titleEn: 'Haven Library & Cartographer Study',
-      tag: 'بيئة التركيز والأرشيف',
-      desc: 'المقر الرئيسي بالملاذ الأول: طاولة الخرائط الضخمة المنارة بالشموع، رفوف الكتب اللانهائية، والمخطوطات؛ بيئة التعلم والأرشيف.'
-    },
-    {
-      num: '08',
-      file: '08_world_tree_radiant_city.jpg',
-      titleAr: 'The World Tree & Radiant Haven (شجرة العالم الكبرى)',
-      titleEn: 'The World Tree & Radiant Valley Haven',
-      tag: 'شجرة العالم والازدهار التام',
-      desc: 'شجرة العالم الكبرى المضيئة المظلة على المدينة المشيدة في الوادي الأخضر؛ يمثل الازدهار والاستقرار التام للعادات.'
-    },
-    {
-      num: '09',
-      file: '09_astrolabe_skill_tree_medallion.jpg',
-      titleAr: 'The Astrolabe Skill Tree (شجرة المهارات الأسطرلابية)',
-      titleEn: 'Celestial Astrolabe Constellation Medallion',
-      tag: 'شجرة المهارات السلوكية',
-      desc: 'ميدالية أسطرلاب ذهبية ونحاسية منقوشة بشجرة الحياة والدوائر والرموز الفلكية؛ التصميم المعتمد لشجرة المهارات.'
-    },
-    {
-      num: '10',
-      file: '10_shadow_confrontation_ink_wash.jpg',
-      titleAr: 'Encountering the Great Shadow (مواجهة الظلال بالحبر المائي)',
-      titleEn: 'Ink-Wash Encounter with the Shadow',
-      tag: 'المحاكمات والمشاريع الكبرى',
-      desc: 'أسلوب الحبر المائي: المستكشف بفانوسه في الغابة المظلمة يواجه ظلاً عملاقاً يمثل التحديات والمشاريع الكبرى دون لوم.'
-    },
-    {
-      num: '11',
-      file: '11_enchanted_archway_waymark.jpg',
-      titleAr: 'The Living Waymark (علامة الطريق الحية)',
-      titleEn: 'Enchanted Archway & Miro Sprout Waymark',
-      tag: 'علامات الطريق ونوايا التنفيذ',
-      desc: 'قوس صخري أثري مغطى بأوراق لبلاب ندية يخرج من قاعدته كائن النور؛ يمثل علامات الطريق ونوايا التنفيذ.'
-    },
-    {
-      num: '12',
-      file: '12_woodland_echoes_shadow_spirits.jpg',
-      titleAr: 'The Woodland Echoes (أصداء الغابة اللطيفة)',
-      titleEn: 'Woodland Echoes & Ancient Habit Patterns',
-      tag: 'أصداء الأنماط السابقة',
-      desc: 'كائنات ظلال لطيفة وغامضة بعيون بيضاء مشعة تطل من خلف جذوع الأشجار؛ يمثل أصداء الأنماط القديمة والتعافي الواعي.'
-    },
-    {
-      num: '13',
-      file: '13_miro_starlight_spirit_official.jpg',
-      titleAr: 'Miro Official Reference (طائر الحبر ونور النجوم)',
-      titleEn: 'Miro the Starlight Ink Spirit Official',
-      tag: 'الرفيق الحي ميرو',
-      desc: 'كائن النور والرفيق الحي لمستكشف الدرب. يجمع بين طائر النور الحبري والنجوم المتلألئة؛ يقدم الحوارات والاستشارات والتشجيع.'
-    },
-    {
-      num: '14',
-      file: '14_arco_mossy_entrance_wayfinder.jpg',
-      titleAr: 'Arco Ancient Temple & Wayfinder (بطل الأطلس ومدخل المعبد)',
-      titleEn: 'Arco Style Ancient Ruin & Pixel Adventurer',
-      tag: 'تجسيد شخصية المستكشف البكسلية',
-      desc: 'المرجع البصري الأساسي لتجسيد شخصية المستكشف البكسلي القائم أمام معبد الغابة العتيق المكسو بالطحالب مع اليراعات السحرية.'
-    },
-    {
-      num: '15',
-      file: '15_sword_pedestal_godrays.jpg',
-      titleAr: 'Sword on Stone Pedestal with God Rays (سيف الصرح وحزم النور)',
-      titleEn: 'Sword on Stone Pedestal with Sunbeams',
-      tag: 'أشعة الشمس الإلهية ومحراب النصب',
-      desc: 'المرجع الأساسي لأشعة الشمس الإلهية المتلألئة (God Rays) المتدفقة عبر غصون الغابة؛ صرح النُّصُب ومحراب التثبيت والاستقرار.'
-    },
-    {
-      num: '16',
-      file: '16_colossal_ancient_arches_canopy.jpg',
-      titleAr: 'Colossal Ancient Arches & Canopy (الأقواس الحجرية والمظلة الكبرى)',
-      titleEn: 'Colossal Ancient Arches & Forest Canopy',
-      tag: 'بانوراما مسرح الملاذ الحي',
-      desc: 'الخلفية البانورامية الرئيسية لمسرح الملاذ الحي: أقواس معمارية مهيبة تعانق الأشجار العملاقة وضوء الصباح الضبابي.'
-    },
-    {
-      num: '17',
-      file: '17_giant_stone_face_ruins.jpg',
-      titleAr: 'Colossal Stone Face Sanctuary (وجه الصرح الحجري العملاق)',
-      titleEn: 'Colossal Stone Face in the Overgrown Ruins',
-      tag: 'أطلال المحاكمات والعقبات الكبرى',
-      desc: 'المرجع البصري لصرح المحاكمات والعقبات الكبرى: وجه صخري عملاق نابت عليه الأعشاب واللبلاب يواجهه المستكشف بهيبة وسلام.'
-    },
-    {
-      num: '18',
-      file: '18_nature_reclaims_sanctuary.jpg',
-      titleAr: 'Nature Reclaims Architecture (الطبيعة تستعيد العمارة القديمة)',
-      titleEn: 'Nature Reclaiming Train Station & Architecture',
-      tag: 'سوق غنائم الملاذ والاستشفاء',
-      desc: 'المرجع البصري لسوق غنائم الملاذ ومحطات السكينة: عمارة عتيقة مكسوة بالأوراق الخضراء تتغلغل فيها شمس الصباح الحيوية.'
-    },
-    {
-      num: '19',
-      file: '19_overgrown_creeping_vines_border.png',
-      titleAr: 'Overgrown Creeping Vines & Border Foliage (الإطار النباتي الزاحف)',
-      titleEn: 'Creeping Pixel Vines & Border Foliage',
-      tag: 'الإطار الزاحف خارج حدود النافذة',
-      desc: 'المرجع الدقيق والحصري لأنيميشن الفروع النباتية والأوراق والبراعم الزاحفة على حواف النافذة الفائضة خارج الحدود بعدة مليمترات.'
-    }
-  ];
-
-  function renderAtlasGallery() {
-    const grid = document.getElementById('atlasGalleryGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    ATLAS_REFERENCE_ARTWORKS.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'atlas-gallery-item';
-      card.innerHTML = `
-        <div class="gallery-thumb-wrap">
-          <img class="gallery-thumb-img" src="../../assets/brand/living-atlas/${item.file}" alt="${item.titleAr}" loading="lazy">
-          <span class="gallery-num-badge">#${item.num}</span>
-        </div>
-        <div class="gallery-meta">
-          <div class="gallery-title-ar">${item.titleAr}</div>
-          <div class="gallery-title-en">${item.titleEn}</div>
-          <div class="gallery-desc">${item.desc}</div>
-          <span class="gallery-role-tag">${item.tag}</span>
-        </div>
-      `;
-
-      card.onclick = () => {
-        const modal = document.getElementById('atlasGalleryLightboxModal');
-        const img = document.getElementById('atlasLightboxImg');
-        const title = document.getElementById('atlasLightboxTitle');
-        const desc = document.getElementById('atlasLightboxDesc');
-        if (modal && img) {
-          img.src = `../../assets/brand/living-atlas/${item.file}`;
-          if (title) title.textContent = `[${item.num}] ${item.titleAr}`;
-          if (desc) desc.innerHTML = `<strong>${item.tag}</strong><br>${item.desc}`;
-          modal.hidden = false;
-        }
-      };
-
-      grid.appendChild(card);
-    });
-
-    const closeBtn = document.getElementById('atlasLightboxCloseBtn');
-    const modal = document.getElementById('atlasGalleryLightboxModal');
-    if (closeBtn && modal) {
-      closeBtn.onclick = () => { modal.hidden = true; };
-      modal.onclick = (e) => { if (e.target === modal) modal.hidden = true; };
-    }
-  }
-
 })();
