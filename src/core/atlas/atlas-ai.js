@@ -56,17 +56,31 @@ const ATLAS_AI_SYSTEM_PROMPT = `
 // ============================================================================
 
 /**
+ * Maps legacy/deprecated model names to current active endpoints
+ */
+function resolveModelName(model) {
+  const m = (model || '').trim();
+  if (!m || m === 'gemini-1.5-flash' || m === 'gemini-2.0-flash' || m === 'gemini-2.5-flash' || m === 'gemini-2.5-flash-lite') {
+    return 'gemini-flash-lite-latest';
+  }
+  if (m === 'gemini-1.5-pro' || m === 'gemini-2.0-pro' || m === 'gemini-2.5-pro') {
+    return 'gemini-pro-latest';
+  }
+  return m;
+}
+
+/**
  * Sends a payload to Google Gemini API over native HTTPS.
  * Ensures zero intermediate cloud servers or analytics tracking.
  */
-function callGeminiApi({ apiKey, model = 'gemini-1.5-flash', contents, systemInstruction = null, generationConfig = {} }) {
+function executeGeminiRequest({ apiKey, model = 'gemini-flash-lite-latest', contents, systemInstruction = null, generationConfig = {} }) {
   return new Promise((resolve, reject) => {
     if (!apiKey || typeof apiKey !== 'string' || !apiKey.trim()) {
       return reject(new Error('مفتاح Google Gemini API غير متوفر أو فارغ.'));
     }
 
     const cleanKey = apiKey.trim();
-    const cleanModel = model.trim() || 'gemini-1.5-flash';
+    const cleanModel = resolveModelName(model);
     const postData = JSON.stringify({
       contents: Array.isArray(contents) ? contents : [{ role: 'user', parts: [{ text: String(contents) }] }],
       ...(systemInstruction ? {
@@ -103,9 +117,9 @@ function callGeminiApi({ apiKey, model = 'gemini-1.5-flash', contents, systemIns
           if (res.statusCode >= 200 && res.statusCode < 300) {
             const candidate = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
             if (candidate) {
-              return resolve({ ok: true, text: candidate.trim(), raw: parsed });
+              return resolve({ ok: true, text: candidate.trim(), raw: parsed, resolvedModel: cleanModel });
             }
-            return resolve({ ok: true, text: '', raw: parsed });
+            return resolve({ ok: true, text: '', raw: parsed, resolvedModel: cleanModel });
           }
 
           // Error handling from Gemini API
@@ -132,9 +146,29 @@ function callGeminiApi({ apiKey, model = 'gemini-1.5-flash', contents, systemIns
 }
 
 /**
+ * Sends a payload to Google Gemini API with automatic model fallback to gemini-flash-lite-latest
+ */
+async function callGeminiApi(opts) {
+  const primaryModel = resolveModelName(opts.model);
+  try {
+    return await executeGeminiRequest({ ...opts, model: primaryModel });
+  } catch (err) {
+    if (primaryModel !== 'gemini-flash-lite-latest' && (
+      err.message.includes('not found') ||
+      err.message.includes('no longer available') ||
+      err.message.includes('high demand') ||
+      err.message.includes('NOT_FOUND')
+    )) {
+      return await executeGeminiRequest({ ...opts, model: 'gemini-flash-lite-latest' });
+    }
+    throw err;
+  }
+}
+
+/**
  * Fast ping test to verify that the API Key and model are functioning properly.
  */
-async function testGeminiConnection({ apiKey, model = 'gemini-1.5-flash' } = {}) {
+async function testGeminiConnection({ apiKey, model = 'gemini-flash-lite-latest' } = {}) {
   try {
     const testResult = await callGeminiApi({
       apiKey,
@@ -153,7 +187,7 @@ async function testGeminiConnection({ apiKey, model = 'gemini-1.5-flash' } = {})
 
     return {
       ok: true,
-      message: `تم الاتصال بنجاح بميرو ونموذج ${model}! الاستجابة: "${testResult.text}"`
+      message: `تم الاتصال بنجاح بميرو ونموذج ${testResult.resolvedModel || model}! الاستجابة: "${testResult.text}"`
     };
   } catch (err) {
     let friendlyError = err.message;
@@ -162,7 +196,7 @@ async function testGeminiConnection({ apiKey, model = 'gemini-1.5-flash' } = {})
     } else if (err.message.includes('403') || err.message.includes('PERMISSION_DENIED')) {
       friendlyError = 'تم رفض الإذن (Permission Denied). تأكد من تفعيل Gemini API في مشروعك.';
     } else if (err.message.includes('NOT_FOUND') || err.message.includes('404')) {
-      friendlyError = `النموذج المحدد (${model}) غير متاح لحسابك. جرب اختيار gemini-1.5-flash.`;
+      friendlyError = `النموذج المحدد (${model}) غير متاح لحسابك. جرب اختيار gemini-flash-lite-latest.`;
     }
     return {
       ok: false,
@@ -174,7 +208,7 @@ async function testGeminiConnection({ apiKey, model = 'gemini-1.5-flash' } = {})
 /**
  * Generates an empathetic, reflective Miro whisper based on today's habit completions and current wayfinder status.
  */
-async function generateMiroCompanionReflection({ apiKey, model = 'gemini-1.5-flash', wayfinderState, habitsSummary, lang = 'ar' } = {}) {
+async function generateMiroCompanionReflection({ apiKey, model = 'gemini-flash-lite-latest', wayfinderState, habitsSummary, lang = 'ar' } = {}) {
   const isEn = (lang === 'en');
   const userPrompt = isEn ?
     `Wayfinder Status: Level ${wayfinderState?.level || 1}, Title: "${wayfinderState?.titleEn || 'Wayfinder'}", Gold: ${wayfinderState?.havenGold || 0}.
@@ -201,7 +235,7 @@ Generate a short, inspiring 2-sentence companion whisper as Miro welcoming the p
 /**
  * Consult Miro in a specific psychological / life reflection mode.
  */
-async function consultMiroWithAi({ apiKey, model = 'gemini-1.5-flash', modeKey = 'reflection', userQuestion = '', wayfinderState, lang = 'ar' } = {}) {
+async function consultMiroWithAi({ apiKey, model = 'gemini-flash-lite-latest', modeKey = 'reflection', userQuestion = '', wayfinderState, lang = 'ar' } = {}) {
   const isEn = (lang === 'en');
   const userPrompt = isEn ?
     `Mode: ${modeKey}. User Question / Thought: "${userQuestion}".
@@ -228,7 +262,7 @@ Offer a thoughtful, grounded response (max 3-4 sentences) as Miro blending habit
 /**
  * Generates an inspiring daily micro-quest formulated by Miro.
  */
-async function generateDailyQuestWithAi({ apiKey, model = 'gemini-1.5-flash', habit, wayfinderState, lang = 'ar' } = {}) {
+async function generateDailyQuestWithAi({ apiKey, model = 'gemini-flash-lite-latest', habit, wayfinderState, lang = 'ar' } = {}) {
   const isEn = (lang === 'en');
   const habitName = habit?.name || (isEn ? 'Daily Practice' : 'الممارسة اليومية');
   const habitCategory = habit?.category || 'productivity';

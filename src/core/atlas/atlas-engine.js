@@ -494,7 +494,7 @@ class AtlasEngine extends EventEmitter {
       const wayfinderState = this.store.data.wayfinder || {};
       return consultMiroWithAi({
         apiKey: atlasConf.apiKey.trim(),
-        model: atlasConf.model || 'gemini-1.5-flash',
+        model: atlasConf.model || 'gemini-flash-lite-latest',
         modeKey,
         userQuestion,
         wayfinderState,
@@ -576,7 +576,7 @@ class AtlasEngine extends EventEmitter {
         const wayfinderState = this.store.data.wayfinder || {};
         const aiRes = await generateDailyQuestWithAi({
           apiKey: atlasConf.apiKey.trim(),
-          model: atlasConf.model || 'gemini-1.5-flash',
+          model: atlasConf.model || 'gemini-flash-lite-latest',
           habit: targetHabit,
           wayfinderState,
           lang,

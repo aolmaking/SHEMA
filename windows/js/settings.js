@@ -5234,7 +5234,7 @@ function wireAtlasAiSetup() {
     testBtn.onclick = async () => {
       const atlas = s.atlas || {};
       const key = keyInput ? keyInput.value.trim() : (atlas.apiKey || '');
-      const model = modelSel ? modelSel.value : (atlas.model || 'gemini-1.5-flash');
+      const model = modelSel ? modelSel.value : (atlas.model || 'gemini-flash-lite-latest');
       if (!key) {
         if (testStatus) {
           testStatus.textContent = en() ? '❌ Please enter a Gemini API Key first.' : '❌ يرجى إدخال مفتاح Gemini API أولاً.';

@@ -436,7 +436,7 @@ const DEFAULTS = {
   atlas: {
     aiEnabled: false,
     apiKey: '',
-    model: 'gemini-1.5-flash',
+    model: 'gemini-flash-lite-latest',
   },
   layoutVersion: LAYOUT_VERSION,
   initialized: false,
@@ -5647,7 +5647,7 @@ function registerIpc() {
   ipcMain.handle('atlas:test-ai', async (_e, { apiKey, model } = {}) => {
     const atlasConf = settings.get('atlas') || {};
     const key = apiKey || atlasConf.apiKey;
-    const targetModel = model || atlasConf.model || 'gemini-1.5-flash';
+    const targetModel = model || atlasConf.model || 'gemini-flash-lite-latest';
     if (!key || typeof key !== 'string' || !key.trim()) {
       return { ok: false, error: 'مفتاح API غير متوفر (يرجى إدخال مفتاح Gemini API أولاً)' };
     }
