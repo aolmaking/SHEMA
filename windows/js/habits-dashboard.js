@@ -3224,6 +3224,7 @@
         targetNum.min = '1';
         targetNum.max = '100';
         if (!preserveValues && (!targetNum.value || targetNum.value === '1')) targetNum.value = '100';
+        else if (Number(targetNum.value) > 100) targetNum.value = '100';
         targetNum.placeholder = '100';
       }
       if (targetUnit) {

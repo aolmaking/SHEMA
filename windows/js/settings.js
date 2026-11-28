@@ -2689,6 +2689,7 @@ function buildSuperUrgentAndWhatsApp() {
       if (!habitsScrollList || !habitPickerSelect) return;
       habitsScrollList.innerHTML = '';
       habitPickerSelect.innerHTML = '';
+      if (quickHabitSelect) quickHabitSelect.innerHTML = '';
 
       if (cachedHabits.length === 0) {
         if (habitsCountEl) habitsCountEl.textContent = '(0)';
@@ -2702,8 +2703,16 @@ function buildSuperUrgentAndWhatsApp() {
 
         const opt = document.createElement('option');
         opt.value = '';
-        opt.textContent = en() ? '-- No habits found --' : '-- لا توجد عادات --';
+        opt.textContent = en() ? '-- No habits found --' : '-- لا توجد عادات مضافة --';
         habitPickerSelect.appendChild(opt);
+
+        if (quickHabitSelect) {
+          const qOpt = document.createElement('option');
+          qOpt.value = '';
+          qOpt.textContent = en() ? '-- No habits found --' : '-- لا توجد عادات مضافة --';
+          quickHabitSelect.appendChild(qOpt);
+        }
+
         if (selectedCard) selectedCard.style.display = 'none';
         return;
       }
@@ -3117,13 +3126,22 @@ function buildSuperUrgentAndWhatsApp() {
       };
     }
 
-    try {
-      if (window.widgets?.habits?.getState) {
-        const state = await window.widgets.habits.getState();
-        cachedHabits = (state?.habits || []).filter(h => !h.archived);
-        renderHabits();
-      }
-    } catch (_err) {}
+    const refreshHabits = async () => {
+      try {
+        if (window.widgets?.habits?.getState) {
+          const state = await window.widgets.habits.getState();
+          cachedHabits = (state?.habits || []).filter(h => !h.archived);
+          renderHabits();
+        } else if (window.widgets?.habits?.getHabits) {
+          const list = await window.widgets.habits.getHabits(true);
+          cachedHabits = (list || []).filter(h => !h.archived);
+          renderHabits();
+        }
+      } catch (_err) {}
+    };
+
+    window.__refreshWaHabits = refreshHabits;
+    await refreshHabits();
 
     if (window.widgets?.habits?.onChange) {
       window.widgets.habits.onChange((newList) => {
@@ -4431,7 +4449,7 @@ function buildHabits() {
     switchEl('#habitsShowStrength', h.showStrength !== false, (v) => setGroup('habits', { showStrength: v }));
   }
   if ($('#habitsShowUrgency')) {
-    switchEl('#habitsShowUrgency', h.showUrgency !== false, (v) => setGroup('habits', { showUrgency: v }));
+    switchEl('#habitsShowUrgency', Boolean(h.showUrgency), (v) => setGroup('habits', { showUrgency: v }));
   }
   if ($('#habitsShowProgressBar')) {
     switchEl('#habitsShowProgressBar', h.showProgressBar !== false, (v) => setGroup('habits', { showProgressBar: v }));
@@ -5353,6 +5371,7 @@ function switchTab(tabId, targetId = null) {
   }
 
   updateSummaryStatuses();
+  if (window.__refreshWaHabits) window.__refreshWaHabits();
 
   if (targetId) {
     setTimeout(() => {
@@ -5687,6 +5706,7 @@ function wire() {
   initSettingsSearch();
   buildPerWidgetStyles();
   updateSummaryStatuses();
+  if (window.__refreshWaHabits) window.__refreshWaHabits();
   wireSetupGuideModals();
   wireWidgetEnableSwitches();
 
@@ -5861,6 +5881,7 @@ function wire() {
     syncBrowserSetup();
     syncPhoto();
     updateSummaryStatuses();
+  if (window.__refreshWaHabits) window.__refreshWaHabits();
     buildPerWidgetStyles();
   });
   window.widgets.win.onSection(jumpTo);
@@ -6113,6 +6134,7 @@ function refreshControls() {
   buildPerWidgetStyles();
   buildFolderSettings();
   updateSummaryStatuses();
+  if (window.__refreshWaHabits) window.__refreshWaHabits();
   syncAppearanceScopeUI();
 }
 

@@ -989,7 +989,7 @@
     }
 
     if (lastCompletedDaysAgo === null) {
-      return 95;
+      return 0;
     }
 
     const urgencyRatio = lastCompletedDaysAgo / interval;
@@ -1076,7 +1076,7 @@
     // Component visibility
     const showStreak = s.showStreak !== false;
     const showStrength = s.showStrength !== false;
-    const showUrgency = s.showUrgency !== false;
+    const showUrgency = s.showUrgency === true;
     const showPomodoro = s.showPomodoroShortcut !== false;
     const showProgressBar = s.showProgressBar !== false;
     const showMiniStrip = s.showMiniStrip !== false;
@@ -2692,7 +2692,7 @@
       }
 
       // Urgency / Overdue Pill (OpenHabitTracker - Streak Guilt Eliminator)
-      const showUrgency = (state.settings?.showUrgency !== false) && (state.allSettings?.habits?.showUrgency !== false);
+      const showUrgency = Boolean(state.settings?.showUrgency) || Boolean(state.allSettings?.habits?.showUrgency);
       const urgScore = calculateUrgencyScore(h.id);
       if (showUrgency && urgScore >= 50 && status !== 'done' && status !== 'skip') {
         const urgPill = document.createElement('span');
