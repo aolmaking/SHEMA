@@ -9515,6 +9515,46 @@ body.theme-notebook .preview-tile {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
+#pane-atlas .trials-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(20, 29, 50, 0.92) 100%),
+    url('../../assets/brand/living-atlas/04_storybook_map_forest_runes.jpg') center/cover no-repeat !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5);
+}
+
+#pane-atlas .obstacles-prog-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(20, 29, 50, 0.92) 100%),
+    url('../../assets/brand/living-atlas/10_shadow_confrontation_ink_wash.jpg') right 15%/cover no-repeat !important;
+  border: 1.5px solid rgba(251, 191, 36, 0.4) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5);
+}
+
+#pane-atlas .sanctuary-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(20, 29, 50, 0.92) 100%),
+    url('../../assets/brand/living-atlas/05_verdant_ruins_mossy_path.jpg') center/cover no-repeat !important;
+  border: 1.5px solid rgba(168, 85, 247, 0.45) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+}
+
+#pane-atlas .bazaar-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(20, 29, 50, 0.92) 100%),
+    url('../../assets/brand/living-atlas/08_world_tree_radiant_city.jpg') center/cover no-repeat !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+#pane-atlas .chronicles-card {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(20, 29, 50, 0.92) 100%),
+    url('../../assets/brand/living-atlas/06_the_wayfinder_pilgrim_journey.jpg') center/cover no-repeat !important;
+  border: 1.5px solid rgba(251, 191, 36, 0.4) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
 #pane-atlas .miro-ask-ai-row {
   display: flex;
   align-items: center;
@@ -10907,4 +10947,304 @@ body.theme-notebook .preview-tile {
 .card-action-success-fx {
   animation: radiantGlowPulse 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   border-color: #fde047 !important;
+}
+
+/* ==========================================================================
+   Phase 3: Major Trials, 3-Tier Obstacles, Sanctuary & Bazaar Styling
+   ========================================================================== */
+
+/* Major Trials Card & Luminous Progress */
+.atlas-trial-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 69, 0.88) 100%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+
+.atlas-trial-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.65) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.25);
+}
+
+.atlas-trial-card.completed {
+  border-color: rgba(52, 211, 153, 0.6) !important;
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(15, 23, 42, 0.92) 100%) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 18px rgba(52, 211, 153, 0.2);
+}
+
+.trial-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.trial-progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #0284c7, #38bdf8, #fde047) !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+  transition: width 0.4s ease;
+}
+
+.atlas-trial-card.completed .trial-progress-fill {
+  background: linear-gradient(90deg, #059669, #10b981, #34d399) !important;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.85);
+}
+
+/* 3-Tier Obstacles & Visual Stepper */
+.atlas-obstacle-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 69, 0.88) 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+
+.atlas-obstacle-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(251, 191, 36, 0.65) !important;
+}
+
+.atlas-obstacle-card.relic {
+  border: 1.5px solid rgba(251, 191, 36, 0.75) !important;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.92) 0%, rgba(15, 23, 42, 0.94) 100%) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 22px rgba(251, 191, 36, 0.3) !important;
+}
+
+.obstacle-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 6px 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stepper-step {
+  flex: 1;
+  text-align: center;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.stepper-step.active {
+  color: #fde047;
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
+}
+
+.stepper-step.completed {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.obstacle-advance-btn {
+  background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+  border: 1px solid rgba(56, 189, 248, 0.6) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.obstacle-advance-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+}
+
+.obstacle-strategy-select {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #f8fafc;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-family: inherit;
+}
+
+/* Sanctuary of Monuments & Relics Vault */
+.sanctuary-sections-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .sanctuary-sections-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sanctuary-sub-block {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sanctuary-sub-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #f8fafc;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sanctuary-monuments-grid,
+.sanctuary-relics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.monument-display-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(20, 29, 50, 0.9), rgba(15, 23, 42, 0.95));
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(251, 191, 36, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.monument-icon {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px #fde047);
+}
+
+.monument-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #fde047;
+}
+
+.monument-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.relic-display-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.8), rgba(15, 23, 42, 0.95));
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(168, 85, 247, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.relic-icon {
+  font-size: 24px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px #c084fc);
+}
+
+.relic-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #c084fc;
+}
+
+.relic-note {
+  font-size: 10.5px;
+  color: #94a3b8;
+}
+
+/* Rewards Bazaar Cards */
+.atlas-bazaar-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 69, 0.88) 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.atlas-bazaar-card:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(251, 191, 36, 0.7) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 18px rgba(245, 158, 11, 0.3);
+}
+
+.bazaar-delete-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.bazaar-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.bazaar-redeem-btn {
+  margin-top: 6px;
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  border: 1px solid rgba(52, 211, 153, 0.7) !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bazaar-redeem-btn:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(52, 211, 153, 0.5);
+}
+
+.bazaar-redeem-btn:disabled {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+  color: #94a3b8 !important;
+  cursor: default;
+  transform: none !important;
+  box-shadow: none !important;
 }

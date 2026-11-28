@@ -354,7 +354,7 @@ class AtlasEngine extends EventEmitter {
 
     this.emit('atlas:reward-redeemed', { rewardId, res, chronicle });
     this.emit('atlas:updated', this.getDashboardState());
-    return { ok: true, res, chronicle };
+    return { ok: true, res, remainingGold: res.remainingGold, reward: res.reward, chronicle };
   }
 
   /**
@@ -812,6 +812,10 @@ class AtlasEngine extends EventEmitter {
         this.store.data.obstaclesState?.tiers || {},
         this.store.data.obstaclesState?.dormantRelics || []
       ),
+      obstaclesState: {
+        tiers: { ...(this.store.data.obstaclesState?.tiers || {}) },
+        dormantRelics: [...(this.store.data.obstaclesState?.dormantRelics || [])],
+      },
       rewards: AtlasRewardsEngine.getAllRewards(
         this.store.data.customRewards || [],
         wf.havenGold || 0

@@ -5301,7 +5301,11 @@
       }
       const cost = Number($('#rewardInputCost')?.value) || 50;
       const icon = $('#rewardInputIcon')?.value?.trim() || '🎁';
-      if (window.widgets?.habits?.saveReward) {
+      if ($('#pane-atlas')?.classList.contains('active') && window.widgets?.atlas?.addReward) {
+        await window.widgets.atlas.addReward({ title, titleEn: title, cost, icon });
+        $('#addRewardModal').hidden = true;
+        renderAtlasPane();
+      } else if (window.widgets?.habits?.saveReward) {
         await window.widgets.habits.saveReward({ title, titleEn: title, cost, icon });
         $('#addRewardModal').hidden = true;
         await renderGamification();
@@ -6111,7 +6115,7 @@
       };
     }
 
-    // 11. Phase 3: Major Trials (Boss Replacement)
+    // 11. Phase 3: Major Trials (Boss Replacement with Luminous Progression)
     const trialsGridEl = $('#atlasTrialsGrid');
     if (trialsGridEl && Array.isArray(atlasState.trials)) {
       trialsGridEl.innerHTML = '';
@@ -6119,37 +6123,67 @@
         const card = document.createElement('div');
         card.className = `atlas-trial-card ${trial.isCompleted ? 'completed' : ''}`;
         const rew = trial.rewards || {};
+        const canClaim = !trial.isCompleted && (trial.currentSteps >= trial.requiredSteps);
+
         card.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 22px;">${trial.icon}</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 24px; filter: drop-shadow(0 0 6px #38bdf8);">${trial.icon}</span>
               <div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">${isEn ? trial.titleEn : trial.titleAr}</div>
-                <div style="font-size: 10px; color: var(--text-muted);">${isEn ? trial.monumentNameEn : trial.monumentNameAr}</div>
+                <div style="font-size: 13.5px; font-weight: 800; color: #f8fafc;">${isEn ? trial.titleEn : trial.titleAr}</div>
+                <div style="font-size: 10.5px; color: #94a3b8;">🏛️ ${isEn ? trial.monumentNameEn : trial.monumentNameAr}</div>
               </div>
             </div>
-            ${trial.isCompleted ? `<span style="font-size: 11px; font-weight: 700; color: #15803d;">✅ ${isEn ? 'Conquered' : 'مكتملة'}</span>` : ''}
+            ${trial.isCompleted ? `<span style="font-size: 11px; font-weight: 800; color: #34d399; background: rgba(52, 211, 153, 0.15); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(52, 211, 153, 0.4);">✅ ${isEn ? 'Conquered' : 'مكتملة ومُشيدة'}</span>` : ''}
           </div>
-          <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${isEn ? trial.descriptionEn : trial.descriptionAr}</div>
+          <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.5;">${isEn ? trial.descriptionEn : trial.descriptionAr}</div>
           <div class="trial-progress-bar">
             <div class="trial-progress-fill" style="width: ${trial.progressPercent || 0}%"></div>
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600;">
-            <span>${trial.currentSteps} / ${trial.requiredSteps} ${isEn ? 'Steps' : 'خطوات صادقة'}</span>
-            <span style="color: #0284c7;">${trial.progressPercent}%</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700;">
+            <span style="color: #94a3b8;">${trial.currentSteps} / ${trial.requiredSteps} ${isEn ? 'Faithful Steps' : 'خطوات صادقة'}</span>
+            <span style="color: #38bdf8;">${trial.progressPercent}%</span>
           </div>
-          <div style="display: flex; align-items: gap: 6px; flex-wrap: wrap;">
-            ${rew.havenGold ? `<span class="workshop-cost-tag">🪙 +${rew.havenGold}</span>` : ''}
-            ${rew.aetherShards ? `<span class="workshop-cost-tag">💎 +${rew.aetherShards}</span>` : ''}
-            ${rew.manuscriptScraps ? `<span class="workshop-cost-tag">📜 +${rew.manuscriptScraps}</span>` : ''}
-            ${rew.seedsOfLight ? `<span class="workshop-cost-tag">🌱 +${rew.seedsOfLight}</span>` : ''}
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              ${rew.havenGold ? `<span class="workshop-cost-tag">🪙 +${rew.havenGold}</span>` : ''}
+              ${rew.aetherShards ? `<span class="workshop-cost-tag">💎 +${rew.aetherShards}</span>` : ''}
+              ${rew.manuscriptScraps ? `<span class="workshop-cost-tag">📜 +${rew.manuscriptScraps}</span>` : ''}
+              ${rew.seedsOfLight ? `<span class="workshop-cost-tag">🌱 +${rew.seedsOfLight}</span>` : ''}
+            </div>
+            ${canClaim ? `
+              <button type="button" class="dash-action-btn primary trial-claim-btn" style="padding: 4px 12px; font-size: 11px;">
+                🏆 ${isEn ? 'Claim Monument' : 'استلام النصب والمكافأة'}
+              </button>
+            ` : ''}
           </div>
         `;
+
+        const claimBtn = card.querySelector('.trial-claim-btn');
+        if (claimBtn) {
+          claimBtn.onclick = async () => {
+            claimBtn.disabled = true;
+            try {
+              if (window.widgets?.atlas?.completeTrial) {
+                card.classList.add('card-action-success-fx');
+                const res = await window.widgets.atlas.completeTrial(trial.id);
+                if (res?.ok) {
+                  if (speechEl) speechEl.textContent = isEn ? `"Monument erect! A major milestone carved into the Haven."` : `"ارتفع نُصب الملاذ! خطوة تاريخية كبرى أضاءت عوالم الأطلس."`;
+                  setTimeout(() => renderAtlasPane(), 400);
+                }
+              }
+            } catch (err) {
+              console.error('[Atlas] Complete trial failed:', err);
+              claimBtn.disabled = false;
+            }
+          };
+        }
+
         trialsGridEl.appendChild(card);
       });
     }
 
-    // 12. Phase 3: Living Obstacles & 3-Tier Progression
+    // 12. Phase 3: Living Obstacles & 3-Tier Dynamic Progression
     const obstaclesGridEl = $('#atlasObstaclesGrid');
     if (obstaclesGridEl && Array.isArray(atlasState.obstacles)) {
       obstaclesGridEl.innerHTML = '';
@@ -6157,9 +6191,6 @@
         const card = document.createElement('div');
         card.className = `atlas-obstacle-card ${obs.isDormantRelic ? 'relic' : ''}`;
         const tier = obs.currentTier || 0;
-        const tierName = obs.isDormantRelic
-          ? (isEn ? 'Tier 3: Dormant Relic' : 'المستوى 3: أثر تاريخي خامل')
-          : (tier === 0 ? (isEn ? 'Active Friction' : 'احتكاك نشط') : (isEn ? `Tier ${tier} Victory` : `انتصار المستوى ${tier}`));
 
         const strategiesOptions = (obs.availableStrategies || []).map(s => `
           <option value="${s.id}">${isEn ? s.nameEn : s.nameAr}</option>
@@ -6167,20 +6198,29 @@
 
         card.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">${isEn ? obs.nameEn : obs.nameAr}</div>
-            <span class="obstacle-tier-badge tier-${tier}">${tierName}</span>
+            <div style="font-size: 13.5px; font-weight: 800; color: #f8fafc;">${isEn ? obs.nameEn : obs.nameAr}</div>
+            <span class="obstacle-tier-badge tier-${tier}">
+              ${obs.isDormantRelic ? (isEn ? '🏺 Dormant Relic' : '🏺 أثر تاريخي خامل') : (isEn ? `Tier ${tier}/3` : `المرحلة ${tier}/3`)}
+            </span>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${isEn ? obs.descriptionEn : obs.descriptionAr}</div>
+          <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.5;">${isEn ? obs.descriptionEn : obs.descriptionAr}</div>
+          
+          <div class="obstacle-stepper">
+            <div class="stepper-step ${tier >= 1 ? 'completed' : (tier === 0 ? 'active' : '')}">${isEn ? '1. Breakthrough ⚡' : '1. الانفراج ⚡'}</div>
+            <div class="stepper-step ${tier >= 2 ? 'completed' : (tier === 1 ? 'active' : '')}">${isEn ? '2. Stabilize 🛡️' : '2. التثبيت 🛡️'}</div>
+            <div class="stepper-step ${tier >= 3 ? 'completed' : (tier === 2 ? 'active' : '')}">${isEn ? '3. Dormant 🏺' : '3. أثر خامل 🏺'}</div>
+          </div>
+
           ${!obs.isDormantRelic ? `
             <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
               <select class="obstacle-strategy-select" style="flex: 1;">
                 ${strategiesOptions}
               </select>
-              <button type="button" class="obstacle-advance-btn">${isEn ? 'Apply Strategy' : 'تطبيق الاستراتيجية'}</button>
+              <button type="button" class="obstacle-advance-btn">${isEn ? 'Apply Strategy ➔' : 'تطبيق الاستراتيجية ➔'}</button>
             </div>
           ` : `
-            <div style="font-size: 11px; color: #0284c7; background: rgba(2, 132, 199, 0.06); padding: 4px 8px; border-radius: 6px;">
-              🏛️ ${isEn ? 'Preserved peacefully in the Haven Relics Archive.' : 'محفوظ بأمان كأثر تاريخي خامل في أرشيف الملاذ.'}
+            <div style="font-size: 11px; color: #c084fc; background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35); padding: 6px 10px; border-radius: 8px; line-height: 1.4;">
+              🏛️ ${isEn ? 'Preserved peacefully in the Haven Relics Vault as a beacon of lifelong calm.' : 'رُوّض بنجاح وتحول إلى أثر تاريخي هادئ في خزانة الملاذ؛ يمنحك ثباتاً وسكينة دائمة.'}
             </div>
           `}
         `;
@@ -6192,14 +6232,18 @@
             advBtn.disabled = true;
             try {
               if (window.widgets?.atlas?.advanceObstacle) {
+                card.classList.add('card-action-success-fx');
                 const res = await window.widgets.atlas.advanceObstacle({
                   obstacleKey: obs.id,
                   strategyKey: sel.value,
                 });
-                if (res?.ok) renderAtlasPane();
+                if (res?.ok) {
+                  setTimeout(() => renderAtlasPane(), 400);
+                }
               }
             } catch (err) {
               console.error('[Atlas] Advance obstacle failed:', err);
+              advBtn.disabled = false;
             }
           };
         }
@@ -6208,7 +6252,61 @@
       });
     }
 
-    // 13. Phase 3: Chronicles Journal
+    // 13. Haven Sanctuary: Monuments & Dormant Relics Vault Rendering
+    const sanctuaryMonumentsGrid = $('#atlasSanctuaryMonumentsGrid');
+    if (sanctuaryMonumentsGrid) {
+      sanctuaryMonumentsGrid.innerHTML = '';
+      const monuments = atlasState.havenFacilities?.monuments || [];
+      if (monuments.length === 0) {
+        sanctuaryMonumentsGrid.innerHTML = `
+          <div style="font-size: 11.5px; color: #94a3b8; text-align: center; padding: 12px; line-height: 1.5;">
+            ${isEn ? 'No monuments erected yet. Fulfill Major Trials to raise landmarks in the Haven.' : 'لم يرتفع نُصب بعد... أنجز المحاكمات الكبرى لتشييد شواهد الملاذ الشامخة.'}
+          </div>
+        `;
+      } else {
+        monuments.forEach(m => {
+          const item = document.createElement('div');
+          item.className = 'monument-display-card';
+          item.innerHTML = `
+            <div class="monument-icon">${m.icon || '🏛️'}</div>
+            <div>
+              <div class="monument-title">${isEn ? (m.nameEn || m.nameAr) : (m.nameAr || m.nameEn)}</div>
+              <div class="monument-desc">${isEn ? (m.loreEn || 'A lasting beacon of personal excellence.') : (m.loreAr || 'شاهد خالد على الاستقامة والسعي الصادق.')}</div>
+            </div>
+          `;
+          sanctuaryMonumentsGrid.appendChild(item);
+        });
+      }
+    }
+
+    const sanctuaryRelicsGrid = $('#atlasSanctuaryRelicsGrid');
+    if (sanctuaryRelicsGrid) {
+      sanctuaryRelicsGrid.innerHTML = '';
+      const relics = atlasState.obstaclesState?.dormantRelics || [];
+      if (relics.length === 0) {
+        sanctuaryRelicsGrid.innerHTML = `
+          <div style="font-size: 11.5px; color: #94a3b8; text-align: center; padding: 12px; line-height: 1.5;">
+            ${isEn ? 'No dormant relics archived yet. Master obstacles to Stage 3 to preserve them peacefully.' : 'لا توجد آثار خاملة بعد... روّض العراقيل إلى المستوى الثالث لتحويلها إلى آثار سلام.'}
+          </div>
+        `;
+      } else {
+        relics.forEach(rel => {
+          const item = document.createElement('div');
+          item.className = 'relic-display-card';
+          const rName = typeof rel === 'string' ? rel : (rel.name || rel.id);
+          item.innerHTML = `
+            <div class="relic-icon">🏺</div>
+            <div>
+              <div class="relic-title">${rName}</div>
+              <div class="relic-note">${isEn ? 'Mastered friction resting peacefully in the vault.' : 'عائق تم ترويضه بالكامل واستقر كأثر حكمة وسلام.'}</div>
+            </div>
+          `;
+          sanctuaryRelicsGrid.appendChild(item);
+        });
+      }
+    }
+
+    // 14. Phase 3: Chronicles Journal
     const chroniclesListEl = $('#atlasChroniclesList');
     if (chroniclesListEl && Array.isArray(atlasState.chronicles)) {
       chroniclesListEl.innerHTML = '';
@@ -6235,26 +6333,48 @@
       }
     }
 
-    // 14. Phase 3: Rewards Bazaar
+    // 15. Phase 3: Rewards Bazaar (Real-World Intrinsic Flourishing)
     const bazaarGridEl = $('#atlasBazaarGrid');
     if (bazaarGridEl && Array.isArray(atlasState.rewards)) {
       bazaarGridEl.innerHTML = '';
       atlasState.rewards.forEach(r => {
         const card = document.createElement('div');
         card.className = 'atlas-bazaar-card';
+        const isCustom = r.isCustom || (!String(r.id).startsWith('PRESET_'));
+        const goldDeficit = Math.max(0, (r.cost || 0) - (wf.havenGold || 0));
+
         card.innerHTML = `
-          <div class="bazaar-card-head">
+          <div class="bazaar-card-head" style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 20px;">${r.icon || '🎁'}</span>
-              <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">${isEn ? (r.titleEn || r.titleAr) : (r.titleAr || r.titleEn)}</span>
+              <span style="font-size: 22px;">${r.icon || '🎁'}</span>
+              <span style="font-size: 13.5px; font-weight: 800; color: #f8fafc;">${isEn ? (r.titleEn || r.titleAr) : (r.titleAr || r.titleEn)}</span>
             </div>
-            <span style="font-size: 11.5px; font-weight: 700; color: #b45309;">🪙 ${r.cost}</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 12px; font-weight: 800; color: #fde047; background: rgba(251, 191, 36, 0.15); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(251, 191, 36, 0.4);">🪙 ${r.cost}</span>
+              ${isCustom ? `<button type="button" class="bazaar-delete-btn" title="${isEn ? 'Delete Custom Reward' : 'حذف المكافأة'}">✕</button>` : ''}
+            </div>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${isEn ? (r.descriptionEn || r.descriptionAr) : (r.descriptionAr || r.descriptionEn)}</div>
+          <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">${isEn ? (r.descriptionEn || r.descriptionAr) : (r.descriptionAr || r.descriptionEn)}</div>
           <button type="button" class="bazaar-redeem-btn" ${r.canAfford ? '' : 'disabled'}>
-            ${r.canAfford ? (isEn ? 'Redeem Treat' : 'استرداد المكافأة') : (isEn ? 'Need More Gold' : 'ذهب غير كافٍ')}
+            ${r.canAfford ? (isEn ? 'Redeem Treat 🪙' : 'استرداد المكافأة 🪙') : (isEn ? `Need ${goldDeficit} more gold` : `ينقصك ${goldDeficit} ذهب`)}
           </button>
         `;
+
+        const delBtn = card.querySelector('.bazaar-delete-btn');
+        if (delBtn) {
+          delBtn.onclick = async () => {
+            if (confirm(isEn ? 'Delete this custom reward?' : 'هل تريد حذف هذه المكافأة المخصصة؟')) {
+              try {
+                if (window.widgets?.atlas?.deleteReward) {
+                  await window.widgets.atlas.deleteReward(r.id);
+                  renderAtlasPane();
+                }
+              } catch (err) {
+                console.error('[Atlas] Delete reward failed:', err);
+              }
+            }
+          };
+        }
 
         const redeemBtn = card.querySelector('.bazaar-redeem-btn');
         if (redeemBtn && r.canAfford) {
@@ -6262,11 +6382,16 @@
             redeemBtn.disabled = true;
             try {
               if (window.widgets?.atlas?.redeemReward) {
+                card.classList.add('card-action-success-fx');
                 const res = await window.widgets.atlas.redeemReward(r.id);
-                if (res?.ok) renderAtlasPane();
+                if (res?.ok) {
+                  if (speechEl) speechEl.textContent = isEn ? `"Splendid! Enjoy your well-earned reward."` : `"هنيئاً لك! استمتع بمكافأتك المستحقة بكل بهجة وسرور."`;
+                  setTimeout(() => renderAtlasPane(), 400);
+                }
               }
             } catch (err) {
               console.error('[Atlas] Redeem failed:', err);
+              redeemBtn.disabled = false;
             }
           };
         }
@@ -6279,6 +6404,9 @@
     if (openRewardBtn) {
       openRewardBtn.onclick = () => {
         const modal = $('#addRewardModal');
+        if (modal) modal.hidden = false;
+      };
+    }
         if (modal) modal.hidden = false;
       };
     }
