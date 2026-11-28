@@ -6942,6 +6942,34 @@ body.theme-minimal-light .plate.tile-plate[data-app-icon="1"],
   background: color-mix(in srgb, var(--tile) 94%, #0284c7) !important;
 }
 
+/* Quick Daily Reflection & Micro-Journal Modal & Chips */
+.qj-prompt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--plate-subtle, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  color: var(--ink, inherit);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.qj-prompt-chip:hover {
+  background: var(--accent, #3b82f6);
+  color: #fff;
+  border-color: var(--accent, #3b82f6);
+  transform: translateY(-1px);
+}
+.qj-prompt-chip:active {
+  transform: translateY(0);
+}
+
+
 
 
 

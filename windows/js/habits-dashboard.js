@@ -5364,6 +5364,16 @@
         const h = state.habits.find(x => x.id === opts.habitId);
         if (h) populateHabitForm(h);
       }
+      if (opts?.focus === 'reflection') {
+        switchTab('grid');
+        setTimeout(() => {
+          const card = $('#reflectionCard');
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            $('#reflectionTextarea')?.focus();
+          }
+        }, 180);
+      }
     });
 
     window.widgets?.habits?.onGamificationChange?.((g) => {

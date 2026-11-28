@@ -359,6 +359,8 @@ strings({
     's.habitsShowMiniStrip': 'إظهار شريط الأيام السبعة السريع (7-Day Strip)',
     's.habitsShowRoutineFilters': 'إظهار شريط تصنيفات الروتين (صباحي/مسائي/عمل...)',
     's.habitsShowFooterCheckin': 'إظهار شريط التسجيل السريع للمزاج وساعات النوم',
+    's.habitsShowQuickJournal': 'إظهار زر التدوين السريع (خاطرة وتأمل اليوم)',
+    's.habitsShowQuickJournalHint': 'يعرض زراً صغيراً في شريط الودجت الخارجي لكتابة وتوثيق تأملاتك وخاطرة اليوم مباشرة دون الحاجة لفتح لوحة التحكم.',
     's.habitsPsychologyTitle': 'سيكلوجية التحفيز والتفاعل الدقيق (Micro-Interactions)',
     's.habitsSoundEffects': 'نغمة الإنجاز الصوتية الفورية (Audio Chime)',
     's.habitsSoundEffectsHint': 'نغمة صوتية مريحة ومهدئة عند إتمام العادة لتعزيز هرمون الإنجاز والتحفيز الذاتي.',
@@ -1128,6 +1130,8 @@ strings({
     's.habitsShowMiniStrip': 'Show 7-Day Matrix Strip',
     's.habitsShowRoutineFilters': 'Show Routine Period Chips (Morning/Evening/Work)',
     's.habitsShowFooterCheckin': 'Show Quick Sleep & Mood Check-in Bar',
+    's.habitsShowQuickJournal': 'Show Quick Micro-Journal Button',
+    's.habitsShowQuickJournalHint': 'Displays a small button in the widget header to write and record your daily reflection immediately.',
     's.habitsPsychologyTitle': 'Habit Psychology & Micro-Interactions',
     's.habitsSoundEffects': 'Instant Completion Audio Chime',
     's.habitsSoundEffectsHint': 'A gentle, satisfying chime upon completing a habit to boost dopamine and adherence.',
@@ -4440,6 +4444,9 @@ function buildHabits() {
   }
   if ($('#habitsShowFooterCheckin')) {
     switchEl('#habitsShowFooterCheckin', h.showFooterCheckin !== false, (v) => setGroup('habits', { showFooterCheckin: v }));
+  }
+  if ($('#habitsShowQuickJournal')) {
+    switchEl('#habitsShowQuickJournal', h.showQuickJournal !== false, (v) => setGroup('habits', { showQuickJournal: v }));
   }
   if ($('#habitsSoundEffects')) {
     switchEl('#habitsSoundEffects', h.soundEffects !== false, (v) => setGroup('habits', { soundEffects: v }));

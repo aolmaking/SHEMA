@@ -188,6 +188,15 @@
       'habits.focusModeOn': 'إلغاء وضع التركيز (إظهار البطاقات العلوية)',
       'habits.showWeekStrip': '📅 شريط أيام الأسبوع',
       'habits.habitsFocusMode': '🎯 وضع التركيز على العادات (توسيع مساحة العادات)',
+      'habits.quickJournal': 'تدوين وتأمل سريع (Micro-Journal)',
+      'habits.showQuickJournal': '✍️ زر التدوين السريع',
+      'habits.quickJournalTitle': 'خاطرة وتأمل اليوم (Micro-Journal)',
+      'habits.quickJournalSaved': 'تم حفظ الخاطرة بنجاح ✨',
+      'habits.openInDash': 'عرض باللوحة ↗',
+      'habits.quickJournalPrompt1': '🎯 أهم إنجاز',
+      'habits.quickJournalPrompt2': '💡 درس اليوم',
+      'habits.quickJournalPrompt3': '🙏 امتنان',
+      'habits.quickJournalPrompt4': '⚡ عقبة',
     },
     en: {
       'habits.title': 'Habits & Wellness',
@@ -368,6 +377,15 @@
       'habits.focusModeOn': 'Exit Focus Mode (Show top panels)',
       'habits.showWeekStrip': '📅 7-Day Week Strip',
       'habits.habitsFocusMode': '🎯 Habits Focus Mode (Full space)',
+      'habits.quickJournal': 'Quick Reflection (Micro-Journal)',
+      'habits.showQuickJournal': '✍️ Quick Journal Button',
+      'habits.quickJournalTitle': 'Daily Reflection & Micro-Journal',
+      'habits.quickJournalSaved': 'Reflection saved successfully ✨',
+      'habits.openInDash': 'Open in Dashboard ↗',
+      'habits.quickJournalPrompt1': '🎯 Top Win',
+      'habits.quickJournalPrompt2': '💡 Lesson',
+      'habits.quickJournalPrompt3': '🙏 Gratitude',
+      'habits.quickJournalPrompt4': '⚡ Obstacle',
     },
   });
 
@@ -1069,9 +1087,12 @@
     const showAtlasBar = s.showAtlasBar !== false;
     const showSound = s.soundEffects !== false;
     const showWeekStrip = s.showWeekStrip !== false;
+    const showQuickJournal = s.showQuickJournal !== false;
     const habitsFocusMode = Boolean(s.habitsFocusMode);
 
     if ($('#popShowWeekStrip')) $('#popShowWeekStrip').checked = showWeekStrip;
+    if ($('#popShowQuickJournal')) $('#popShowQuickJournal').checked = showQuickJournal;
+    if ($('#quickJournalBtn')) $('#quickJournalBtn').style.display = showQuickJournal ? 'inline-flex' : 'none';
     if ($('#popHabitsFocusMode')) $('#popHabitsFocusMode').checked = habitsFocusMode;
 
     const plate = $('#habitsPlate');
@@ -3363,6 +3384,41 @@
     }
   }
 
+  async function openQuickJournalModal() {
+    const modal = $('#quickJournalModal');
+    if (!modal) return;
+    const today = formatLocalDate();
+    if ($('#qjDateBadge')) $('#qjDateBadge').textContent = today;
+    const textarea = $('#qjTextarea');
+    const status = $('#qjStatus');
+    if (status) status.textContent = '';
+
+    // Load existing note
+    let existingNote = '';
+    try {
+      const todayLog = getTodayLog();
+      existingNote = todayLog.dailyNote || '';
+      if (!existingNote && window.widgets?.habits?.getDayNote) {
+        existingNote = (await window.widgets.habits.getDayNote(today)) || '';
+      }
+    } catch (_) {}
+
+    if (textarea) {
+      textarea.value = existingNote;
+    }
+    modal.hidden = false;
+    setTimeout(() => {
+      textarea?.focus();
+      const len = textarea?.value?.length || 0;
+      textarea?.setSelectionRange(len, len);
+    }, 60);
+  }
+
+  function closeQuickJournalModal() {
+    const modal = $('#quickJournalModal');
+    if (modal) modal.hidden = true;
+  }
+
   function openQuickSleepModal() {
     const modal = $('#quickSleepModal');
     if (!modal) return;
@@ -3487,6 +3543,9 @@
       persistHabitSettings({ gamificationEnabled: e.target.checked });
       renderGamificationPill();
     });
+    $('#popShowQuickJournal')?.addEventListener('change', (e) => {
+      persistHabitSettings({ showQuickJournal: e.target.checked });
+    });
     $('#popShowAtlasBar')?.addEventListener('change', (e) => {
       persistHabitSettings({ showAtlasBar: e.target.checked });
       renderAtlasMiniBar();
@@ -3555,6 +3614,70 @@
     $('#qsSaveBtn')?.addEventListener('click', () => {
       saveSleep(qsSelectedHours, qsSelectedQuality);
       closeQuickSleepModal();
+    });
+
+    // Quick Reflection & Micro-Journal Modal Wiring
+    $('#quickJournalBtn')?.addEventListener('click', () => {
+      openQuickJournalModal();
+    });
+    $('#qjCloseBtn')?.addEventListener('click', closeQuickJournalModal);
+    $('#qjCancelBtn')?.addEventListener('click', closeQuickJournalModal);
+
+    // Micro-prompts chips insertion
+    $$('#qjPromptsRow .qj-prompt-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const prompt = chip.dataset.prompt || '';
+        const textarea = $('#qjTextarea');
+        if (!textarea) return;
+        const current = textarea.value;
+        if (!current.trim()) {
+          textarea.value = prompt;
+        } else {
+          textarea.value = current.endsWith('\n') ? `${current}${prompt}` : `${current}\n${prompt}`;
+        }
+        textarea.focus();
+        const len = textarea.value.length;
+        textarea.setSelectionRange(len, len);
+      });
+    });
+
+    async function saveQuickJournalAction() {
+      const textarea = $('#qjTextarea');
+      const status = $('#qjStatus');
+      const text = (textarea?.value || '').trim();
+      const today = formatLocalDate();
+      const saveBtn = $('#qjSaveBtn');
+      if (saveBtn) saveBtn.disabled = true;
+      try {
+        if (window.widgets?.habits?.saveDayNote) {
+          await window.widgets.habits.saveDayNote({ dateStr: today, note: text });
+        }
+        const dayLog = getTodayLog();
+        if (dayLog) dayLog.dailyNote = text;
+        if (status) status.textContent = t('habits.quickJournalSaved');
+        setTimeout(() => {
+          closeQuickJournalModal();
+          if (status) status.textContent = '';
+        }, 500);
+      } catch (err) {
+        if (status) status.textContent = err.message || 'Error saving';
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    }
+
+    $('#qjSaveBtn')?.addEventListener('click', saveQuickJournalAction);
+
+    $('#qjTextarea')?.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        saveQuickJournalAction();
+      }
+    });
+
+    $('#qjOpenFullDashBtn')?.addEventListener('click', () => {
+      closeQuickJournalModal();
+      window.widgets?.win?.openHabitsDashboard?.({ tab: 'grid', focus: 'reflection' });
     });
 
     // Quick Add Modal Wiring
