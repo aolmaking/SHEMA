@@ -5607,6 +5607,8 @@
 
     const goldEl = $('#atlasHavenGold');
     if (goldEl) goldEl.textContent = String(wf.havenGold || 0);
+    const goldLbl = $('.atlas-gold-lbl');
+    if (goldLbl) goldLbl.textContent = isEn ? 'Haven Gold' : 'ذهب الملاذ';
 
     // Living Materials Counters
     const mats = wf.livingMaterials || {};
@@ -5861,7 +5863,7 @@
             ${isEn ? project.descriptionEn : project.descriptionAr}
           </div>
           <div class="workshop-cost-row">
-            ${cost.aetherShards > 0 ? `<span class="workshop-cost-tag">💎 ${cost.aetherShards} ${isEn ? 'Aether' : 'أثير'}</span>` : ''}
+            ${cost.aetherShards > 0 ? `<span class="workshop-cost-tag">💎 ${cost.aetherShards} ${isEn ? 'Crystals' : 'بلورات طاقة'}</span>` : ''}
             ${cost.manuscriptScraps > 0 ? `<span class="workshop-cost-tag">📜 ${cost.manuscriptScraps} ${isEn ? 'Scraps' : 'مخطوط'}</span>` : ''}
             ${cost.seedsOfLight > 0 ? `<span class="workshop-cost-tag">🌱 ${cost.seedsOfLight} ${isEn ? 'Seeds' : 'بذور'}</span>` : ''}
           </div>

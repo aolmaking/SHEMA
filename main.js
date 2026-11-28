@@ -433,6 +433,11 @@ const DEFAULTS = {
     lightShaders: true,  // reduce GPU shaders on battery
     widgets: {},         // per-widget overrides
   },
+  atlas: {
+    aiEnabled: false,
+    apiKey: '',
+    model: 'gemini-1.5-flash',
+  },
   layoutVersion: LAYOUT_VERSION,
   initialized: false,
   widgets: Object.fromEntries(Object.entries(WIDGETS).map(([id, w]) => [
@@ -5636,6 +5641,20 @@ function registerIpc() {
   ipcMain.handle('atlas:delete-miro-note', (_e, noteId) => atlasEngine.deleteMiroNote(noteId));
   ipcMain.handle('atlas:reset-miro-memory', (_e) => atlasEngine.resetMiroMemory());
   ipcMain.handle('atlas:set-wayfinder-name', (_e, name) => atlasEngine.setWayfinderName(name));
+  ipcMain.handle('atlas:test-ai', async (_e, { apiKey, model } = {}) => {
+    const atlasConf = settings.get('atlas') || {};
+    const key = apiKey || atlasConf.apiKey;
+    const targetModel = model || atlasConf.model || 'gemini-1.5-flash';
+    if (!key || typeof key !== 'string' || !key.trim()) {
+      return { ok: false, error: 'مفتاح API غير متوفر (يرجى إدخال مفتاح Gemini API أولاً)' };
+    }
+    try {
+      const { testGeminiConnection } = require('./src/core/atlas/atlas-ai');
+      return await testGeminiConnection({ apiKey: key.trim(), model: targetModel });
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  });
 
   ipcMain.on('shell:open', (_e, url) => {
     if (typeof url === 'string' && (/^https?:\/\//i.test(url) || /^mailto:/i.test(url))) openExternalUrl(url);

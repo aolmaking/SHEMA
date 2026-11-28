@@ -1057,34 +1057,51 @@
             </div>
 
             <!-- Duration Step & Progression Controls (Visible when type === 'duration') -->
-            <div class="form-group" id="durationStepGroup" style="display: none; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.22); border-radius: 10px; padding: 12px; margin-top: 10px;">
-              <label class="form-label" style="display: flex; align-items: center; justify-content: space-between; font-weight: 700;">
+            <div class="form-group" id="durationStepGroup"
+              style="display: none; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.22); border-radius: 10px; padding: 12px; margin-top: 10px;">
+              <label class="form-label"
+                style="display: flex; align-items: center; justify-content: space-between; font-weight: 700;">
                 <span>⏱️ خطوات الإكمال ومقدار الوقت لكل نقرة (دقائق)</span>
                 <span style="font-size: 11px; opacity: 0.8; font-weight: normal;">(زيادة بالدقائق مع كل ضغطة)</span>
               </label>
-              
+
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
                 <div>
-                  <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">الدقائق المضافة لكل نقرة:</label>
-                  <input type="number" class="form-input" id="habitInputDurationStep" value="10" min="1" max="720" placeholder="مثلاً: 10">
+                  <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">الدقائق المضافة لكل
+                    نقرة:</label>
+                  <input type="number" class="form-input" id="habitInputDurationStep" value="10" min="1" max="720"
+                    placeholder="مثلاً: 10">
                 </div>
                 <div>
-                  <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">المدة المستهدفة الإجمالية (دقائق):</label>
-                  <input type="number" class="form-input" id="habitInputDurationTargetSync" value="30" min="1" max="1440" placeholder="مثلاً: 30">
+                  <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">المدة المستهدفة الإجمالية
+                    (دقائق):</label>
+                  <input type="number" class="form-input" id="habitInputDurationTargetSync" value="30" min="1"
+                    max="1440" placeholder="مثلاً: 30">
                 </div>
               </div>
 
               <!-- Quick Presets -->
               <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
-                <button type="button" class="dur-preset-badge" data-step="5" style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡ 5 د</button>
-                <button type="button" class="dur-preset-badge" data-step="10" style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡ 10 د</button>
-                <button type="button" class="dur-preset-badge" data-step="15" style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡ 15 د</button>
-                <button type="button" class="dur-preset-badge" data-step="20" style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡ 20 د</button>
-                <button type="button" class="dur-preset-badge" data-step="30" style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡ 30 د</button>
+                <button type="button" class="dur-preset-badge" data-step="5"
+                  style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡
+                  5 د</button>
+                <button type="button" class="dur-preset-badge" data-step="10"
+                  style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡
+                  10 د</button>
+                <button type="button" class="dur-preset-badge" data-step="15"
+                  style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡
+                  15 د</button>
+                <button type="button" class="dur-preset-badge" data-step="20"
+                  style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡
+                  20 د</button>
+                <button type="button" class="dur-preset-badge" data-step="30"
+                  style="cursor: pointer; padding: 3px 9px; border-radius: 12px; font-size: 11px; background: rgba(245,158,11,0.15); color: #d97706; border: 1px solid rgba(245,158,11,0.25); font-weight: 600;">⚡
+                  30 د</button>
               </div>
 
               <!-- Real-time calculation helper text -->
-              <div id="durationCalcExplanation" style="font-size: 11.5px; color: #d97706; margin-top: 8px; font-weight: 600; line-height: 1.4;">
+              <div id="durationCalcExplanation"
+                style="font-size: 11.5px; color: #d97706; margin-top: 8px; font-weight: 600; line-height: 1.4;">
                 💡 كل ضغطة على العادة ستضيف 10 دقائق حتى الإكمال عند 30 دقيقة
               </div>
             </div>
@@ -1834,9 +1851,9 @@
               </div>
               <div class="atlas-header-currencies">
                 <div class="atlas-gold-badge" title="ذهب الملاذ المكتسب من إتمام العادات">🪙 <span
-                    id="atlasHavenGold">0</span> <span data-i18n="atlas.havenGold">ذهب الملاذ</span></div>
+                    id="atlasHavenGold">0</span> <span class="atlas-gold-lbl" data-i18n="atlas.havenGold">ذهب الملاذ</span></div>
                 <div class="atlas-materials-badges">
-                  <span class="atlas-mat-badge aether" title="أحجار الأثير: لترميم المنشآت والجسور">💎 <span
+                  <span class="atlas-mat-badge aether" title="بلورات الطاقة: لترميم المنشآت والجسور">💎 <span
                       id="atlasAetherCount">0</span></span>
                   <span class="atlas-mat-badge manuscript" title="قصاصات المخطوطات: لحفظ الخرائط والتوثيق">📜 <span
                       id="atlasManuscriptCount">0</span></span>

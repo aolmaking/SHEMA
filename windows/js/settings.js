@@ -39,6 +39,14 @@ strings({
     's.appearanceScopeTitle': 'تخصيص المظهر والثيم لكل ودجت',
     's.appearanceScopeDesc': 'يمكنك تخصيص ثيم وألوان وخطوط وزجاج كل ودجت أو نافذة الإعدادات بشكل مستقل تماماً، أو تطبيق الإعدادات العامة.',
     's.ecoTitle': '🔋 توفير الطاقة والبطارية للابتوب',
+    's.atlasSetupTitle': '✨ أطلس العوالم الحيّة والرفيق ميرو (الذكاء الاصطناعي)',
+    's.atlasSetupDesc': 'ربط الرفيق ميرو ومحرك أحداث القصة التفاعلية بنموذج الذكاء الاصطناعي (Gemini). يتم حفظ مفتاح API محلياً 100% داخل جهازك دون أي وسيط خارجي، لتحاكي أحداث القصة عاداتك وتطورك الواقعي بصدق ودون أي لوم.',
+    's.atlasAiEnabled': 'تفعيل الرفيق الذكي ميرو ومحرك سرد الأطلس',
+    's.atlasApiKey': 'مفتاح Google Gemini API Key',
+    's.atlasAiModel': 'نموذج الذكاء الاصطناعي (Gemini Model)',
+    's.atlasAiTestBtn': '⚡ فحص الاتصال بميرو والنموذج',
+    's.atlasPrivacyTitle': 'خصوصية وسيادة تامة 100% (Local-First Sovereignty)',
+    's.atlasPrivacyDesc': 'مفتاح API الخاص بك يُخزن محلياً فقط في ملف إعداداتك على جهازك. لا يتم إرسال أي بيانات إلى أي خوادم وسيطة أو خدمات تتبع. ميرو يستند فقط إلى بيانات عاداتك الواقعية لتشجيعك وسرد رحلتك.',
     's.ecoDesc': 'تحسين استهلاك المعالج، تجميد الودجات المصغرة، وإلغاء الشيدرز والبلور الثقيل تلقائياً عند العمل على البطارية لإطالة عمر اللابتوب.',
     's.ecoMode': 'وضع توفير الطاقة:',
     's.ecoModeAuto': 'تلقائي (عند العمل على البطارية)',
@@ -810,6 +818,14 @@ strings({
     's.appearanceScopeTitle': 'Per-Widget Theme & Appearance Customization',
     's.appearanceScopeDesc': 'Customize the theme, accent, fonts, and glass for individual widgets or Settings window, or apply globally.',
     's.ecoTitle': '🔋 Laptop Battery & Power Saver',
+    's.atlasSetupTitle': '✨ The Living Atlas & AI Miro Companion',
+    's.atlasSetupDesc': 'Connect Miro and dynamic narrative storytelling to Google Gemini API. Your API key is stored 100% locally with zero external telemetry, authentically reflecting your real habits without guilt or shame.',
+    's.atlasAiEnabled': 'Enable AI Miro Companion & Storytelling Engine',
+    's.atlasApiKey': 'Google Gemini API Key',
+    's.atlasAiModel': 'Gemini Model',
+    's.atlasAiTestBtn': '⚡ Test Connection with Miro & Model',
+    's.atlasPrivacyTitle': '100% Local-First Sovereignty & Privacy',
+    's.atlasPrivacyDesc': 'Your API key is stored strictly on your local device in settings.json. Zero intermediate servers, zero analytics. Miro uses only your real habit logs to encourage you and narrate your journey.',
     's.ecoDesc': 'Optimize CPU usage, freeze minimized widgets, and suppress heavy blur shaders automatically when on battery to extend laptop life.',
     's.ecoMode': 'Power saver mode:',
     's.ecoModeAuto': 'Automatic (active on battery)',
@@ -5132,6 +5148,133 @@ function syncBrowserSetup() {
   }
 }
 
+function syncAtlasAiSetup() {
+  const atlas = s.atlas || {};
+  const enabledBtn = $('#atlasAiEnabled');
+  if (enabledBtn) {
+    const isEn = Boolean(atlas.aiEnabled);
+    enabledBtn.setAttribute('aria-checked', String(isEn));
+    enabledBtn.classList.toggle('active', isEn);
+  }
+  const fields = $('#atlasAiFields');
+  if (fields) {
+    fields.style.display = (atlas.aiEnabled ?? false) ? 'block' : 'none';
+  }
+  const keyInput = $('#atlasApiKey');
+  if (keyInput && atlas.apiKey !== undefined && keyInput !== document.activeElement) {
+    keyInput.value = atlas.apiKey || '';
+  }
+  const modelSel = $('#atlasAiModel');
+  if (modelSel && atlas.model) {
+    modelSel.value = atlas.model;
+  }
+  const badge = $('#atlasAiStatusBadge');
+  if (badge) {
+    if (!atlas.aiEnabled) {
+      badge.textContent = en() ? '⏸️ Miro Paused' : '⏸️ ميرو متوقف';
+      badge.style.color = 'var(--ink-2, #94a3b8)';
+      badge.style.borderColor = 'rgba(255,255,255,0.15)';
+      badge.style.background = 'rgba(255,255,255,0.05)';
+    } else if (atlas.apiKey && atlas.apiKey.trim().length > 10) {
+      badge.textContent = en() ? '✨ Miro Ready' : '✨ ميرو جاهز';
+      badge.style.color = '#38bdf8';
+      badge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+      badge.style.background = 'rgba(56, 189, 248, 0.15)';
+    } else {
+      badge.textContent = en() ? '⚠️ Needs API Key' : '⚠️ بانتظار المفتاح';
+      badge.style.color = '#fbbf24';
+      badge.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+      badge.style.background = 'rgba(251, 191, 36, 0.15)';
+    }
+  }
+}
+
+function wireAtlasAiSetup() {
+  const enabledBtn = $('#atlasAiEnabled');
+  if (enabledBtn) {
+    enabledBtn.onclick = () => {
+      const cur = s.atlas?.aiEnabled ?? false;
+      const next = !cur;
+      set({ atlas: { ...(s.atlas || {}), aiEnabled: next } });
+      syncAtlasAiSetup();
+    };
+  }
+
+  const keyInput = $('#atlasApiKey');
+  if (keyInput) {
+    keyInput.addEventListener('input', debounce((e) => {
+      set({ atlas: { ...(s.atlas || {}), apiKey: e.target.value.trim() } });
+      syncAtlasAiSetup();
+    }, 250));
+  }
+
+  const toggleVisBtn = $('#atlasApiKeyToggleVisibility');
+  if (toggleVisBtn && keyInput) {
+    toggleVisBtn.onclick = () => {
+      if (keyInput.type === 'password') {
+        keyInput.type = 'text';
+        toggleVisBtn.textContent = '🔒';
+      } else {
+        keyInput.type = 'password';
+        toggleVisBtn.textContent = '👁️';
+      }
+    };
+  }
+
+  const modelSel = $('#atlasAiModel');
+  if (modelSel) {
+    modelSel.addEventListener('change', (e) => {
+      set({ atlas: { ...(s.atlas || {}), model: e.target.value } });
+    });
+  }
+
+  const testBtn = $('#atlasAiTestBtn');
+  const testStatus = $('#atlasAiTestStatus');
+  if (testBtn) {
+    testBtn.onclick = async () => {
+      const atlas = s.atlas || {};
+      const key = keyInput ? keyInput.value.trim() : (atlas.apiKey || '');
+      const model = modelSel ? modelSel.value : (atlas.model || 'gemini-1.5-flash');
+      if (!key) {
+        if (testStatus) {
+          testStatus.textContent = en() ? '❌ Please enter a Gemini API Key first.' : '❌ يرجى إدخال مفتاح Gemini API أولاً.';
+          testStatus.style.color = '#ef4444';
+        }
+        return;
+      }
+
+      testBtn.disabled = true;
+      if (testStatus) {
+        testStatus.textContent = en() ? '⚡ Testing connection...' : '⚡ جارٍ اختبار الاتصال بميرو والنموذج...';
+        testStatus.style.color = '#38bdf8';
+      }
+
+      try {
+        const res = await window.widgets.atlas.testAi({ apiKey: key, model });
+        if (res && res.ok) {
+          if (testStatus) {
+            testStatus.textContent = `✅ ${res.message || (en() ? 'Connection successful!' : 'تم الاتصال بنجاح!')}`;
+            testStatus.style.color = '#10b981';
+          }
+          syncAtlasAiSetup();
+        } else {
+          if (testStatus) {
+            testStatus.textContent = `❌ ${res?.error || (en() ? 'Connection failed' : 'فشل الاتصال')}`;
+            testStatus.style.color = '#ef4444';
+          }
+        }
+      } catch (err) {
+        if (testStatus) {
+          testStatus.textContent = `❌ ${err.message || 'Error'}`;
+          testStatus.style.color = '#ef4444';
+        }
+      } finally {
+        testBtn.disabled = false;
+      }
+    };
+  }
+}
+
 /* ---------- photo ---------- */
 
 function buildPhoto() {
@@ -5925,6 +6068,7 @@ function wire() {
   updateSummaryStatuses();
   if (window.__refreshWaHabits) window.__refreshWaHabits();
   wireSetupGuideModals();
+  wireAtlasAiSetup();
   wireWidgetEnableSwitches();
 
   $('#headIcon').append(icon('gear'));
@@ -6096,6 +6240,7 @@ function wire() {
     syncWidgetRows();
     syncEmail();
     syncBrowserSetup();
+    syncAtlasAiSetup();
     syncPhoto();
     updateSummaryStatuses();
     if (window.__refreshWaHabits) window.__refreshWaHabits();
@@ -6305,6 +6450,25 @@ function wireSetupGuideModals() {
       ];
 
       renderGuideCards(steps);
+    } else if (type === 'atlas') {
+      titleEl.textContent = en() ? 'The Living Atlas & AI Miro Setup Guide' : 'دليل تفعيل ذكاء أطلس والرفيق ميرو (Gemini AI)';
+      subEl.textContent = en() ? 'Connect Miro and dynamic narrative storytelling in 30 seconds' : 'خطوات الحصول على مفتاح API مجاني وربط ميرو في 30 ثانية';
+
+      const steps = en() ? [
+        { num: '1', title: 'Get Free Gemini API Key', desc: 'Visit Google AI Studio at (aistudio.google.com) and sign in with your Google account.' },
+        { num: '2', title: 'Create API Key', desc: 'Click "Get API key" > "Create API key in new project" (it is completely free with generous daily quotas).' },
+        { num: '3', title: 'Paste & Select Model', desc: 'Copy the key (starts with AIzaSy...), paste it into the field below, and choose your preferred model (gemini-1.5-flash is fast and recommended).' },
+        { num: '4', title: 'Test Connection', desc: 'Click "Test Connection with Miro & Model". You will see immediate confirmation from Miro!' },
+        { num: '🛡️', tip: true, title: '100% Local-First Sovereignty', desc: 'Your API key is stored strictly on your local device in settings.json. Zero telemetry, zero tracking, and your habits are never sent to third-party ad networks.' },
+      ] : [
+        { num: '١', title: 'الدخول إلى Google AI Studio', desc: 'توجه إلى الرابط الرسمي (aistudio.google.com) وسجل الدخول بحساب Google الخاص بك.' },
+        { num: '٢', title: 'إنشاء مفتاح API مجاني', desc: 'اضغط على زر "Get API key" ثم "Create API key" (المفتاح مجاني تماماً بحصة استخدام يومية سخية تكفي الاستخدام اليومي).' },
+        { num: '٣', title: 'لصق المفتاح واختيار النموذج', desc: 'انسخ المفتاح (يبدأ بـ AIzaSy...) والصقه في خانة مفتاح Gemini أدناه، واختر النموذج المناسب (gemini-1.5-flash سريع وموصى به).' },
+        { num: '٤', title: 'فحص الاتصال الفوري', desc: 'اضغط على زر "فحص الاتصال بميرو والنموذج" للتأكد من جاهزية الرفيق لبدء الحوار وسرد أحداث القصة.' },
+        { num: '🛡️', tip: true, title: 'سيادة وخصوصية محلية 100%', desc: 'مفتاحك يُحفظ محلياً فقط على جهازك في ملف الإعدادات. لا تمر أي بيانات عبر خوادم وسيطة، وميرو يعكس عاداتك الواقعية بأمان تام ودون أي حكم أو لوم.' },
+      ];
+
+      renderGuideCards(steps);
     }
 
     modal.hidden = false;
@@ -6347,6 +6511,7 @@ function refreshControls() {
   buildPomodoro();
   syncEmail();
   syncBrowserSetup();
+  syncAtlasAiSetup();
   syncPhoto();
   buildPerWidgetStyles();
   buildFolderSettings();

@@ -197,6 +197,7 @@
       'habits.quickJournalPrompt2': '💡 درس اليوم',
       'habits.quickJournalPrompt3': '🙏 امتنان',
       'habits.quickJournalPrompt4': '⚡ عقبة',
+      'atlas.havenGold': 'ذهب الملاذ',
     },
     en: {
       'habits.title': 'Habits & Wellness',
@@ -386,6 +387,7 @@
       'habits.quickJournalPrompt2': '💡 Lesson',
       'habits.quickJournalPrompt3': '🙏 Gratitude',
       'habits.quickJournalPrompt4': '⚡ Obstacle',
+      'atlas.havenGold': 'Haven Gold',
     },
   });
 

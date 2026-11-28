@@ -121,6 +121,7 @@
       'until.hm': '{h} س {m} د',
       'until.m': '{m} د',
       'until.lt': 'أقل من دقيقة',
+      'atlas.havenGold': 'ذهب الملاذ',
     },
     en: {
       'common.close': 'Close',
@@ -136,6 +137,7 @@
       'until.hm': '{h} h {m} min',
       'until.m': '{m} min',
       'until.lt': 'under a minute',
+      'atlas.havenGold': 'Haven Gold',
     },
   };
 

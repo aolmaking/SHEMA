@@ -13,8 +13,8 @@
 const LIVING_MATERIALS_META = Object.freeze({
   aetherShards: {
     id: 'aetherShards',
-    nameAr: 'أحجار الأثير',
-    nameEn: 'Aether Shards',
+    nameAr: 'بلورات الطاقة',
+    nameEn: 'Light Crystals',
     icon: '💎',
     color: '#38bdf8',
     descriptionAr: 'بلورات ضوئية نقية تُكتسب من الارتقاء وتخطي العقبات لترميم أبنية وجسور الملاذ.',

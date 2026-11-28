@@ -13,6 +13,7 @@ const materials = require('./atlas-materials');
 const map = require('./atlas-map');
 const trials = require('./atlas-trials');
 const rewards = require('./atlas-rewards');
+const ai = require('./atlas-ai');
 
 module.exports = {
   ...constants,
@@ -28,4 +29,5 @@ module.exports = {
   ...map,
   ...trials,
   ...rewards,
+  ...ai,
 };
