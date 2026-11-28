@@ -6407,9 +6407,6 @@
         if (modal) modal.hidden = false;
       };
     }
-        if (modal) modal.hidden = false;
-      };
-    }
 
     // 15. Phase 3: Miro Memory & Privacy Sovereignty
     const miroMem = atlasState.miroMemory || {};
